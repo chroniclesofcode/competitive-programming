@@ -21,7 +21,7 @@ const LL MX = 5 * 1e6;
 int n;
 
 /*
-
+n^3 seems feasible as its less than 1e7 operations on grid
 */
 
 void solve() {
