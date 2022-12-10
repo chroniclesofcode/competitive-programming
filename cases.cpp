@@ -10,7 +10,9 @@ void solve();
 MAINRET(t) main(void) {
     std::cin.tie(nullptr);
     std::cin.sync_with_stdio(false);
-
+    LL t;
+    cin >> t;
+    while (t--)
         solve();
 }
 
