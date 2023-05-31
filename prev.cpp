@@ -1,27 +1,34 @@
-class Solution {
-public:
-    int hold[100001][101];
-    int free[100001][101];
-    int maxProfit(int k, vector<int>& prices) {
-        int n = prices.size();
-        hold[0][1] = -prices[0];
+#include <bits/stdc++.h>
 
-        for (int i = 1; i < n; i++) {
-            for (int j = 1; j <= k; j++) {
-                if (free[i-1][j-1] > 0 || j == 1) {
-                    hold[i][j] = max(hold[i-1][j], free[i-1][j-1] - prices[i]);
-                    free[i][j] = max(free[i-1][j], hold[i-1][j] + prices[i]);
-                } else {
-                    if (i+1 < n) {
-                        hold[i][j] = -prices[i+1];
-                    }
-                }
-            }
-        }
-        int ans = 0;
-        for (int i = 0; i <= k; i++) {
-            ans = max(ans, free[n-1][i]);
-        }
-        return ans;
-    }
-};
+using namespace std;
+
+#define MAINRET(x) in##x
+#define LL long long
+
+void solve();
+
+MAINRET(t) main(void) {
+    std::cin.tie(nullptr);
+    std::cin.sync_with_stdio(false);
+
+        solve();
+}
+
+#define INF numeric_limits<LL>::max() / 2
+const LL MX = 5 * 1e6;
+//const LL MOD = 1e7;
+
+int n;
+
+/*
+
+*/
+
+void solve() {
+
+}
+
+
+
+
+
