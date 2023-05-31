@@ -26,6 +26,18 @@ public:
                 ans = max(dp[i][j], ans);
             }
         }
+        
+        /*
+        // Alternatively, this code can be written as
+        
+        for (int i = 0; i < a.size(); i++) {
+            for (int j = 0; j < b.size(); j++) {
+                dp[i+1][j+1] = a[i] == b[j] ? dp[i][j] + 1 : max(dp[i][j+1], dp[i+1][j]);
+            }
+        }
+        
+        
+        */
         return ans;
     }
 };
