@@ -15,31 +15,39 @@ MAINRET(t) main(void) {
 }
 
 #define INF numeric_limits<LL>::max() / 2
-const LL MX = 520;
+const LL MX = 110;
 //const LL MOD = 1e7;
-vector<vector<int>> dp(MX, vector<int>(MX, INT_MAX));
 
-int a, b;
+int n;
+int a[MX];
+set<int> s;
+set<int> tmp;
+vector<int> v(100000);
+/*
+
+*/
 
 void solve() {
-    cin >> a >> b;
-    for (int i = 1; i <= a; ++i) {
-        for (int j = 1; j <= b; ++j) {
-            if (i == j) {
-                dp[i][j] = 0;
-            } else {
-                for (int k = 1; k < i; k++) {
-                    dp[i][j] = min(dp[i][j], dp[i-k][j] + dp[k][j] + 1);
-                }
-                for (int k = 1; k < j; k++) {
-                    dp[i][j] = min(dp[i][j], dp[i][j-k] + dp[i][k] + 1);
-                }
-            }
-            //cout << dp[i][j] << " ";
-        }
-        //cout << endl;
+    cin >> n;
+    for (int i = 0; i < n; i++) {
+        cin >> a[i];
     }
-    cout << dp[a][b] << endl;
+
+    for (int i = 0; i < n; i++) {
+        v.clear();
+        for (auto j = s.begin(); j != s.end(); j++) {
+            v.push_back(*j + a[i]);
+        }
+        s.insert(a[i]);
+        for (int j = 0; j < v.size(); j++) {
+            s.insert(v[j]);
+        }
+    }
+    cout << s.size() << '\n';
+    for (auto it = s.begin(); it != s.end(); it++) {
+        cout << *it << " ";
+    }
+    cout << '\n';
 }
 
 
