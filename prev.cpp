@@ -15,39 +15,40 @@ MAINRET(t) main(void) {
 }
 
 #define INF numeric_limits<LL>::max() / 2
-const LL MX = 110;
+const LL MX = 5 * 1e3;
 //const LL MOD = 1e7;
+array<LL, 2> dp[MX][MX];
+LL a[MX];
+LL n;
 
-int n;
-int a[MX];
-set<int> s;
-set<int> tmp;
-vector<int> v(100000);
 /*
-
+   dp[i][j][0..1] = max score of first player if
+   the game is played from LLerval i to j.
+   0 is max score he can achieve if he goes first
+   1 is max score he can achieve if he goes second
 */
 
 void solve() {
     cin >> n;
-    for (int i = 0; i < n; i++) {
+    for (LL i = 0; i < n; i++) {
         cin >> a[i];
     }
-
-    for (int i = 0; i < n; i++) {
-        v.clear();
-        for (auto j = s.begin(); j != s.end(); j++) {
-            v.push_back(*j + a[i]);
-        }
-        s.insert(a[i]);
-        for (int j = 0; j < v.size(); j++) {
-            s.insert(v[j]);
+    for (LL i = n-1; i >= 0; i--) {
+        for (LL j = i; j < n; j++) {
+            if (i == j) {
+                dp[i][j] = { a[i], 0 }; 
+            } else {
+                LL lp = a[i]+dp[i+1][j][1];
+                LL rp =  a[j]+dp[i][j-1][1];
+                if (lp > rp) {
+                    dp[i][j] = { lp, dp[i+1][j][0] };
+                } else {
+                    dp[i][j] = { rp, dp[i][j-1][0] };
+                }
+            }
         }
     }
-    cout << s.size() << '\n';
-    for (auto it = s.begin(); it != s.end(); it++) {
-        cout << *it << " ";
-    }
-    cout << '\n';
+    cout << dp[0][n-1][0] << '\n';
 }
 
 
