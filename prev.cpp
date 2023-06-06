@@ -15,40 +15,52 @@ MAINRET(t) main(void) {
 }
 
 #define INF numeric_limits<LL>::max() / 2
-const LL MX = 5 * 1e3;
-//const LL MOD = 1e7;
-array<LL, 2> dp[MX][MX];
-LL a[MX];
+const LL MX = 510;
+const LL MOD = 1e9 + 7;
+
 LL n;
+LL dp[MX][63000];
 
 /*
-   dp[i][j][0..1] = max score of first player if
-   the game is played from LLerval i to j.
-   0 is max score he can achieve if he goes first
-   1 is max score he can achieve if he goes second
+   Very interesting problem
+    0-1 knapsack, lot of small nuances to take care of.
+    At first, DP was wrong becasue I didn't consider my max sum.
+    Then, I did a real knapsack, when what I should be doing
+    is considering the different ways to make things... Which is
+    actually an EASIER recursion than a max.
 */
 
 void solve() {
     cin >> n;
-    for (LL i = 0; i < n; i++) {
-        cin >> a[i];
+    LL sum = n * (n+1) / 2;
+    if (sum % 2 == 1) {
+        cout << 0 << endl;
+        return;
     }
-    for (LL i = n-1; i >= 0; i--) {
-        for (LL j = i; j < n; j++) {
-            if (i == j) {
-                dp[i][j] = { a[i], 0 }; 
+    sum /= 2;
+    dp[0][0] = 1;
+    for (LL i = 1; i < n; i++) {
+        for (LL j = 0; j <= sum; j++) {
+            if (j - i >= 0) {
+                // This line adds the number of ways to make
+                // if you include it, and the number of ways
+                // if you didn't include it.
+                // The only deciding factor is whether j-i
+                // is greater than 0. Because that's recursion
+                // for you. You don't even need to consider
+                // whether it is possible, it is definitely
+                // possible IF dp[i-1][j-i] > 0
+                // Also had nasty bug where I did dp[i][j-i]
+                // instead of dp[i-1][j-i], because we shouldn't
+                // include i if we've already included it!
+                dp[i][j] = dp[i-1][j-i] + dp[i-1][j];
             } else {
-                LL lp = a[i]+dp[i+1][j][1];
-                LL rp =  a[j]+dp[i][j-1][1];
-                if (lp > rp) {
-                    dp[i][j] = { lp, dp[i+1][j][0] };
-                } else {
-                    dp[i][j] = { rp, dp[i][j-1][0] };
-                }
+                dp[i][j] = dp[i-1][j];
             }
+            dp[i][j] %= MOD;
         }
     }
-    cout << dp[0][n-1][0] << '\n';
+    cout << dp[n-1][sum] << '\n';
 }
 
 
