@@ -15,35 +15,33 @@ MAINRET(t) main(void) {
 }
 
 #define INF numeric_limits<LL>::max() / 2
-const LL MX = 2 * 1e5 + 10;
+const LL MX = 2 * 1e5 + 20;
 //const LL MOD = 1e7;
 
 LL n;
-LL a[MX];
-vector<LL> dp;
+array<LL, 3> a[MX];
+set<array<LL, 2>> dp;
 
 /*
-    dp[i] is going to represent the minimum number at the
-    end of the subsequence
+   dp = closing time, max price
 */
 
 void solve() {
     cin >> n;
     for (LL i = 0; i < n; i++) {
-        cin >> a[i];
+        cin >> a[i][1] >> a[i][0] >> a[i][2];
     }
+    sort(a, a+n);
+    LL maxp = 0;
+    dp.insert({ 0, 0 });
     for (LL i = 0; i < n; i++) {
-        auto it = lower_bound(dp.begin(), dp.end(), a[i]);    
-        if (it == dp.end()) {
-            dp.push_back(a[i]);
-        } else {
-            dp[(--it)-dp.begin()+1] = a[i];
-        }
+        auto it = dp.lower_bound({a[i][1]});
+        it--;
+        maxp = max(maxp, (*it)[1] + a[i][2]);
+        dp.insert({ a[i][0], maxp });
     }
-    cout << dp.size() << endl;
+    cout << (*--dp.end())[1] << endl;
 }
-
-
 
 
 
