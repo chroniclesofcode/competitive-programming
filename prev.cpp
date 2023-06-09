@@ -15,33 +15,31 @@ MAINRET(t) main(void) {
 }
 
 #define INF numeric_limits<LL>::max() / 2
-const LL MX = 2 * 1e5 + 20;
-//const LL MOD = 1e7;
+const LL MX = 10000;
+const LL MOD = 1e9 + 7;
 
-LL n;
-array<LL, 3> a[MX];
-set<array<LL, 2>> dp;
+LL a, b;
+LL dp[20][2];
 
-/*
-   dp = closing time, max price
-*/
+
+LL digitdp(string s) {
+
+}
+
+void resetdp() {
+    memset(dp, 0, sizeof dp);
+}
 
 void solve() {
-    cin >> n;
-    for (LL i = 0; i < n; i++) {
-        cin >> a[i][1] >> a[i][0] >> a[i][2];
-    }
-    sort(a, a+n);
-    LL maxp = 0;
-    dp.insert({ 0, 0 });
-    for (LL i = 0; i < n; i++) {
-        auto it = dp.lower_bound({a[i][1]});
-        it--;
-        maxp = max(maxp, (*it)[1] + a[i][2]);
-        dp.insert({ a[i][0], maxp });
-    }
-    cout << (*--dp.end())[1] << endl;
+    cin >> a >> b;
+    LL r1 = digitdp(to_string(b));
+    resetdp();
+    LL r2 = digitdp(to_string(a));
+    
+    cout << r1 - r2 << endl;
 }
+
+
 
 
 
