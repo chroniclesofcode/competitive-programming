@@ -14,65 +14,77 @@ MAINRET(t) main(void) {
         solve();
 }
 
-#define INF (numeric_limits<LL>::max()/5) * 4
+#define INF numeric_limits<LL>::max() / 2
 #define NINF -INF
-const LL MX = 1e6;
+const LL MX = 3000;
 //const LL MOD = 1e7;
 
 LL n, m;
 
-LL ans = 0;
+LL p[MX];
+
 /*
 
 */
 
-LL dist[MX][2];
-bool vis[MX][2];
-priority_queue<array<LL,3>, vector<array<LL,3>>, greater<array<LL,3>>> pq;
 vector<array<LL,2>> adj[MX];
+LL dist[MX];
 
 void solve() {
     cin >> n >> m;
+
     LL a, b, c;
     for (LL i = 0; i < m; i++) {
         cin >> a >> b >> c;
         adj[a-1].push_back({c, b-1});
     }
+    // Bellman ford negative cycle finding
+    // Note: n is a super node, it is connected
+    // to every single node with a weight of 0
+    // to detect isolated islands within graphs.
+
+    // - Note: no new cycles will be created.
     for (LL i = 0; i < n; i++) {
-        dist[i][0] = INF;
-        dist[i][1] = INF;
+        adj[n].push_back({ 0, i });
+        dist[i] = INF;
+        p[i] = -1;
     }
-    dist[0][0] = dist[0][1] = 0;
-    pq.push({0, 0, 0});
-    while (!pq.empty()) {
-        auto top = pq.top();
-        LL v = top[2];
-        LL used = top[1]; // 1 if used
-        pq.pop();
-        //cout << "visited: " << v << " used: " << used << " w: " << top[0] << endl;
-        if (vis[v][used]) continue;
-        vis[v][used] = 1;
-        for (auto &e : adj[v]) {
-            if (dist[e[1]][used] > dist[v][used] + e[0]) {
-                dist[e[1]][used] = dist[v][used] + e[0];
-            }
-            if (used) {
-                pq.push({dist[e[1]][1],1, e[1]});
-            } else {
-                if (dist[e[1]][1] > dist[v][0] + e[0]/2) {
-                     dist[e[1]][1] = dist[v][0] + e[0]/2;
-                     pq.push({dist[e[1]][1]/2,1, e[1]});
+    dist[n] = 0;
+    LL x = -1;
+    for (LL ct = 0; ct < n+2; ct++) {
+        x = -1;
+        for (LL i = 0; i <= n; i++) {
+            if (dist[i] == INF) continue;
+            for (auto &j : adj[i]) {
+                if (dist[j[1]] > dist[i] + j[0]) {
+                    dist[j[1]] = dist[i] + j[0];
+                    p[j[1]] = i;
+                    x = j[1];
                 }
-                pq.push({dist[e[1]][0], 0, e[1]});
             }
         }
     }
-    /*
-    for (int i = 0; i < n; i++) {
-        cout << (dist[i][0] == INF ? -1 : dist[i][0]) << " ";
+
+    if (x == -1) {
+        cout << "NO\n";
+        return;
     }
-    */
-    cout << dist[n-1][1] << endl;
+    cout << "YES\n";
+    for (LL i = 0; i < n; i++) {
+        x = p[x];
+    }
+    vector<LL> path;
+    for (LL c = x;; c = p[c]) {
+        path.push_back(c);
+        if (c == x && path.size() > 1) {
+            break;
+        }
+    }
+    reverse(path.begin(), path.end());
+    for  (auto &u : path) {
+        cout << u+1 << " ";
+    }
+    cout << endl;
 }
 
 
