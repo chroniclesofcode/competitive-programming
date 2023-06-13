@@ -24,35 +24,33 @@ LL n, m;
 vector<LL> adj[MX];
 LL pred[MX];
 bool vis[MX];
-LL group[MX];
+bool vis2[MX];
+int flag = 0;
+int endv = -1;
 /*
 
 */
 
-LL endv = -1;
-LL curr = -1;
-LL flag = 0;
-
 void dfs(LL v, LL p) {
-    if (flag) return;
-    //cout << "v: " << v+1 << " group[v]: " << group[v] << " curr: " << curr <<  endl;
-    if (vis[v]) {
-        if (group[v] == curr) {
-            endv = v;
-            flag = 1;
-            pred[v] = p;
-            return;
-        } else {
-            return;
-        }
+    //cout << "v: " << v+1 << " " << p+1 << " " << vis2[v] << endl;
+    if (flag) {
+        return;
     }
+    if (vis2[v]) {
+        flag = 1;
+        pred[v] = p;
+        endv = v;
+        return;
+    }
+    if (vis[v]) return;
     vis[v] = true;
+    vis2[v] = true;
     pred[v] = p;
-    group[v] = curr;
 
     for (auto &u : adj[v]) {
         dfs(u, v);
     }
+    vis2[v] = false;
 }
 
 void solve() {
@@ -62,13 +60,11 @@ void solve() {
         cin >> z1 >> z2;
         adj[z1-1].push_back(z2-1);
     }
-
-    for (LL i = 0; i < n; i++) {
+    for (int i = 0; i < n; i++) {
         if (flag) break;
-        curr = i+1;
         dfs(i, -1);
     }
-    cout << "here " << endv << " pred: " << pred[endv] << endl;
+
     if (!flag) {
         cout << "IMPOSSIBLE\n";
         return;
@@ -77,7 +73,7 @@ void solve() {
     for (LL p = pred[endv]; p != endv; p = pred[p]) {
         path.push_back(p);
     }
-    if (path.size() == 0 || !flag) {
+    if (path.size() == 0) {
         cout << "IMPOSSIBLE\n";
         return;
     }
@@ -88,8 +84,8 @@ void solve() {
         cout << e+1 << " ";
     }
     cout << endv+1 << endl;
+    
 }
-
 
 
 
