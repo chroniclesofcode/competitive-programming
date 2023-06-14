@@ -20,71 +20,56 @@ MAINRET(t) main(void) {
 const LL MX = 5 * 1e6;
 //const LL MOD = 1e7;
 
-LL n, m;
-vector<LL> adj[MX];
-LL pred[MX];
+int n, m;
+vector<int> adj[MX];
+stack<int> s;
 bool vis[MX];
-bool vis2[MX];
+bool v2[MX];
 int flag = 0;
-int endv = -1;
 /*
-
+   simple top sort
 */
 
-void dfs(LL v, LL p) {
-    //cout << "v: " << v+1 << " " << p+1 << " " << vis2[v] << endl;
-    if (flag) {
-        return;
-    }
-    if (vis2[v]) {
+void dfs(int u) {
+    if (v2[u]) {
         flag = 1;
-        pred[v] = p;
-        endv = v;
         return;
     }
-    if (vis[v]) return;
-    vis[v] = true;
-    vis2[v] = true;
-    pred[v] = p;
-
-    for (auto &u : adj[v]) {
-        dfs(u, v);
+    if (vis[u] || flag) {
+        return;
     }
-    vis2[v] = false;
+    vis[u] = true;
+    v2[u] = true;
+
+    for (auto &v : adj[u]) {
+        dfs(v);
+    }
+
+    v2[u] = false;
+
+    s.push(u);
 }
 
 void solve() {
     cin >> n >> m;
-    LL z1, z2;
-    for (LL i = 0; i < m; i++) {
-        cin >> z1 >> z2;
-        adj[z1-1].push_back(z2-1);
+    int a, b;
+    for (int i = 0; i < m; i++) {
+        cin >> a >> b;
+        adj[a-1].push_back(b-1);
     }
     for (int i = 0; i < n; i++) {
         if (flag) break;
-        dfs(i, -1);
+        dfs(i);
     }
-
-    if (!flag) {
+    if (flag) {
         cout << "IMPOSSIBLE\n";
         return;
     }
-    vector<LL> path;
-    for (LL p = pred[endv]; p != endv; p = pred[p]) {
-        path.push_back(p);
+    while (!s.empty()) {
+        cout << s.top()+1 << " ";
+        s.pop();
     }
-    if (path.size() == 0) {
-        cout << "IMPOSSIBLE\n";
-        return;
-    }
-    reverse(path.begin(), path.end());
-    cout << path.size()+2 << endl;
-    cout << endv+1 << " ";
-    for (auto &e : path) {
-        cout << e+1 << " ";
-    }
-    cout << endv+1 << endl;
-    
+    cout << endl;
 }
 
 
