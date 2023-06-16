@@ -18,58 +18,73 @@ MAINRET(t) main(void) {
 #define NINF -INF
 
 const LL MX = 5 * 1e6;
-//const LL MOD = 1e7;
+const LL MOD = 1e9 + 7;
 
-int n, m;
-vector<int> adj[MX];
-stack<int> s;
-bool vis[MX];
-bool v2[MX];
-int flag = 0;
+LL n, m;
+vector<LL> adj[MX];
+vector<LL> rev[MX];
+LL dp[MX];
+LL in_deg[MX];
+LL pred[MX];
 /*
-   simple top sort
+
 */
 
-void dfs(int u) {
-    if (v2[u]) {
-        flag = 1;
-        return;
-    }
-    if (vis[u] || flag) {
-        return;
-    }
-    vis[u] = true;
-    v2[u] = true;
-
-    for (auto &v : adj[u]) {
-        dfs(v);
-    }
-
-    v2[u] = false;
-
-    s.push(u);
-}
 
 void solve() {
     cin >> n >> m;
-    int a, b;
-    for (int i = 0; i < m; i++) {
-        cin >> a >> b;
-        adj[a-1].push_back(b-1);
+    LL t1,t2;
+    for (LL i = 0; i < m; i++) {
+        cin >> t1 >> t2;
+        adj[t1-1].push_back(t2-1);
+        rev[t2-1].push_back(t1-1);
+        in_deg[t2-1]++;
     }
-    for (int i = 0; i < n; i++) {
-        if (flag) break;
-        dfs(i);
+
+    queue<LL> q;
+    for (LL i = 0; i < n; i++) {
+        dp[i] = -INF;
+        pred[i] = -1;
+        if (in_deg[i] == 0) q.push(i);
     }
-    if (flag) {
+    dp[0] = 1;
+    while (!q.empty()) {
+        LL u = q.front();
+        q.pop();
+        for (auto &v : adj[u]) {
+            in_deg[v]--;
+            if (in_deg[v] == 0) q.push(v);
+        }
+
+        for (auto &p : rev[u]) {
+            //cout << "u: " << u+1 << " rev " << p+1 << endl;
+            if (dp[p]+1 > dp[u]) {
+                dp[u] = dp[p]+1;
+                pred[u] = p;
+            }
+        }
+    }
+
+
+    pred[0] = -1;
+
+    LL p = n-1;
+    vector<LL> paths;
+    while (p != -1) {
+        paths.push_back(p);
+        p = pred[p];
+    }
+    reverse(paths.begin(), paths.end());
+    if (paths[0] != 0 || paths[paths.size()-1] != n-1) {
         cout << "IMPOSSIBLE\n";
         return;
     }
-    while (!s.empty()) {
-        cout << s.top()+1 << " ";
-        s.pop();
+    cout << paths.size() << endl;
+    for (auto &e : paths) {
+        cout << e+1 << " ";
     }
     cout << endl;
+    
 }
 
 
