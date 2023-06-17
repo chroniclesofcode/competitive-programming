@@ -21,70 +21,58 @@ const LL MX = 5 * 1e6;
 const LL MOD = 1e9 + 7;
 
 LL n, m;
-vector<LL> adj[MX];
-vector<LL> rev[MX];
-LL dp[MX];
-LL in_deg[MX];
-LL pred[MX];
+#define arr array<LL,3>
+priority_queue<arr, vector<arr>, greater<arr>> pq;
+LL dist[MX];
+LL paths[MX];
+bool vis[MX];
+vector<arr> adj[MX];
+LL minf[MX];
+LL maxf[MX];
 /*
 
 */
 
-
 void solve() {
+    LL a, b, c;
     cin >> n >> m;
-    LL t1,t2;
     for (LL i = 0; i < m; i++) {
-        cin >> t1 >> t2;
-        adj[t1-1].push_back(t2-1);
-        rev[t2-1].push_back(t1-1);
-        in_deg[t2-1]++;
+        cin >> a >> b >> c;
+        adj[a-1].push_back({ c, b-1 });
     }
-
-    queue<LL> q;
     for (LL i = 0; i < n; i++) {
-        dp[i] = -INF;
-        pred[i] = -1;
-        if (in_deg[i] == 0) q.push(i);
+        dist[i] = INF;
+        //minf[i] = INF;
+        //maxf[i] = NINF;
     }
-    dp[0] = 1;
-    while (!q.empty()) {
-        LL u = q.front();
-        q.pop();
-        for (auto &v : adj[u]) {
-            in_deg[v]--;
-            if (in_deg[v] == 0) q.push(v);
-        }
+    paths[0] = 1;
+    dist[0] = 0;
+    pq.push({0,0});
 
-        for (auto &p : rev[u]) {
-            //cout << "u: " << u+1 << " rev " << p+1 << endl;
-            if (dp[p]+1 > dp[u]) {
-                dp[u] = dp[p]+1;
-                pred[u] = p;
+    while (!pq.empty()) {
+        auto top = pq.top();
+        pq.pop();
+        LL u = top[1];
+        if (vis[u]) continue;
+        vis[u] = 1;
+        for (auto &v : adj[u]) {
+            if (dist[v[1]] > dist[u] + v[0]) {
+                minf[v[1]] = minf[u]+1;
+                maxf[v[1]] = maxf[u]+1;
+                dist[v[1]] = dist[u] + v[0];
+                paths[v[1]] = paths[u];
+                pq.push({dist[v[1]], v[1]});
+            } else if (dist[v[1]] == dist[u] + v[0]) {
+                minf[v[1]] = min(minf[v[1]], minf[u]+1);
+                maxf[v[1]] = max(maxf[v[1]], maxf[u]+1);
+                paths[v[1]] += paths[u];
+                paths[v[1]] %= MOD;
+                pq.push({dist[v[1]], v[1]});
             }
         }
     }
 
-
-    pred[0] = -1;
-
-    LL p = n-1;
-    vector<LL> paths;
-    while (p != -1) {
-        paths.push_back(p);
-        p = pred[p];
-    }
-    reverse(paths.begin(), paths.end());
-    if (paths[0] != 0 || paths[paths.size()-1] != n-1) {
-        cout << "IMPOSSIBLE\n";
-        return;
-    }
-    cout << paths.size() << endl;
-    for (auto &e : paths) {
-        cout << e+1 << " ";
-    }
-    cout << endl;
-    
+    cout << dist[n-1] << " " << paths[n-1] << " " << minf[n-1] << " " << maxf[n-1] << endl;
 }
 
 
