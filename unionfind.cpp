@@ -18,25 +18,25 @@ MAINRET(t) main(void) {
 const LL MX = 5 * 1e6;
 //const LL MOD = 1e7;
 
-int size[MX];
-int group[MX]; 
+int sz[MX];
+int grp[MX]; 
 
 int Find(int a) {
-    if (a == group[a]) {
+    if (a == grp[a]) {
         return a;
     }
-    return group[a] = Find(group[a]);
+    return grp[a] = Find(grp[a]);
 }
 
 void Union(int a, int b) {
     a = Find(a);
     b = Find(b);
     if (a != b) {
-        if (size[a] < size[b]) {
+        if (sz[a] < sz[b]) {
             swap(a, b);
         }
-        group[b] = a;
-        size[a] += size[b];
+        grp[b] = a;
+        sz[a] += sz[b];
     }
 
 }

@@ -15,39 +15,28 @@ MAINRET(t) main(void) {
 }
 
 #define INF numeric_limits<LL>::max() / 2
-const LL MX = 5 * 1e6;
+#define NINF -INF
+
+const LL MX = 1e6;
 //const LL MOD = 1e7;
 
-int size[MX];
-int group[MX]; 
-
-int Find(int a) {
-    if (a == group[a]) {
-        return a;
-    }
-    return group[a] = Find(group[a]);
-}
-
-void Union(int a, int b) {
-    a = Find(a);
-    b = Find(b);
-    if (a != b) {
-        if (size[a] < size[b]) {
-            swap(a, b);
-        }
-        group[b] = a;
-        size[a] += size[b];
-    }
-
-}
-
-int n;
-
+int n, m;
+#define arr array<int,2>
+int vis[MX];
+vector<arr> adj[MX];
 /*
 
 */
 
 void solve() {
+    cin >> n >> m;
+    int a, b, c;
+    for (int i = 0; i < m; i++) {
+        cin >> a >> b >> c;
+        a--; b--;
+        adj[a].push_back({ c, b });
+    }
+
 
 }
 
