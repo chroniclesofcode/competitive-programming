@@ -15,28 +15,70 @@ MAINRET(t) main(void) {
 }
 
 #define INF numeric_limits<LL>::max() / 2
-#define NINF -INF
-
-const LL MX = 1e6;
+const LL MX = 5 * 1e6;
 //const LL MOD = 1e7;
 
-int n, m;
-#define arr array<int,2>
-int vis[MX];
-vector<arr> adj[MX];
+#define arr array<LL, 2>
+
+LL sz[MX];
+LL grp[MX]; 
+
+LL Find(LL a) {
+    if (a == grp[a]) {
+        return a;
+    }
+    return grp[a] = Find(grp[a]);
+}
+
+void Union(LL a, LL b) {
+    a = Find(a);
+    b = Find(b);
+    if (a != b) {
+        if (sz[a] < sz[b]) {
+            swap(a, b);
+        }
+        grp[b] = a;
+        sz[a] += sz[b];
+    }
+
+}
+
+LL n, m;
+vector<arr> edges;
 /*
 
 */
 
 void solve() {
     cin >> n >> m;
-    int a, b, c;
-    for (int i = 0; i < m; i++) {
-        cin >> a >> b >> c;
+    LL a, b;
+    for (LL i = 0; i < m; i++) {
+        cin >> a >> b;
         a--; b--;
-        adj[a].push_back({ c, b });
+        edges.push_back({ a, b });
     }
 
+    for (LL i = 0; i < n; i++) {
+        grp[i] = i;
+        sz[i] = 1;
+    }
+    LL numc = n;
+    LL maxc = 1;
+
+    for (auto &e : edges) {
+        a = Find(e[0]);
+        b = Find(e[1]);
+
+        if (a == b) {
+            Union(a, b);
+            maxc = max(maxc, sz[Find(a)]);
+        } else {
+            Union(a, b);
+            numc--;
+            maxc = max(maxc, sz[Find(a)]);
+        }
+        cout << numc << " " << maxc << '\n';
+    }
 
 }
 
