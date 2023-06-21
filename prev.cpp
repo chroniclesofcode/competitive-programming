@@ -15,70 +15,92 @@ MAINRET(t) main(void) {
 }
 
 #define INF numeric_limits<LL>::max() / 2
-const LL MX = 5 * 1e6;
+#define NINF -INF
+
+const LL MX = 2 * 1e5;
 //const LL MOD = 1e7;
 
-#define arr array<LL, 2>
-
-LL sz[MX];
-LL grp[MX]; 
-
-LL Find(LL a) {
-    if (a == grp[a]) {
-        return a;
-    }
-    return grp[a] = Find(grp[a]);
-}
-
-void Union(LL a, LL b) {
-    a = Find(a);
-    b = Find(b);
-    if (a != b) {
-        if (sz[a] < sz[b]) {
-            swap(a, b);
-        }
-        grp[b] = a;
-        sz[a] += sz[b];
-    }
-
-}
-
-LL n, m;
-vector<arr> edges;
+int n, m, grp[MX];
+vector<int> adj[MX], rev[MX], scc[MX];
+vector<bool> vis(MX, false);
+vector<int> order, comp, rts;
 /*
-
+    
 */
+
+void dfs1(int u) {
+    vis[u] = true;
+    for (auto &v : adj[u]) {
+        if (!vis[v]) {
+            dfs1(v);
+        }
+    }
+    order.push_back(u);
+}
+
+void dfs2(int u) {
+    vis[u] = true;
+    comp.push_back(u);
+    for (auto &v : rev[u]) {
+        if (!vis[v]) {
+            dfs2(v);
+        }
+    }
+}
 
 void solve() {
     cin >> n >> m;
-    LL a, b;
-    for (LL i = 0; i < m; i++) {
-        cin >> a >> b;
-        a--; b--;
-        edges.push_back({ a, b });
+    int a, b;
+    for (int i = 0; i < m; i++) {
+        cin >> a >> b; a--; b--;
+        adj[a].push_back(b);
+        rev[b].push_back(a);
     }
 
-    for (LL i = 0; i < n; i++) {
-        grp[i] = i;
-        sz[i] = 1;
-    }
-    LL numc = n;
-    LL maxc = 1;
-
-    for (auto &e : edges) {
-        a = Find(e[0]);
-        b = Find(e[1]);
-
-        if (a == b) {
-            Union(a, b);
-            maxc = max(maxc, sz[Find(a)]);
-        } else {
-            Union(a, b);
-            numc--;
-            maxc = max(maxc, sz[Find(a)]);
+    for (int i = 0; i < n; i++) {
+        if (!vis[i]) {
+            dfs1(i);
         }
-        cout << numc << " " << maxc << '\n';
     }
+    vis.assign(n, false);
+
+    reverse(order.begin(), order.end());
+
+    for (auto &v : order) {
+        if (!vis[v]) {
+            dfs2(v);
+
+            int rt = comp.front();
+            for (auto &u : comp) {
+                grp[u] = rt;
+            }
+            rts.push_back(rt);
+
+            comp.clear();
+        }
+    }
+    for (int i = 0; i < n; i++) {
+        int r1 = grp[i];
+        for (auto &u : adj[i]) {
+            int r2 = grp[u];
+            if (r1 != r2) {
+                scc[r1].push_back(r2);
+            }
+        }
+    }
+    unordered_map<int, int> mp;
+    int ct = 1;
+    for (int i = 0; i < n; i++) {
+        if (!mp[grp[i]]) {
+            mp[grp[i]] = ct++;
+        }
+        grp[i] = mp[grp[i]];
+    }
+    cout << rts.size() << endl;
+    for (int i = 0; i < n; i++) {
+        cout << grp[i] << " ";
+    }
+    cout << endl;
 
 }
 
