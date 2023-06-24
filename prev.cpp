@@ -17,117 +17,64 @@ MAINRET(t) main(void) {
 #define INF numeric_limits<LL>::max() / 2
 #define NINF -INF
 
-const LL MX = 2 * 1e5 + 20;
+const LL MX = 2 * 1e5;
 //const LL MOD = 1e7;
 
-LL n, m, grp[MX], cost1[MX], cost[MX], dp[MX], indeg[MX];
-vector<LL> adj[MX], rev[MX], scc[MX], rscc[MX];
-vector<bool> vis(MX, false);
-vector<LL> order, comp, rts;
+int n, m, in[MX], out[MX], deg[MX];
+stack<int> s;
+vector<int> ans, adj[MX];
 /*
 
 */
 
-void dfs1(LL u) {
-    vis[u] = true;
-    for (auto &v : adj[u]) {
-        if (!vis[v]) {
-            dfs1(v);
-        }
+void dfs(int u) {
+    while (adj[u].size()) {
+        int v = adj[u].back();
+        adj[u].pop_back();
+        dfs(v);
     }
-    order.push_back(u);
-}
-
-void dfs2(LL u) {
-    vis[u] = true;
-    comp.push_back(u);
-    for (auto &v : rev[u]) {
-        if (!vis[v]) {
-            dfs2(v);
-        }
-    }
-}
-
-void dfs3(LL u) {
+    ans.push_back(u);
 }
 
 void solve() {
     cin >> n >> m;
-
-    LL a, b;
-    for (LL i = 0; i < n; i++) {
-        cin >> cost1[i];
-    }
-    for (LL i = 0; i < m; i++) {
-        cin >> a >> b; a--; b--;
+    int a, b;
+    for (int i = 0; i < m; i++) {
+        cin >> a >> b;
+        a--; b--;
         adj[a].push_back(b);
-        rev[b].push_back(a);
+        deg[a]++;
+        deg[b]++;
+        in[b]++;
+        out[a]++;
     }
 
-    for (LL i = 0; i < n; i++) {
-        if (!vis[i]) {
-            dfs1(i);
+    bool flag = 0;
+    if (deg[0] % 2 != 1 || deg[n-1] % 2 != 1) {
+        flag = 1;
+    }
+    for (int i = 1; i < n-1; i++) {
+        if (deg[i] % 2 == 1) {
+            flag = 1;
+            break;
         }
     }
-    vis.assign(n, false);
-
-    reverse(order.begin(), order.end());
-
-    for (auto &v : order) {
-        if (!vis[v]) {
-            dfs2(v);
-
-            LL rt = comp.front();
-            LL tmpc = 0;
-            for (auto &u : comp) {
-                grp[u] = rt;
-                tmpc += cost1[u];
-            }
-            rts.push_back(rt);
-            cost[rt] = tmpc;
-
-            comp.clear();
-        }
+    if (flag) {
+        cout << "IMPOSSIBLE\n";
+        return;
     }
 
-    for (LL i = 0; i < n; i++) {
-        LL r1 = grp[i];
-        for (auto &u : adj[i]) {
-            LL r2 = grp[u];
-            if (r1 != r2) {
-                scc[r1].push_back(r2);
-                rscc[r2].push_back(r1);
-                indeg[r2]++;
-            }
-        }
-    }
+    dfs(0);
 
-    queue<LL> q;
-    for (auto &r : rts) {
-        dp[r] = cost[r];
-        if (indeg[r] == 0) {
-            q.push(r);
-        }
+    if (ans.size() != m+1) {
+        cout << "IMPOSSIBLE\n";
+        return;
     }
-    LL ans = 0;
-    while (!q.empty()) {
-        LL u = q.front();
-        q.pop();
-
-        for (auto &v : scc[u]) {
-            indeg[v]--;
-            if (indeg[v] == 0) q.push(v);
-        }
-        for (auto &v : rscc[u]) {
-            dp[u] = max(dp[u], dp[v] + cost[u]);
-        }
-        ans = max(ans, dp[u]);
-    }
-    cout << ans << endl;
+    reverse(ans.begin(), ans.end());
+    for (auto &u : ans) cout << u+1 << " ";
+    cout << endl;
 
 }
-
-
 
 
 
