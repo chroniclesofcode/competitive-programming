@@ -17,24 +17,16 @@ MAINRET(t) main(void) {
 #define INF numeric_limits<LL>::max() / 2
 #define NINF -INF
 
-const LL MX = 2 * 1e5;
-//const LL MOD = 1e7;
+const LL MX = 25;
+const LL MOD = 1e9+7;
 
-int n, m, in[MX], out[MX], deg[MX];
-stack<int> s;
-vector<int> ans, adj[MX];
+int n, m, vis[MX], dp[(1 << 20) + 10][MX];
+vector<int> rev[MX];
+int LG = 1;
 /*
 
 */
 
-void dfs(int u) {
-    while (adj[u].size()) {
-        int v = adj[u].back();
-        adj[u].pop_back();
-        dfs(v);
-    }
-    ans.push_back(u);
-}
 
 void solve() {
     cin >> n >> m;
@@ -42,39 +34,57 @@ void solve() {
     for (int i = 0; i < m; i++) {
         cin >> a >> b;
         a--; b--;
-        adj[a].push_back(b);
-        deg[a]++;
-        deg[b]++;
-        in[b]++;
-        out[a]++;
+        //adj[a][b]++;
+        //adj[a].push_back(b);
+        rev[b].push_back(a);
     }
+    LG = 1 << n;
+    /*
+       The below case might seem like a decent
+       starting case, but not really valid since
+       1 is not included in the paths except the first.
 
-    bool flag = 0;
-    if (deg[0] % 2 != 1 || deg[n-1] % 2 != 1) {
-        flag = 1;
+       It seems like it won't be considered, but consider
+       00011 -> we're going to run DP on 00010 excluding
+       the first node (origin), which is going to give 1 if we use the
+       case below. In fact, we want to use 0, since 00010
+       doesn't have 1 in it!
+    */
+    /*
+    for (int i = 0; i < n; i++) {
+        dp[1 << i][i] = 1;
     }
-    for (int i = 1; i < n-1; i++) {
-        if (deg[i] % 2 == 1) {
-            flag = 1;
-            break;
+    */
+    dp[1][0] = 1;
+    for (int i = 2; i < LG; i++) {
+        // Doesn't include 1st city, exclude
+        if (!(i & 1)) continue;
+        // SINCE hamilton path, you need to include
+        // all cities in order to be able to add on
+        // the very last city (don't want to add on
+        // dp with last city when not all vertices visited.
+        if (i & (1 << (n-1)) && i != LG-1) continue;
+        for (int j = 0; j < n; j++) {
+            // Is in the subset
+            int u = 1 << j;
+            if (i & u) {
+                // For every v which is linked to u
+                // check if it is in the subset
+                // and compute dp
+                for (auto &k : rev[j]) {
+                    int v = 1 << k;
+                    if (i & v) {
+                        dp[i][j] += dp[i^u][k];
+                        dp[i][j] %= MOD;
+                    }
+                }
+            }
         }
     }
-    if (flag) {
-        cout << "IMPOSSIBLE\n";
-        return;
-    }
-
-    dfs(0);
-
-    if (ans.size() != m+1) {
-        cout << "IMPOSSIBLE\n";
-        return;
-    }
-    reverse(ans.begin(), ans.end());
-    for (auto &u : ans) cout << u+1 << " ";
-    cout << endl;
-
+    cout << dp[LG-1][n-1] << endl;
 }
+
+
 
 
 
