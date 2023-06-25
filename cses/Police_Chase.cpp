@@ -80,7 +80,17 @@ void add_edge(LL u, LL v, LL c) {
     _add_edge(u, v, c); 
     _add_edge(v, u, 0);
 }
+int vis[MX];
 
+void check_reach(int u) {
+    if (vis[u]) {
+        return;
+    }
+    vis[u] = true;
+    for (int e = start[u]; ~e; e = succ[e]) {
+        if (cap[e] > 0) check_reach(to[e]);
+    }
+}
 /*
 
 */
@@ -89,18 +99,27 @@ void solve() {
     fill(start, start+MX, -1);
 
     cin >> N >> m;
-    int a, b, c;
+    int a, b;
     for (int i = 0; i < m; i++) {
-        cin >> a >> b >> c;
+        cin >> a >> b;
         a--; b--;
-        add_edge(a, b, c);
+        add_edge(a, b, 1);
+        add_edge(b, a, 1);
     }
     s = 0;
     t = N-1;
-
     cout << mf() << endl;
+    check_reach(s);
+    vector<array<LL,2>> ans;
+    for (int e = 0; e < edge_counter; e +=2) {
+        if (!vis[to[e]] && vis[to[e^1]]) {
+            ans.push_back({to[e^1], to[e]});
+        }
+    }
+    for (auto &v : ans) {
+        cout << v[0]+1 << ' ' << v[1]+1 << '\n';
+    }
 }
-
 
 
 
