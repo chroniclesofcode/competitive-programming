@@ -17,71 +17,63 @@ MAINRET(t) main(void) {
 #define INF numeric_limits<LL>::max() / 2
 #define NINF -INF
 
-const LL MX = 25;
-const LL MOD = 1e9+7;
+const LL MX = 5 * 1e6;
+//const LL MOD = 1e7;
 
-int n, m, vis[MX], dp[(1 << 20) + 10][MX];
-vector<int> rev[MX];
-int LG = 1;
+#define arr array<int,2>
+int x, y;
+int dp[30][30];
+int SZ = 8;
 /*
 
 */
 
+vector<vector<int>> dir = {{1,2},{1,-2},{-1,2},{-1,-2},{2,1},{2,-1},{-2,1},{-2,-1}};
+
+bool check(int a, int b) {
+    return a >= 1 && b >= 1 && a <= SZ && b <= SZ && dp[a][b] == 0;
+}
 
 void solve() {
-    cin >> n >> m;
-    int a, b;
-    for (int i = 0; i < m; i++) {
-        cin >> a >> b;
-        a--; b--;
-        //adj[a][b]++;
-        //adj[a].push_back(b);
-        rev[b].push_back(a);
-    }
-    LG = 1 << n;
-    /*
-       The below case might seem like a decent
-       starting case, but not really valid since
-       1 is not included in the paths except the first.
-
-       It seems like it won't be considered, but consider
-       00011 -> we're going to run DP on 00010 excluding
-       the first node (origin), which is going to give 1 if we use the
-       case below. In fact, we want to use 0, since 00010
-       doesn't have 1 in it!
-    */
-    /*
-    for (int i = 0; i < n; i++) {
-        dp[1 << i][i] = 1;
-    }
-    */
-    dp[1][0] = 1;
-    for (int i = 2; i < LG; i++) {
-        // Doesn't include 1st city, exclude
-        if (!(i & 1)) continue;
-        // SINCE hamilton path, you need to include
-        // all cities in order to be able to add on
-        // the very last city (don't want to add on
-        // dp with last city when not all vertices visited.
-        if (i & (1 << (n-1)) && i != LG-1) continue;
-        for (int j = 0; j < n; j++) {
-            // Is in the subset
-            int u = 1 << j;
-            if (i & u) {
-                // For every v which is linked to u
-                // check if it is in the subset
-                // and compute dp
-                for (auto &k : rev[j]) {
-                    int v = 1 << k;
-                    if (i & v) {
-                        dp[i][j] += dp[i^u][k];
-                        dp[i][j] %= MOD;
+    cin >> y >> x;
+    int a, b, ct = 0;
+    for (int i = 1; i <= SZ * SZ; i++) {
+        dp[x][y] = i;
+        int t1 = x, t2 = y;
+        // search for unvisited node with
+        // least reachable edges
+        int minr = numeric_limits<int>::max();
+        for (int j = 0; j < dir.size(); j++) {
+            ct = 0;
+            a = x+dir[j][0];
+            b = y+dir[j][1];
+            if (check(a,b)) {
+                for (int k = 0; k < dir.size(); k++) {
+                    int o1 = a+dir[k][0], o2 = b+dir[k][1];
+                    if (check(o1,o2)) {
+                        ct++;
                     }
+                }
+                if (ct < minr) {
+                    minr = ct;
+                    t1 = a;
+                    t2 = b;
+                } else if (ct == minr && (SZ/2 - a)*(SZ/2 - a) + (SZ/2-b)*(SZ/2-b) < (SZ/2 - t1)*(SZ/2 - t1) + (SZ/2 - t2)*(SZ/2 - t2)) {
+                    t1 = a;
+                    t2 = b;
                 }
             }
         }
+        x = t1;
+        y = t2;
     }
-    cout << dp[LG-1][n-1] << endl;
+
+    for (int i = 1; i <= SZ; i++) {
+        for (int j = 1; j <= SZ; j++) {
+            cout << dp[i][j] << ' ';
+        }
+        cout << '\n';
+    }
 }
 
 
