@@ -20,25 +20,38 @@ MAINRET(t) main(void) {
 const LL MX = 5 * 1e6;
 //const LL MOD = 1e7;
 
-LL n;
-unordered_map<LL, LL> m;
+int n, m, k;
+
+vector<int> ppl, apa;
 /*
 
 */
 
 void solve() {
-    // TLE if not reserving/increasing load factor
-    m.reserve(1024);
-    m.max_load_factor(0.25);
-    cin >> n;
-    LL a;
-    LL ans = 0;
-    for (LL i = 0; i < n; i++) {
-        cin >> a;
-        if (m[a] == 0) {
-            ans++;
+    cin >> n >> m >> k;
+    int x;
+    for (int i = 0; i < n; i++) {
+        cin >> x;
+        ppl.push_back(x);
+    }
+    for (int i = 0; i < m; i++) {
+        cin >> x;
+        apa.push_back(x);
+    }
+    sort(ppl.begin(), ppl.end());
+    sort(apa.begin(), apa.end());
+
+    int i = 0, j = 0, ans = 0;
+    while (i < ppl.size() && j < apa.size()) {
+        int tol = ppl[i];
+        int sz = apa[j];
+        if (tol+k >= sz && tol-k <= sz) {
+            ans++; i++; j++;
+        } else if (tol+k < sz) {
+            i++;
+        } else if (tol-k > sz) {
+            j++;
         }
-        m[a]++;
     }
     cout << ans << endl;
 }
