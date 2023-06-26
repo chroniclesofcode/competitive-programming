@@ -20,34 +20,50 @@ MAINRET(t) main(void) {
 const LL MX = 5 * 1e6;
 //const LL MOD = 1e7;
 
-int n, x;
-vector<int> p;
-int vis[MX];
+int n, m;
+vector<int> t;
+multiset<int> h;
+
 /*
 
 */
 
 void solve() {
-    cin >> n >> x;
-    int a;
+    cin >> n >> m;
+    int x;
     for (int i = 0; i < n; i++) {
-        cin >> a;
-        p.push_back(a);
+        cin >> x;
+        h.insert(x);
     }
-    sort(p.begin(), p.end(), greater<int>());
-    int j = n-1;
-    int ans = 0;
-    for (int i = 0; i < n && i <= j; i++) {
-        if (vis[i]) continue;
-        vis[i] = 1;
-        int rem = x - p[i];
-        if (p[j] <= rem && !vis[j]) {
-            vis[j] = 1;
-            j--;
+    for (int i = 0; i < m; i++) {
+        cin >> x;
+        t.push_back(x);
+    }
+
+    for (int i = 0; i < m; i++) {
+        auto it = h.lower_bound(t[i]);
+        if (it == h.end() && h.size() > 0) {
+            it--;
+        } else if (it == h.end()){
+            cout << "-1\n";
+            continue;
         }
-        ans++;
+
+        int price = *it;
+        if (price == t[i]) {
+            h.erase(it);
+        } else if (it == h.begin() && price > t[i]) {
+            price = -1;
+        } else {
+            if (price > t[i]) {
+                it--;
+            }
+            price = *it;
+            h.erase(it);
+        }
+
+        cout << price << '\n';
     }
-    cout << ans << endl;
 }
 
 
