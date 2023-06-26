@@ -20,38 +20,32 @@ MAINRET(t) main(void) {
 const LL MX = 5 * 1e6;
 //const LL MOD = 1e7;
 
-int n, m, k;
-
-vector<int> ppl, apa;
+int n, x;
+vector<int> p;
+int vis[MX];
 /*
 
 */
 
 void solve() {
-    cin >> n >> m >> k;
-    int x;
+    cin >> n >> x;
+    int a;
     for (int i = 0; i < n; i++) {
-        cin >> x;
-        ppl.push_back(x);
+        cin >> a;
+        p.push_back(a);
     }
-    for (int i = 0; i < m; i++) {
-        cin >> x;
-        apa.push_back(x);
-    }
-    sort(ppl.begin(), ppl.end());
-    sort(apa.begin(), apa.end());
-
-    int i = 0, j = 0, ans = 0;
-    while (i < ppl.size() && j < apa.size()) {
-        int tol = ppl[i];
-        int sz = apa[j];
-        if (tol+k >= sz && tol-k <= sz) {
-            ans++; i++; j++;
-        } else if (tol+k < sz) {
-            i++;
-        } else if (tol-k > sz) {
-            j++;
+    sort(p.begin(), p.end(), greater<int>());
+    int j = n-1;
+    int ans = 0;
+    for (int i = 0; i < n && i <= j; i++) {
+        if (vis[i]) continue;
+        vis[i] = 1;
+        int rem = x - p[i];
+        if (p[j] <= rem && !vis[j]) {
+            vis[j] = 1;
+            j--;
         }
+        ans++;
     }
     cout << ans << endl;
 }
