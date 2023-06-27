@@ -20,28 +20,44 @@ MAINRET(t) main(void) {
 const LL MX = 5 * 1e6;
 //const LL MOD = 1e7;
 
-int n, x;
-int a[MX];
-unordered_map<int, int> m;
+LL n;
+LL a[MX];
 /*
 
 */
 
 void solve() {
-    m.reserve(1024);
-    m.max_load_factor(0.25);
-    cin >> n >> x;
-    for (int i = 1; i <= n; i++) {
+    cin >> n;
+    for (LL i = 0; i < n; i++) {
         cin >> a[i];
-        m[a[i]] = i;
     }
-    for (int i = 1; i <= n; i++) {
-        if (m[x-a[i]] > 0 && i != m[x-a[i]]) {
-            cout << i << " " << m[x-a[i]] << endl;
-            return;
+    LL curr = a[0];
+    LL ans = curr;
+    LL pos = a[0] > 0 ? a[0] : 0;
+    LL neg = a[0] > 0 ? 0 : -a[0]; // Sum of negatives after recent positive
+    for (LL i = 1; i < n; i++) {
+        curr += a[i];
+        ans = max(ans, curr);
+        if (a[i] > 0) {
+            if (a[i-1] <= 0 && neg > pos) {
+                curr = a[i];
+                pos = a[i];
+                neg = 0;
+            } else {
+                pos += a[i];
+            }
+        } else {
+            if (neg > pos) {
+                curr = a[i];
+                pos = 0;
+                neg = -a[i];
+            } else {
+                neg += -a[i];
+            }
         }
+        ans = max(ans, curr);
     }
-    cout << "IMPOSSIBLE\n";
+    cout << ans << endl;
 }
 
 
