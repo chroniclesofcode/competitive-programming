@@ -22,45 +22,34 @@ const LL MX = 5 * 1e6;
 
 LL n;
 vector<LL> a;
-
-
 /*
 
 */
-LL calc(LL idx) {
-    LL val = a[idx];
-    LL res = 0;
-    for (LL i = 0; i < n; i++) {
-        res += abs(val - a[i]);
-    }
-    return res;
-}
 
 void solve() {
     cin >> n;
-    LL b;
+    LL x;
     for (LL i = 0; i < n; i++) {
-        cin >> b;
-        a.push_back(b);
+        cin >> x;
+        a.push_back(x);
     }
     sort(a.begin(), a.end());
-    LL ans = INF;
-    LL lo = 0;
-    LL hi = n-1;
-    while (lo < hi) {
-        LL mid = lo + (hi-lo)/2;
-        LL mid2 = mid+1;
-        LL val = calc(mid);
-        LL val2 = calc(mid2);
-        if (val <= val2) {
-            hi = mid;
-        } else {
-            lo = mid2;
-        }
-        ans = min({ans, val, val2});
+    if (a[0] != 1) {
+        cout << 1 << endl;
+        return;
     }
-    if (ans == INF) ans = 0;
-    cout << ans << endl;
+    LL res = 1;
+    LL crs = a[0];
+    for (LL i = 1; i < n; i++) {
+        if (a[i] > crs+1) {
+            res = crs+1;
+            break;
+        }
+        crs += a[i];
+        res = crs+1;
+    }
+    cout << res << endl;
+
 }
 
 
