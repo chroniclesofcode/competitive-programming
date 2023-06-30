@@ -20,45 +20,36 @@ MAINRET(t) main(void) {
 const LL MX = 5 * 1e6;
 //const LL MOD = 1e7;
 
-int n;
-int a[MX];
-unordered_map<int, int> m;
+int n, a[MX];
+multiset<int> towers;
 /*
 
 */
 
 void solve() {
-    m.reserve(1024);
-    m.max_load_factor(0.25);
     cin >> n;
-    for (int i = 1; i <= n; i++) {
+    for (int i = 0; i < n; i++) {
         cin >> a[i];
     }
-    int ans = 0;
-    int seq = 0;
-    int idx = 1;
-    for (int i = 1; i <= n; i++) {
-        if (m[a[i]] == 0) {
-            //cout << "u: " << i << " " << a[i] << endl;
-            m[a[i]] = i;
-            seq++;
-        } else if (m[a[i]] > 0) {
-            //cout << "nu: " << i << " " << a[i] << endl;
-            // I made a very very careless mistake here
-            // int idx = m[a[i]]+1;
-            // This means I will update the array at the LAST
-            // occurence of the element seen, even if it was
-            // 10 light years ago and the back of the array
-            // already progressed from there. This makes the
-            // answers I return extremely big.
-
-            idx = max(m[a[i]]+1, idx);
-            m[a[i]] = i;
-            seq = i - idx + 1;
+    towers.insert(a[0]);
+    for (int i = 1; i < n; i++) {
+        auto it = towers.lower_bound(a[i]);
+        if (it == towers.end()) {
+            towers.insert(a[i]);
+        } else if (*it == a[i]) {
+            auto it2 = towers.upper_bound(a[i]);
+            if (it2 == towers.end()) {
+                towers.insert(a[i]);
+            } else {
+                towers.erase(it2);
+                towers.insert(a[i]);
+            }
+        } else {
+            towers.erase(it);
+            towers.insert(a[i]);
         }
-        ans = max(ans, seq);
     }
-    cout << ans << endl;
+    cout << towers.size() << endl;
 }
 
 
