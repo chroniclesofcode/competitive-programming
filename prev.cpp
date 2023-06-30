@@ -20,36 +20,74 @@ MAINRET(t) main(void) {
 const LL MX = 5 * 1e6;
 //const LL MOD = 1e7;
 
-int n, a[MX];
-multiset<int> towers;
+int x, n, p[MX];
+#define arr array<int,2>
+set<arr> intervals;
+multiset<int> lengths;
 /*
 
 */
 
-void solve() {
-    cin >> n;
-    for (int i = 0; i < n; i++) {
-        cin >> a[i];
+void reml(int sz) {
+    sz++;
+    auto it = lengths.find(sz);
+    if (it != lengths.end()) {
+        lengths.erase(it);
     }
-    towers.insert(a[0]);
-    for (int i = 1; i < n; i++) {
-        auto it = towers.lower_bound(a[i]);
-        if (it == towers.end()) {
-            towers.insert(a[i]);
-        } else if (*it == a[i]) {
-            auto it2 = towers.upper_bound(a[i]);
-            if (it2 == towers.end()) {
-                towers.insert(a[i]);
-            } else {
-                towers.erase(it2);
-                towers.insert(a[i]);
-            }
+}
+
+void addl(int sz) {
+    sz++;
+    if (sz > 0)
+        lengths.insert(sz);
+}
+
+void addi(int u, int v) {
+    if (v - u < 0) return;
+    intervals.insert({u,v});
+    addl(v-u);
+}
+
+void solve() {
+    cin >> x >> n;
+    int tmp;
+    for (int i = 0; i < n; i++) {
+        cin >> tmp;
+        //tmp--;
+        p[i] = tmp;
+    }
+    intervals.insert({0,x-1});
+    lengths.insert(x);
+    for (int i = 0; i < n; i++) {
+        if (intervals.size() == 0) {
+            cout << 0 << ' ';
+            continue;
+        }
+        if (p[i] == 0 || p[i] == x) {
+            auto it = lengths.end();
+            it--;
+            cout << *it << ' ';
+            continue;
+        }
+        auto it = intervals.lower_bound({p[i],p[i]});
+        it--;
+        auto v = *it;
+        intervals.erase(it);
+        reml(v[1]-v[0]);
+
+        addi(v[0], p[i]-1);
+        addi(p[i], v[1]);
+        if (lengths.size() == 0) {
+            cout << 0 << ' ';
         } else {
-            towers.erase(it);
-            towers.insert(a[i]);
+            auto it = lengths.end();
+            it--;
+            cout << *it << ' ';
+
         }
     }
-    cout << towers.size() << endl;
+    cout << endl;
+    
 }
 
 
