@@ -25,7 +25,15 @@ vector<LL> a;
 /*
    we just read books, one starts from longest, one 
    starts from shortest.
+   when the shortest meets the longest, the shortest can
+   go to the back of the longest and start reading the
+   longest book. From then on, the longest can finish his
+   book (guaranteed before shortest reaches them), and then
+   finish off the shortest's books = sum of all times.
 
+   The only situation where this cannot happen is when shortest
+   meets longest and longest is still on his first book - which
+   is then first book * 2.
 */
 
 void solve() {
