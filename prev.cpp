@@ -20,53 +20,38 @@ MAINRET(t) main(void) {
 const LL MX = 5 * 1e6;
 //const LL MOD = 1e7;
 
-#define arr array<int,4>
-int n, nums[MX];
-vector<arr> room;
-set<array<int,2>> s;
+LL n, t;
+vector<LL> k;
 /*
+
 */
 
 void solve() {
-    cin >> n;
-    int x, y;
-    for (int i = 0; i < n; i++) {
-        cin >> x >> y;
-        room.push_back({x,0,i,y});
-        room.push_back({y,1,i,x});
+    cin >> n >> t;
+    LL x;
+    LL smol = INF;
+    for (LL i = 0; i < n; i++) {
+        cin >> x;
+        k.push_back(x);
+        smol = min(smol, x);
     }
-    sort(room.begin(), room.end());
-    int curr = 0;
-    int ans = 0;
-    for (int i = 0; i < room.size(); i++) {
-        auto v = room[i];
-        if (v[1]) {
-            // Room ends
-            curr--;
-        } else {
-            // New room
-            curr++;
-            int roomno = curr;
-            if (s.size()) {
-                auto minend = s.begin();
-                if ((*minend)[0] < v[0]) {
-                    roomno = (*minend)[1];
-                    s.erase(minend);
-                }
-            }
-            s.insert({v[3],roomno});
-            nums[v[2]] = roomno;
+    LL lo = 1;
+    LL hi = t * smol;
+    LL mid;
+    LL ans = INF;
+    while (lo <= hi) {
+        mid = lo + (hi - lo)/2;
+        LL tot = 0;
+        for (LL i = 0; i < n; i++) {
+            tot += mid/k[i];
         }
-        ans = max(ans, curr);
+        if (tot >= t) {
+            hi = mid-1;
+            ans = min(ans, mid);
+        } else {
+            lo = mid+1;
+        }
     }
     cout << ans << endl;
-    for (int i = 0; i < n; i++) {
-        cout << nums[i] << ' ';
-    }
-    cout << endl;
 }
-
-
-
-
 
