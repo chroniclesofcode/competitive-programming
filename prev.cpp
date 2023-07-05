@@ -20,43 +20,40 @@ MAINRET(t) main(void) {
 const LL MX = 5 * 1e6;
 //const LL MOD = 1e7;
 
-LL n;
-vector<LL> a;
+LL n, x;
+vector<array<LL,2>> a;
+//unordered_map<LL, LL> m;
 /*
-   we just read books, one starts from longest, one 
-   starts from shortest.
-   when the shortest meets the longest, the shortest can
-   go to the back of the longest and start reading the
-   longest book. From then on, the longest can finish his
-   book (guaranteed before shortest reaches them), and then
-   finish off the shortest's books = sum of all times.
 
-   The only situation where this cannot happen is when shortest
-   meets longest and longest is still on his first book - which
-   is then first book * 2.
 */
 
 void solve() {
-    cin >> n;
-    LL x;
+    cin >> n >> x;
+    LL u;
     for (LL i = 0; i < n; i++) {
-        cin >> x;
-        a.push_back(x);
+        cin >> u;
+        a.push_back({u, i});
     }
+
     sort(a.begin(), a.end());
 
-    LL j = n-1;
-    LL sum = 0;
-    LL rev = a[j];
-    for (LL i = 0; i < n; i++) {
-        sum += a[i];
+    for (int i = 0; i < n; i++) {
+        int l = 0, r = n-1;
+        while (l < r) {
+            LL val = a[l][0]+a[r][0]+a[i][0];
+            if (val < x) l++;
+            else if (val > x) r--;
+            else if (a[i][1] != a[l][1] && a[i][1] != a[r][1] && a[l][1] != a[r][1]) {
+                cout << a[l][1]+1 << ' ' << a[r][1]+1 << ' ' << a[i][1]+1 << endl;
+                return;
+            } else {
+                l++;
+            }
+        }
     }
-    if (a[n-1] > sum - a[n-1]) {
-        cout << a[n-1] * 2;
-    } else {
-        cout << sum;
-    }
-    cout << endl;
+
+
+    cout << "IMPOSSIBLE\n";
 }
 
 
