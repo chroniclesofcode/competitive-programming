@@ -20,40 +20,38 @@ MAINRET(t) main(void) {
 const LL MX = 5 * 1e6;
 //const LL MOD = 1e7;
 
-LL n, x;
-vector<array<LL,2>> a;
-//unordered_map<LL, LL> m;
+int n, x, a[MX];
+unordered_map<int,int> m;
+unordered_map<int, array<int,2>> tsum;
 /*
-
 */
 
 void solve() {
     cin >> n >> x;
-    LL u;
-    for (LL i = 0; i < n; i++) {
-        cin >> u;
-        a.push_back({u, i});
-    }
-
-    sort(a.begin(), a.end());
-
+    int t;
     for (int i = 0; i < n; i++) {
-        int l = 0, r = n-1;
-        while (l < r) {
-            LL val = a[l][0]+a[r][0]+a[i][0];
-            if (val < x) l++;
-            else if (val > x) r--;
-            else if (a[i][1] != a[l][1] && a[i][1] != a[r][1] && a[l][1] != a[r][1]) {
-                cout << a[l][1]+1 << ' ' << a[r][1]+1 << ' ' << a[i][1]+1 << endl;
-                return;
-            } else {
-                l++;
+        cin >> a[i];
+        m[a[i]] = i+1;
+    }
+    for (int i = 0; i < n; i++) {
+        for (int j = i+1; j < n; j++) {
+            tsum[a[i]+a[j]] = { i+1, j+1 };
+        }
+    }
+    for (int i = 0; i < n; i++) {
+        for (int j = i+1; j < n; j++) {
+            int val = a[i]+a[j];
+            auto res = tsum[x-val];
+            if (res[0] > 0) {
+                if (i+1 != res[0] && j+1 != res[0] && i+1 != res[1] && j+1 != res[1]) {
+                    cout << i+1 << ' ' << j+1 << ' ' << res[0] << ' ' << res[1] << endl;
+                    return;
+                }
             }
         }
     }
-
-
     cout << "IMPOSSIBLE\n";
+
 }
 
 
