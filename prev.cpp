@@ -20,38 +20,46 @@ MAINRET(t) main(void) {
 const LL MX = 5 * 1e6;
 //const LL MOD = 1e7;
 
-LL n, t;
-vector<LL> k;
+LL n;
+vector<LL> a;
 /*
+   we just read books, one starts from longest, one 
+   starts from shortest.
+   when the shortest meets the longest, the shortest can
+   go to the back of the longest and start reading the
+   longest book. From then on, the longest can finish his
+   book (guaranteed before shortest reaches them), and then
+   finish off the shortest's books = sum of all times.
 
+   The only situation where this cannot happen is when shortest
+   meets longest and longest is still on his first book - which
+   is then first book * 2.
 */
 
 void solve() {
-    cin >> n >> t;
+    cin >> n;
     LL x;
-    LL smol = INF;
     for (LL i = 0; i < n; i++) {
         cin >> x;
-        k.push_back(x);
-        smol = min(smol, x);
+        a.push_back(x);
     }
-    LL lo = 1;
-    LL hi = t * smol;
-    LL mid;
-    LL ans = INF;
-    while (lo <= hi) {
-        mid = lo + (hi - lo)/2;
-        LL tot = 0;
-        for (LL i = 0; i < n; i++) {
-            tot += mid/k[i];
-        }
-        if (tot >= t) {
-            hi = mid-1;
-            ans = min(ans, mid);
-        } else {
-            lo = mid+1;
-        }
+    sort(a.begin(), a.end());
+
+    LL j = n-1;
+    LL sum = 0;
+    LL rev = a[j];
+    for (LL i = 0; i < n; i++) {
+        sum += a[i];
     }
-    cout << ans << endl;
+    if (a[n-1] > sum - a[n-1]) {
+        cout << a[n-1] * 2;
+    } else {
+        cout << sum;
+    }
+    cout << endl;
 }
+
+
+
+
 
