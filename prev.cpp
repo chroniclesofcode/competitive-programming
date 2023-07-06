@@ -20,38 +20,32 @@ MAINRET(t) main(void) {
 const LL MX = 5 * 1e6;
 //const LL MOD = 1e7;
 
-int n, x, a[MX];
-unordered_map<int,int> m;
-unordered_map<int, array<int,2>> tsum;
+int n, a[MX], res[MX];
+stack<array<int,2>> s;
 /*
+
 */
 
 void solve() {
-    cin >> n >> x;
-    int t;
+    cin >> n;
     for (int i = 0; i < n; i++) {
         cin >> a[i];
-        m[a[i]] = i+1;
     }
-    for (int i = 0; i < n; i++) {
-        for (int j = i+1; j < n; j++) {
-            tsum[a[i]+a[j]] = { i+1, j+1 };
-        }
-    }
-    for (int i = 0; i < n; i++) {
-        for (int j = i+1; j < n; j++) {
-            int val = a[i]+a[j];
-            auto res = tsum[x-val];
-            if (res[0] > 0) {
-                if (i+1 != res[0] && j+1 != res[0] && i+1 != res[1] && j+1 != res[1]) {
-                    cout << i+1 << ' ' << j+1 << ' ' << res[0] << ' ' << res[1] << endl;
-                    return;
-                }
+    res[0] = 0;
+    s.push({a[0],1});
+    for (int i = 1; i < n; i++) {
+        if (s.empty()) {
+            res[i] = 0;
+        } else {
+            while (!s.empty() && s.top()[0] >= a[i]) s.pop();
+            if (!s.empty()) {
+                res[i] = s.top()[1];
             }
         }
+        s.push({a[i], i+1});
     }
-    cout << "IMPOSSIBLE\n";
-
+    for (int i = 0; i < n; i++) cout << res[i] << ' ';
+    cout << endl;
 }
 
 
