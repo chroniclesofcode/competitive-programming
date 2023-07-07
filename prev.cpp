@@ -20,32 +20,34 @@ MAINRET(t) main(void) {
 const LL MX = 5 * 1e6;
 //const LL MOD = 1e7;
 
-int n, a[MX], res[MX];
-stack<array<int,2>> s;
+LL n, k, a[MX];
+unordered_map<LL, LL> m;
 /*
-
+   1) prefix sums, find two elements which subtract to give x
 */
 
 void solve() {
-    cin >> n;
-    for (int i = 0; i < n; i++) {
+    cin >> n >> k;
+    for (LL i = 0; i < n; i++) {
         cin >> a[i];
     }
-    res[0] = 0;
-    s.push({a[0],1});
-    for (int i = 1; i < n; i++) {
-        if (s.empty()) {
-            res[i] = 0;
-        } else {
-            while (!s.empty() && s.top()[0] >= a[i]) s.pop();
-            if (!s.empty()) {
-                res[i] = s.top()[1];
-            }
+
+    LL distinct = 0;
+    LL ans = 0;
+    LL j = 0;
+    for (LL i = 0; i < n; i++) {
+        if (m[a[i]] == 0) {
+            distinct++;
         }
-        s.push({a[i], i+1});
+        m[a[i]]++;
+        while (distinct > k && j < i) {
+            m[a[j]]--;
+            if (m[a[j]] == 0) distinct--;
+            j++;
+        }
+        ans += i-j+1;
     }
-    for (int i = 0; i < n; i++) cout << res[i] << ' ';
-    cout << endl;
+    cout << ans << endl;
 }
 
 
