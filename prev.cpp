@@ -21,31 +21,46 @@ const LL MX = 5 * 1e6;
 //const LL MOD = 1e7;
 
 LL n, k, a[MX];
-unordered_map<LL, LL> m;
+
 /*
-   1) prefix sums, find two elements which subtract to give x
+   1) prefix sums, find a, b where b-a is minimum
 */
 
 void solve() {
     cin >> n >> k;
+    LL sum = 0;
     for (LL i = 0; i < n; i++) {
         cin >> a[i];
+        sum += a[i];
     }
 
-    LL distinct = 0;
-    LL ans = 0;
-    LL j = 0;
-    for (LL i = 0; i < n; i++) {
-        if (m[a[i]] == 0) {
-            distinct++;
+    LL lo = 1;
+    LL hi = sum;
+    LL ans = sum;
+    while (lo <= hi) {
+        LL mid = lo + (hi - lo)/2;
+        LL tmpk = 1;
+        LL curr = 0;
+        LL cmax = 0;
+        //cout << "mid: " << mid << endl;
+        bool flag = 0;
+        for (LL i = 0; i < n; i++) {
+            curr += a[i];
+            if (curr > mid) {
+                cmax = max(cmax, curr - a[i]);
+                tmpk++;
+                curr = a[i];
+                flag = 1;
+            }
+            cmax = max(cmax, curr);
+            //cout <<"n: "<<a[i]<< " " << "c: " << curr << " tmpk " << tmpk << endl;
         }
-        m[a[i]]++;
-        while (distinct > k && j < i) {
-            m[a[j]]--;
-            if (m[a[j]] == 0) distinct--;
-            j++;
+        if (tmpk <= k && flag) {
+            ans = min(ans, cmax);
+            hi = mid-1;
+        }  else {
+            lo = mid+1;
         }
-        ans += i-j+1;
     }
     cout << ans << endl;
 }
