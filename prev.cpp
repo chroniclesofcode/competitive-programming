@@ -20,49 +20,82 @@ MAINRET(t) main(void) {
 const LL MX = 5 * 1e6;
 //const LL MOD = 1e7;
 
-LL n, k, a[MX];
-
+int n, k, a[MX];
+multiset<int> s1, s2;
 /*
-   1) prefix sums, find a, b where b-a is minimum
+   FOR SOME REASON CSES gives Runtime error, I cannot find the error
+   but on my machine it compiles properly and gives all correct solutions.
+
+   In the repo, find the Sliding_Medians which is more complex, that runs
+   without issues. This one is just simpler logic.
 */
+
+void add_set(int v) {
+    int l = *s1.rbegin();
+    if (v > l) {
+        s2.insert(v);
+        if (s2.size() > s1.size()) {
+            s1.insert(*s2.begin());
+            s2.erase(s2.find(*s2.begin()));
+        }
+    } else {
+        s1.insert(v);
+        if (s1.size() > s2.size()) {
+            int u = *s1.rbegin();
+            s2.insert(u);
+            s1.erase(s1.find(u));
+        }
+    }
+}
+
+void rem_set(int v) {
+    if (!s1.empty() && v <= *s1.rbegin()) {
+        s1.erase(s1.find(v));
+    } else {
+        s2.erase(s2.find(v));
+    }
+}
+
+int medi() {
+    if (s1.size() == s2.size()) {
+        return *s1.rbegin();
+    } else if (s1.size() > s2.size()) {
+        return *s1.rbegin();
+    } else {
+        return *s2.begin();
+    }
+}
+
+void debug() {
+    cout << "s1: ";
+    for (auto &e : s1) {
+        cout << e << ' '; 
+    }
+    cout << "s2: ";
+    for (auto &e : s2) {
+        cout << e << ' ';
+    }
+    cout << endl;
+}
 
 void solve() {
     cin >> n >> k;
-    LL sum = 0;
-    for (LL i = 0; i < n; i++) {
+    for (int i = 0; i < n; i++) {
         cin >> a[i];
-        sum += a[i];
     }
-
-    LL lo = 1;
-    LL hi = sum;
-    LL ans = sum;
-    while (lo <= hi) {
-        LL mid = lo + (hi - lo)/2;
-        LL tmpk = 1;
-        LL curr = 0;
-        LL cmax = 0;
-        //cout << "mid: " << mid << endl;
-        bool flag = 0;
-        for (LL i = 0; i < n; i++) {
-            curr += a[i];
-            if (curr > mid) {
-                cmax = max(cmax, curr - a[i]);
-                tmpk++;
-                curr = a[i];
-                flag = 1;
-            }
-            cmax = max(cmax, curr);
-            //cout <<"n: "<<a[i]<< " " << "c: " << curr << " tmpk " << tmpk << endl;
-        }
-        if (tmpk <= k && flag) {
-            ans = min(ans, cmax);
-            hi = mid-1;
-        }  else {
-            lo = mid+1;
-        }
+    s1.insert(a[0]);
+    for (int i = 1; i < k; i++) {
+        add_set(a[i]);
     }
-    cout << ans << endl;
+    cout << medi() << ' ';
+    for (int i = k; i < n; i++) {
+        debug();
+        rem_set(a[i-k]);
+        add_set(a[i]);
+        cout << medi() << ' ';
+    }
+    debug();
+    cout << endl;
 }
 
 
