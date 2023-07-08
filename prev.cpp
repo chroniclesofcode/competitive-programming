@@ -20,43 +20,66 @@ MAINRET(t) main(void) {
 const LL MX = 5 * 1e6;
 //const LL MOD = 1e7;
 
-int n, k, a[MX];
-multiset<int> s1, s2;
+LL n, k, a[MX], sum1, sum2;
+multiset<LL> s1, s2;
 /*
-   FOR SOME REASON CSES gives Runtime error, I cannot find the error
-   but on my machine it compiles properly and gives all correct solutions.
 
-   In the repo, find the Sliding_Medians which is more complex, that runs
-   without issues. This one is just simpler logic.
 */
 
-void add_set(int v) {
-    int l = *s1.rbegin();
-    if (v > l) {
+void add_set(LL v) {
+    if (s1.empty() && s2.empty()) {
+        s2.insert(v);
+        sum2 += v;
+    } else if (!s2.empty() && v >= *s2.begin()) {
+        sum2 += v;
         s2.insert(v);
         if (s2.size() > s1.size()) {
+            sum1 += *s2.begin();
+            sum2 -= *s2.begin();
             s1.insert(*s2.begin());
-            s2.erase(s2.find(*s2.begin()));
+            s2.erase(s2.begin());
         }
-    } else {
+    } else if (!s2.empty() && v <= *s2.begin()) {
+        sum1 += v;
         s1.insert(v);
         if (s1.size() > s2.size()) {
-            int u = *s1.rbegin();
-            s2.insert(u);
-            s1.erase(s1.find(u));
+            sum2 += *s1.rbegin();
+            sum1 -= *s1.rbegin();
+            s2.insert(*s1.rbegin());
+            s1.erase(s1.find(*s1.rbegin()));
+        }
+    } else if (!s1.empty() && v >= *s1.rbegin()) {
+        sum2 += v;
+        s2.insert(v);
+        if (s2.size() > s1.size()) {
+            sum1 += *s2.begin();
+            sum2 -= *s2.begin();
+            s1.insert(*s2.begin());
+            s2.erase(s2.begin());
+        }
+    } else if (!s1.empty() && v <= *s1.rbegin()) {
+        sum1 += v;
+        s1.insert(v);
+        if (s1.size() > s2.size()) {
+            sum2 += *s1.rbegin();
+            sum1 -= *s1.rbegin();
+            s2.insert(*s1.rbegin());
+            s1.erase(s1.find(*s1.rbegin()));
         }
     }
 }
 
-void rem_set(int v) {
+void rem_set(LL v) {
     if (!s1.empty() && v <= *s1.rbegin()) {
         s1.erase(s1.find(v));
+        sum1 -= v;
     } else {
         s2.erase(s2.find(v));
+        sum2 -= v;
     }
 }
 
-int medi() {
+LL medi() {
     if (s1.size() == s2.size()) {
         return *s1.rbegin();
     } else if (s1.size() > s2.size()) {
@@ -80,21 +103,21 @@ void debug() {
 
 void solve() {
     cin >> n >> k;
-    for (int i = 0; i < n; i++) {
+    for (LL i = 0; i < n; i++) {
         cin >> a[i];
     }
-    s1.insert(a[0]);
-    for (int i = 1; i < k; i++) {
+    sum1 = sum2 = 0;
+    for (LL i = 0; i < k; i++) {
         add_set(a[i]);
     }
-    cout << medi() << ' ';
-    for (int i = k; i < n; i++) {
-        debug();
+    LL me = medi();
+    cout << (me*s1.size()-sum1)+(sum2-me*s2.size()) << ' ';
+    for (LL i = k; i < n; i++) {
         rem_set(a[i-k]);
         add_set(a[i]);
-        cout << medi() << ' ';
+        me = medi();
+        cout << (me*s1.size()-sum1)+(sum2-me*s2.size()) << ' ';
     }
-    debug();
     cout << endl;
 }
 
