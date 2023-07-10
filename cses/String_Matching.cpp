@@ -60,6 +60,11 @@ void solve() {
     int ans = 0;
     prefix_f();
 
+    // Combine the strings with an arbitrary value in the
+    // middle - calculate the prefix array, and just 
+    // count the values when the length = search_string.length
+    // because the prefix = search_string, and the suffix
+    // is actually the occurences you want to be counting.
     for (int i = 0; i < n; i++) {
         if (pi[i] == tmp) ans++;
     }
