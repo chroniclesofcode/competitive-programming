@@ -45,6 +45,24 @@ void add_string(string const& s) {
     trie[v].end = true;
 }
 
+// Find if there is an entry in trie for s[l..r]
+bool search(string const& s, int l, int r) {
+    int v = 0;
+    for (int i = l; i <= r; i++) {
+        char ch = s[i];
+        int c = ch - 'a';
+        v = trie[v].next[c];
+        if (v == -1) {
+            return true;
+        }
+        if (trie[v].end == true) {
+            return false;
+        }
+    }
+    return true;
+}
+    
+
 /*
 
 */
