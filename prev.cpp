@@ -1,22 +1,64 @@
 class Solution {
 public:
-    int countHousePlacements(int n) {
-        #define LL unsigned int
-        vector<vector<LL>> dp(n+1, vector<LL>(4, 0));
-        /*
-        dp[i][0] = empty plot current
-        dp[i][1] = one on top
-        dp[i][2] = one on bottom
-        dp[i][3] = both filled out
-        */
-        const LL MX = 1e9+7;
-        dp[1][0]=dp[1][1]=dp[1][2]=dp[1][3]= 1;
-        for (LL i = 2; i <= n; i++) {
-            dp[i][0] = (dp[i-1][0]+dp[i-1][1]+dp[i-1][2]+dp[i-1][3])%MX;
-            dp[i][1] = (dp[i-1][0]+dp[i-1][2])%MX;
-            dp[i][2] = (dp[i-1][0]+dp[i-1][1])%MX;
-            dp[i][3] = (dp[i-1][0])%MX;
+
+    struct Vertex {
+        int next[26];
+        bool end = false;
+
+        Vertex() {
+            fill(next, next+26, -1);
         }
-        return (dp[n][0]+dp[n][1]+dp[n][2]+dp[n][3])%MX;
+    };
+
+    int n;
+    vector<Vertex> trie;
+
+    void add_string(string const& s) {
+        int v = 0;
+        for (char ch : s) {
+            int c = ch - 'a';
+            if (trie[v].next[c] == -1) {
+                trie[v].next[c] = trie.size();
+                trie.emplace_back();
+            }
+            v = trie[v].next[c];
+        }
+        trie[v].end = true;
+    }
+
+    bool search(string const& s, int l, int r) {
+        int v = 0;
+        for (int i = l; i <= r; i++) {
+            char ch = s[i];
+            int c = ch - 'a';
+            v = trie[v].next[c];
+            if (v == -1) {
+                return true;
+            }
+            if (trie[v].end == true) {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    int longestValidSubstring(string word, vector<string>& forbidden) {
+        trie.emplace_back();
+        for (auto &str : forbidden) {
+            add_string(str);
+        }
+        n = word.size();
+        int j = n-1;
+        int ans = 0;
+        int i = n-1;
+        while (i >= 0) {
+            j = i;
+            while (j >= 0 && search(word, j, i)) {
+                j--;
+            }
+            ans = max(ans, i - j);
+            i = min(i-1, j+9);
+        }
+        return ans;
     }
 };
