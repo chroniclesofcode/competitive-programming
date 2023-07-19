@@ -48,6 +48,10 @@ int n;
 */
 
 void solve() {
+    cin >> n;
+    for (int i = 0; i < n; i++) {
+        grp[i] = i;
+    }
 
 }
 
