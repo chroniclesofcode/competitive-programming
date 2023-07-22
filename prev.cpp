@@ -1,37 +1,32 @@
-#include <bits/stdc++.h>
+class Solution {
+public:
+    vector<int> goodIndices(vector<int>& nums, int k) {
+        const int MX = nums.size()+5;
+        int n = nums.size();
+        int inc[MX], dec[MX];
+        dec[0] = 1;
+        for (int i = 1; i < n; i++) {
+            if (nums[i] <= nums[i-1]) {
+                dec[i] = dec[i-1] + 1;
+            } else {
+                dec[i] = 1;
+            }
+        }
+        inc[n-1] = 1;
+        for (int i = n-2; i >= 0; i--) {
+            if (nums[i] <= nums[i+1]) {
+                inc[i] = inc[i+1] + 1;
+            } else {
+                inc[i] = 1;
+            }
+        }
 
-using namespace std;
-
-#define MAINRET(x) in##x
-#define LL long long
-
-void solve();
-
-MAINRET(t) main(void) {
-    std::cin.tie(nullptr);
-    std::cin.sync_with_stdio(false);
-
-        solve();
-}
-
-#define INF numeric_limits<LL>::max() / 2
-#define NINF -INF
-#define arr array<int,2>
-
-const LL MX = 5 * 1e3;
-//const LL MOD = 1e7;
-
-int n, adj[MX][MX], in[MX], out[MX];
-
-/*
-
-*/
-
-void solve() {
-    cin >> n;
-    int a, b;
-    vector<arr> rm;
-    for (int i = 0; i < n-1; i++) {
-        cin >> a >> b;
+        vector<int> ans;
+        for (int i = k; i < n-k; i++) {
+            if (dec[i-1] >= k && inc[i+1] >= k) {
+                ans.push_back(i);
+            }
+        }
+        return ans;
     }
-}
+};
