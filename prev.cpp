@@ -1,17 +1,66 @@
-class Solution {
-public:
-    int dp[26];
-    int longestIdealString(string s, int k) {
-        int ans = 0;
-        for (int i = 0; i < s.size(); i++) {
-            int ch = s[i] - 'a';
-            int tmp = 0;
-            for (int j = max(0, ch-k); j <= min(25, ch+k); j++) {
-                tmp = max(tmp, dp[j]);
+#include <bits/stdc++.h>
+
+using namespace std;
+
+#define MAINRET(x) in##x
+#define LL long long
+
+void solve();
+
+MAINRET(t) main(void) {
+    std::cin.tie(nullptr);
+    std::cin.sync_with_stdio(false);
+
+        solve();
+}
+
+#define INF numeric_limits<LL>::max() / 2
+#define NINF -INF
+
+const LL MX = 5 * 1e6;
+//const LL MOD = 1e7;
+
+int n;
+stack<int> s;
+string a;
+/*
+   
+*/
+void solve() {
+    cin >> a;
+    int ans = 0;
+    int lv = -1;
+    int ct = 1;
+    for (int i = 0; i < a.size(); i++) {
+        if (a[i] == '(') {
+            s.push(i);
+        } else {
+            if (s.empty()) {
+                lv = i;
+                continue;
             }
-            dp[ch] = max(dp[ch], tmp+1);
-            ans = max(ans, dp[ch]);
+            s.pop();
+            if (s.empty()) {
+                if (i - lv > ans) {
+                    ans = i - lv;
+                    ct = 1;
+                } else if (i - lv == ans) {
+                    ct++;
+                }
+            } else {
+                if (i - s.top() > ans) {
+                    ans = i - s.top();
+                    ct = 1;
+                } else if (i - s.top() == ans) {
+                    ct++;
+                }
+            }
         }
-        return ans;
     }
-};
+    cout << ans << ' ' << ct << '\n';
+}
+
+
+
+
+
