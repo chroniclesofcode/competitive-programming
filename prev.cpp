@@ -1,66 +1,34 @@
-#include <bits/stdc++.h>
-
-using namespace std;
-
-#define MAINRET(x) in##x
-#define LL long long
-
-void solve();
-
-MAINRET(t) main(void) {
-    std::cin.tie(nullptr);
-    std::cin.sync_with_stdio(false);
-
-        solve();
-}
-
-#define INF numeric_limits<LL>::max() / 2
-#define NINF -INF
-
-const LL MX = 5 * 1e6;
-//const LL MOD = 1e7;
-
-int n;
-stack<int> s;
-string a;
-/*
-   
-*/
-void solve() {
-    cin >> a;
-    int ans = 0;
-    int lv = -1;
-    int ct = 1;
-    for (int i = 0; i < a.size(); i++) {
-        if (a[i] == '(') {
-            s.push(i);
-        } else {
-            if (s.empty()) {
-                lv = i;
-                continue;
-            }
-            s.pop();
-            if (s.empty()) {
-                if (i - lv > ans) {
-                    ans = i - lv;
-                    ct = 1;
-                } else if (i - lv == ans) {
-                    ct++;
-                }
-            } else {
-                if (i - s.top() > ans) {
-                    ans = i - s.top();
-                    ct = 1;
-                } else if (i - s.top() == ans) {
-                    ct++;
+class Solution {
+public:
+    int dp[205][30000];
+    bool canPartition(vector<int>& nums) {
+        int sum = 0;
+        int n = nums.size();
+        for (int i = 0; i < n; i++) {
+            sum += nums[i];
+        }
+        if (sum % 2 == 1) {
+            return false;
+        }
+        sum /= 2;
+        for (int i = 0; i < n; i++) {
+            dp[i][0] = 1;
+        }
+        cout << sum << endl;
+        //sort(nums.begin(), nums.end());
+        for (int i = 1; i < n; i++) {
+            for (int j = 1; j <= sum; j++) {
+                if (i > 0) dp[i][j] = dp[i-1][j];
+                if (i == 0) {
+                    dp[i][j] = nums[i] == j;
+                } else if (j - nums[i] >= 0) {
+                    dp[i][j] = dp[i][j] || dp[i-1][j-nums[i]];
+                } 
+                if (j == sum && dp[i][j] == true) {
+                    return true;
                 }
             }
         }
+        return false;
     }
-    cout << ans << ' ' << ct << '\n';
-}
-
-
-
-
-
+};
