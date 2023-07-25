@@ -23,7 +23,19 @@ LL n, m;
 
 LL ans = 0;
 /*
+    Add in all nodes as the negative equivalent, 
+    then run bellman ford to find the shortest path
+    but this actually will be the LONGEST path.
+    We then run bellman ford again, checking all edges
+    which can still be relaxed N times, this will propagate
+    all negative cycles throughout the dist array
 
+    It should be clear if the final answer is part of
+    the negative cycle, then there is an infinite high
+    score. This approach is needed because we are actually
+    looking for real cycles - and we should ignore the
+    real negative cycles, since they take away from
+    score instead of give.
 */
 
 vector<array<LL, 2>> adj[MX];
