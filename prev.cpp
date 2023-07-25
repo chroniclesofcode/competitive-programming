@@ -15,58 +15,60 @@ MAINRET(t) main(void) {
 }
 
 #define INF numeric_limits<LL>::max() / 2
-#define NINF -INF
-
-const LL MX = 2010;
+#define arr array<int,2>
+const LL MX = 5 * 1e6;
 //const LL MOD = 1e7;
 
-LL n, dp[MX][MX];
-vector<LL> a;
+int sz[MX];
+int grp[MX]; 
+
+int Find(int a) {
+    if (a == grp[a]) {
+        return a;
+    }
+    return grp[a] = Find(grp[a]);
+}
+
+void Union(int a, int b) {
+    a = Find(a);
+    b = Find(b);
+    if (a != b) {
+        if (sz[a] < sz[b]) {
+            swap(a, b);
+        }
+        grp[b] = a;
+        sz[a] += sz[b];
+    }
+
+}
+
+int n, m;
+vector<arr> edges;
+
 /*
 
 */
 
-void debug() {
-    cout << "\n start debug \n";
-    for (LL i = 0; i < n; i++) {
-        for (LL j = 0; j < n; j++) {
-            if (dp[i][j] != INF)
-                cout << dp[i][j] << ' ';
-            else cout << -1 << ' ';
-        }
-        cout << endl;
-    }
-    cout << endl;
-}
-
 void solve() {
-    cin >> n;
-    LL x;
-    for (LL i = 0; i < n; i++) {
-        cin >> x;
-        a.push_back(x);
+    cin >> n >> m;
+    for (int i = 0; i < n; i++) {
+        grp[i] = i;
+        sz[i] = 1;
     }
-    sort(a.begin(), a.end());
-    for (LL i = 0; i < n; i++) {
-        for (LL j = 0; j < n; j++) {
-            dp[i][j] = INF;
+    int x, y;
+    for (int i = 0; i < m; i++) {
+        cin >> x >> y;
+        x--; y--;
+        edges.push_back({x, y});
+    }
+    int ans = 0;
+    for (arr e : edges) {
+        if (Find(e[0]) != Find(e[1])) {
+            ans++;
+            Union(e[0], e[1]);
         }
     }
-    for (LL i = n-1; i >= 0; i--) {
-        for (LL j = i; j < n; j++) {
-            if (i == j) {
-                dp[i][j] = 0;
-            }
-            if (i < n) {
-                dp[i][j] = min(dp[i][j], dp[i+1][j] + a[j] - a[i]);
-            }
-            if (j > 0) {
-                dp[i][j] = min(dp[i][j], dp[i][j-1] + a[j] - a[i]);
-            }
-        }
-    }
-    //debug();
-    cout << dp[0][n-1] << '\n';
+    cout << ans << '\n';
 }
 
 
