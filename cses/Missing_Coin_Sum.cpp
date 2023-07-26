@@ -23,7 +23,16 @@ const LL MX = 5 * 1e6;
 LL n;
 vector<LL> a;
 /*
-
+    Very difficult solution I must admit. We iterate through the sorted array and check
+    for each i if the current value is greater than the sum(0..i-1). The intuition is a 
+    bit tricky, but let's first take a look at the main idea: basically, if the current
+    value is LESS than the sum, we are actually able to REWIND the sum back to any value
+    less than the current value, and then make sum+1. E.g. if sum is currently 10, and the
+    current value is like 8 -> it's sort of like DP, we know for sure since the sum is 10, that
+    means every number before it is able to be made. So we can just make 3, then add 8 to make
+    11. However, if the current value is MORE than the sum, we cannot rewind 10 back to -1 to
+    accomodate for say, 11. So that's pretty much the whole idea, the algo is straightforward
+    from there.
 */
 
 void solve() {
