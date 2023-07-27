@@ -1,77 +1,57 @@
 #include <bits/stdc++.h>
-
+ 
 using namespace std;
-
-#define MAINRET(x) in##x
-#define LL long long
-
-void solve();
-
-MAINRET(t) main(void) {
-    std::cin.tie(nullptr);
-    std::cin.sync_with_stdio(false);
-
-        solve();
-}
-
-#define INF numeric_limits<LL>::max() / 2
-#define arr array<int,2>
-const LL MX = 5 * 1e6;
-//const LL MOD = 1e7;
-
-int sz[MX];
-int grp[MX]; 
-
-int Find(int a) {
-    if (a == grp[a]) {
-        return a;
-    }
-    return grp[a] = Find(grp[a]);
-}
-
-void Union(int a, int b) {
-    a = Find(a);
-    b = Find(b);
-    if (a != b) {
-        if (sz[a] < sz[b]) {
-            swap(a, b);
-        }
-        grp[b] = a;
-        sz[a] += sz[b];
-    }
-
-}
-
+ 
 int n, m;
-vector<arr> edges;
+vector<int> cities[100001];
+vector<int> visited(100001, 0);
+vector<int> comp;
+int ans;
 
-/*
+// Run a DFS on every node for their connected component
+// If not visited, set that as the representative node for
+// that connected component. Then just iterate through the
+// connected components and connect them in a list fashion
 
-*/
-
-void solve() {
+// NOTE: We do not need Kosaraju's algorithm since it is
+// bidirectional links, otherwise we need to find the
+// STRONGLY connected components
+ 
+void dfs(int c) {
+    if (visited[c]) {
+        return;
+    }
+    visited[c] = 1;
+    for (int i = 0; i < cities[c].size(); ++i) {
+        dfs(cities[c][i]);
+    }
+}
+ 
+int main(void) {
+ 
     cin >> n >> m;
-    for (int i = 0; i < n; i++) {
-        grp[i] = i;
-        sz[i] = 1;
-    }
-    int x, y;
-    for (int i = 0; i < m; i++) {
+ 
+ 
+    for (int i = 0; i < m; ++i) {
+        int x, y;
         cin >> x >> y;
-        x--; y--;
-        edges.push_back({x, y});
+        x--;
+        y--;
+        cities[x].push_back(y);
+        cities[y].push_back(x);
     }
-    int ans = 0;
-    for (arr e : edges) {
-        if (Find(e[0]) != Find(e[1])) {
+    
+    for (int i = 0; i < n; ++i) {
+        if (cities[i].size() == 0 || !visited[cities[i][0]]) {
+            dfs(i);
             ans++;
-            Union(e[0], e[1]);
+            comp.push_back(i);
         }
     }
-    cout << ans << '\n';
+    cout << ans - 1 << endl;
+    for (int i = 1; i < comp.size(); i++) {
+        cout << comp[i-1] + 1 << " " << comp[i] + 1 << endl;
+    }
+    return 0;
 }
-
-
-
-
-
+ 
