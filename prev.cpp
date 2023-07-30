@@ -16,62 +16,91 @@ MAINRET(t) main(void) {
 
 #define INF numeric_limits<LL>::max() / 2
 #define NINF -INF
-#define arr array<LL,2>
 
-const LL MX = 5 * 1e6;
+const LL MX = 2 * 1e5;
 //const LL MOD = 1e7;
 
-LL n, vis[MX], seen[MX], dist[MX], ans = 0;
-vector<arr> adj[MX];
+int n, m, s, grp[MX], in[MX];
+vector<int> adj[MX], rev[MX], scc[MX];
+vector<bool> vis(MX, false);
+vector<int> order, comp, rts;
 /*
 
 */
 
-LL dfs(LL u) {
-    if (vis[u]) return 0;
-    vis[u] = 1;
-
-    LL ct = 0;
-
-    for (arr v : adj[u]) {
-        if (!vis[v[0]]) {
-            ct += dfs(v[0]) + 2*v[1];
+void dfs1(int u) {
+    vis[u] = true;
+    for (auto &v : adj[u]) {
+        if (!vis[v]) {
+            dfs1(v);
         }
     }
-    return ct;
+    order.push_back(u);
 }
 
-void dfs2(LL u, LL dis) {
-    if (seen[u]) {
-        return;
-    }
-    seen[u] = 1;
-    dist[u] = dis;
-    LL ct = 0;
-    for (arr v : adj[u]) {
-        if (!seen[v[0]]) {
-            dfs2(v[0], dis+v[1]);
-            ct++;
+void dfs2(int u) {
+    vis[u] = true;
+    comp.push_back(u);
+    for (auto &v : rev[u]) {
+        if (!vis[v]) {
+            dfs2(v);
         }
     }
-    if (ct == 0 && u != 0) {
-        ans = max(ans, dist[u]);
-    }
-    return;
 }
 
 void solve() {
-    cin >> n;
-    LL x,y,z;
-    for (LL i = 0; i < n-1; i++) {
-        cin >> x >> y >> z;
-        x--; y--;
-        adj[x].push_back({y,z});
-        adj[y].push_back({x,z});
+    cin >> n >> m >> s;
+    s--;
+    int a, b;
+    for (int i = 0; i < m; i++) {
+        cin >> a >> b; a--; b--;
+        adj[a].push_back(b);
+        rev[b].push_back(a);
     }
-    LL tot = dfs(0);
-    dfs2(0,0);
-    cout << tot - ans << endl;
+
+    for (int i = 0; i < n; i++) {
+        if (!vis[i]) {
+            dfs1(i);
+        }
+    }
+    vis.assign(n, false);
+
+    reverse(order.begin(), order.end());
+    int sourcecomponent = -1;
+    for (auto &v : order) {
+        if (!vis[v]) {
+            dfs2(v);
+
+            int rt = comp.front();
+            for (auto &u : comp) {
+                grp[u] = rt;
+                if (u == s) {
+                    sourcecomponent = rt;
+                }
+            }
+            rts.push_back(rt);
+
+            comp.clear();
+        }
+    }
+
+    for (int i = 0; i < n; i++) {
+        int r1 = grp[i];
+        for (auto &u : adj[i]) {
+            int r2 = grp[u];
+            if (r1 != r2) {
+                scc[r1].push_back(r2);
+                in[r2]++;
+            }
+        }
+    }
+    int ans = 0;
+    for (auto rt : rts) {
+        if (sourcecomponent != rt && in[rt] == 0) {
+            ans++;
+        }
+    }
+    cout << ans << endl;
 }
 
 
