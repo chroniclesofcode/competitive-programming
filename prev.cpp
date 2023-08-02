@@ -4,93 +4,107 @@ using namespace std;
 
 #define MAINRET(x) in##x
 #define LL long long
+
 void solve();
 
 MAINRET(t) main(void) {
     std::cin.tie(nullptr);
     std::cin.sync_with_stdio(false);
-    LL t;
-    cin >> t;
-    while (t--)
+
         solve();
 }
 
 #define INF numeric_limits<LL>::max() / 2
-const LL MX = 5 * 1e5;
+const LL MX = 5 * 1e6;
 //const LL MOD = 1e7;
+LL N, s, t, m;
 
-LL n, m, a[MX];
-vector<LL> ones(MX), twos(MX);
+LL lvl[MX];
+LL nextchld[MX];
+LL start[MX];
+LL succ[MX], cap[MX], to[MX];
+LL edge_counter = 0;
+
+bool bfs() {
+    for (LL i = 0; i < N; i++) lvl[i] = -1;
+    queue<LL> q;
+    q.push(s); lvl[s] = 0;
+    while (!q.empty()) {
+        LL u = q.front(); q.pop();
+        nextchld[u] = start[u]; 
+        for (LL e = start[u]; ~e; e = succ[e]) {
+            if (cap[e] > 0) {
+                LL nxt = to[e];
+                if (lvl[nxt] != -1) continue;
+                lvl[nxt] = lvl[u] + 1;
+                q.push(nxt);
+            }
+        }
+    }
+    return lvl[t] != -1;
+}
+
+LL aug(LL u, LL cflow) {
+    if (u == t) return cflow; 
+    for (LL &i = nextchld[u]; i >= 0; i = succ[i]) {
+        if (cap[i] > 0) {
+            LL nxt = to[i];
+            if (lvl[nxt] != lvl[u] + 1) continue;
+            LL rf = aug(nxt, min(cflow, cap[i]));
+            if (rf > 0) {
+                cap[i] -= rf;
+                cap[i^1] += rf;
+                return rf;
+            }
+        }   
+    }
+    lvl[u]=-1;
+    return 0;
+}
+
+LL mf() {
+    LL tot = 0;
+    while (bfs())
+        for (LL x = aug(s,INF); x; x = aug(s,INF)) tot+=x;
+    return tot;
+}
+
+void _add_edge(LL u, LL v, LL c) {
+    cap[edge_counter] = c, to[edge_counter] = v;
+    succ[edge_counter] = start[u];
+    start[u] = edge_counter;
+    ++edge_counter;
+}
+
+void add_edge(LL u, LL v, LL c) {
+    _add_edge(u, v, c); 
+    _add_edge(v, u, 0);
+}
 
 /*
 
 */
 
 void solve() {
-    ones.clear();
-    twos.clear();
-    cin >> n >> m;
-    LL tot = 0;
-    LL value;
-    for (LL i = 0; i < n; i++) {
-        cin >> value;
-        a[i] = value;
-        tot += value;
-    }
+    fill(start, start+MX, -1);
 
-    for (LL i = 0; i < n; i++) {
-        cin >> value;
-        if (value == 1) {
-            ones.push_back(a[i]);
+    cin >> N;
+    n = N;
+    int a;
+    vector<int> targets, chairs;
+    for (int i = 0; i < n; i++) {
+        cin >> a;
+        if (a == 1) {
+            chairs.push_back(i);
         } else {
-            twos.push_back(a[i]);
-        }
+            targets.push_back(i);
     }
-    if (tot < m) {
-        cout << -1 << '\n';
-        return;
-    }
+    s = 0;
+    t = N-1;
 
-    sort(ones.begin(), ones.end(), greater<LL>());
-    sort(twos.begin(), twos.end(), greater<LL>());
-
-    /*
-    cout << "ONES\n";
-    for (int i = 0; i < ones.size(); i++) cout << ones[i] << ' ';
-    cout << "TWOS\n";
-    for (int i = 0; i < twos.size(); i++) cout << twos[i] << ' ';
-    cout << endl;
-    */
-
-    LL j = 0;
-    if (twos.size() == 0) j = -1;
-    tot = 0;
-    for (; j < twos.size(); j++) {
-        tot += twos[j];
-        if (tot >= m || j == twos.size() - 1) break;
-    }
-
-    LL ans = tot >= m ? (2 * (j+1)) : INF;
-    if (tot >= m && j >= 0) {
-        tot -= twos[j];
-        j--;
-    }
-
-    for (LL i = 0; i < ones.size(); i++) {
-        tot += ones[i];
-        if (tot >= m)
-            ans = min(ans, (1+i) + 2*(1+j));
-        while (tot >= m && j >= 0) {
-            tot -= twos[j];
-            j--;
-            if (tot >= m)
-                ans = min(ans, (1+i) + 2*(1+j));
-        }
-
-    }
-    cout << ans << '\n';
-
+    cout << mf() << endl;
 }
+
 
 
 
