@@ -14,3 +14,19 @@ Note: I have also included questions from leetcode, which is not exactly competi
 - Never get stuck on one approach. If you watch top competitive programmers (e.g. tourist), you will notice he will try many different ways to tackle the problem quickly, and never gets stuck on one methodology. This goes back to the first entry "is this greedy?". People will always try to force what they think is right on a question, and the deeper you go, the less you want to restart from scratch. Your mind is lying to you - it is really no big deal to abandon your current approach if you aren't at the solution (even if you are 'very close to the answer'). Tourist has once said as a kid (gold medalist-kid however...) "I try various [strategies], and one of them is the right one. I am no genius. I am simply good at it."
 - If a problem is hard, don't be afraid to get your hands dirty! Make some test cases, maybe n=6,7 and really wrestle with it. Apply your algorithm on it - what do you see? For beginners, they see a lot of high-level programmers neglect this step and think they should neglect it as well. Don't. Only neglect it if the question is truly too easy for you.
 - What is it about this problem that is difficult? What aspect? What does it change? What can I do to make this problem easier? What would be the solution without this constraint?
+
+# Theorycrafting
+The above advice is generally regarded as 'good' advice and taken from all sorts of sources. However, this
+section is mainly going to be my personal 'theories' on perhaps how to improve at competitive programming
+at an even better rate. I'm not a top-level competitive programmer, so take my advice with a grain of salt, but
+perhaps one day I will be reputable enough that this advice considered seriously.
+- I believe that 'intuition' for problems comes from the culmination of your knowledge bank of all questions
+that you have done before. However, it is very easy to forget a solution to a question you did months or
+years ago. Therefore I believe that a repo such as this one is vital to quick improvement in competitive
+programming. Every so often (maybe once a week), one should read through certain questions and attempt to
+come up with a solution relatively quickly in their head. If they are unable to do that, then they will
+revise and 'memorise' the solution that they had already written. So basically, you are testing yourself
+to see if you still remember the content. If the question is ridiculously easy, remove it from your solution
+bank. Otherwise, keep going until you are able to confidently answer 99% of all questions in your solution bank
+within the span of a few minutes. Then you can be confident that the questions you do from now on are built
+upon a powerful foundation of hundreds, thousands of questions that you had not forgotten.
