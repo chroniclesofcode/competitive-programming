@@ -28,6 +28,14 @@ LL timer = 0;
 /*
     grp represents the connected component of cycles and trees
     comp represents the specific tree component itself.
+
+    Very complex bit of code. A quick summary - every single node, when traversed
+    will lead to a cycle. These nodes not inside a cycle, form trees that end at 
+    cycles. If two planets are not in the same tree, they cannot reach each other.
+    So find depth to node in tree, find distance to node in cycle and you will
+    have your distance. There's also lots of other small nuances such as keeping
+    a time in and time out to check if two planets are on the same branch of the
+    tree etc.
 */
 
 void dfs(LL u) {
