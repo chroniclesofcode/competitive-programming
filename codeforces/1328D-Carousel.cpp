@@ -20,12 +20,18 @@ MAINRET(t) main(void) {
 const LL MX = 5 * 1e5;
 //const LL MOD = 1e7;
 
-int n, type[MX], dp[MX], ret[MX];
+int n, type[MX];
 
 
 /*
-    dp[i] = minimum number of distinct colors 
-    to color up to n figures
+   max number is 3. If even number, we can just go 1212121
+
+   if there is at least one pair next to each other, you can
+   go 1221212121, so just connect that pair and the rest'll be
+   even
+
+   else it's just 3.
+
 */
 
 void solve() {
