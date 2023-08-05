@@ -19,7 +19,7 @@ Note: I have also included questions from leetcode, which is not exactly competi
 The above advice is generally regarded as 'good' advice and taken from all sorts of sources. However, this
 section is mainly going to be my personal 'theories' on perhaps how to improve at competitive programming
 at an even better rate. I'm not a top-level competitive programmer, so take my advice with a grain of salt, but
-perhaps one day I will be reputable enough that this advice considered seriously.
+perhaps one day I will be reputable enough that this advice should be considered seriously.
 - I believe that 'intuition' for problems comes from the culmination of your knowledge bank of all questions
 that you have done before. However, it is very easy to forget a solution to a question you did months or
 years ago. Therefore I believe that a repo such as this one is vital to quick improvement in competitive
