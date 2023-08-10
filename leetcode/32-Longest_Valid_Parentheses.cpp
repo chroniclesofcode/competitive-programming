@@ -1,42 +1,43 @@
 class Solution {
 public:
     /*
-       Very simple stuff. Just remove every single infected node
-       one by one, and check how many nodes will be infected via
-       dfs. The bounds are low, so this question is ridiculously
-       easy since it's pretty much brute force.
+       Took a little bit of fine tuning to do, but
+       in the end it was DP. At first, I tried to
+       just have a last variable, and kept track of the
+       minimum closure time, but ()(() would break it.
+
+       So in this case, I just kept a DP array of lasts,
+       and I noticed that when we close a bracket, if we
+       want an answer that is more than 2, the element
+       directly before the open ( bracket, must be a close
+       bracket. Makes sense because the close bracket signifies
+       another set of parentheses closing, if it's open, it means
+       it actually hasn't closed yet.
     */
-    int n;
-    vector<bool> vis = vector<bool>(301, false);
-    void infect(vector<vector<int>>& g, int u, int exclude, int &ct) {
-        if (vis[u]) return;
-        //cout << "infected " << u << " excluding " << exclude << " ct: " << ct << endl;
-        vis[u] = true;
-        ct++;
-        for (int i = 0; i < n; i++) {
-            if (i == exclude) continue;
-            if (!vis[i] && g[u][i]) infect(g, i, exclude, ct);
-        }
-        return;
-    }
-    int minMalwareSpread(vector<vector<int>>& g, vector<int>& initial) {
-        n = g.size();
-        int ans = numeric_limits<int>::max();
-        int ret = 0;
-        sort(initial.begin(), initial.end());
-        for (int vi : initial) {
-            int ct = 0;
-            vis.assign(vis.size(), false);
-            for (int u : initial) {
-                if (u == vi) continue;
-                infect(g, u, vi, ct);
+    int longestValidParentheses(string str) {
+        stack<int> s;
+        int ans = 0;
+        vector<int> last(str.size(), 1e5);
+        for (int i = 0; i < str.size(); i++) {
+            if (s.empty() && str[i] == ')') {
+                continue;
             }
-            //cout << "ct: " << ct << " for " << vi << endl;
-            if (ct < ans) {
-                ans = ct;
-                ret = vi;
+            if (s.empty()) {
+                s.push(i);
+            } else if (str[i] == '(') {
+                s.push(i);
+            } else if (str[i] == ')') {
+                int idx = s.top();
+                s.pop();
+                ans = max(ans, i - idx + 1);
+                if (idx > 0) {
+                    ans = max(ans, i - last[idx-1] + 1);
+                    last[i] = min(idx, last[idx-1]);
+                } else {
+                    last[i] = 0;
+                }
             }
         }
-        return ret;
+        return ans;
     }
 };
