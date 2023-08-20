@@ -31,3 +31,6 @@ to see if you still remember the content. If the question is ridiculously easy, 
 bank. Otherwise, keep going until you are able to confidently answer 99% of all questions in your solution bank
 within the span of a few minutes. Then you can be confident that the questions you do from now on are built
 upon a powerful foundation of hundreds, thousands of questions that you had not forgotten.
+- Currently, I am using Anki with a collection of all the problems I have solved to test my hypothesis. Since it
+has a much faster turnover rate, we are able to study our flashcards every day, testing ourselves on the problems
+we have solved before.
