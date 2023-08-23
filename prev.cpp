@@ -1,57 +1,92 @@
-class Solution {
-public:
-    /*
-       Upon inspection, it's fairly clear that you set +color on the left, and -color on the right, then when you take the cumulative sum of this array, you will have the sum of all mixed colors for every single element (note the bounds of [l,r) allow this, if it was larger you would have to use a map solution instead of an array-based solution).
-
-I then tried to check if sum[i] != sum[i-1], if this holds, then we can add it to ans. However, this does not take into account when 2 colors add to the same sum. I was thinking of a map based approach, but wasn't really satisfied with the logn overhead. So I decided to use a rolling hash, since even if two numbers add to the same thing, their hash will be different. So I set hash[l] and hash[r] to be the negative, and took the cumulative sum. I checked if hash[l] != hash[l-1] and if this doesn't hold, we add the original sum[i-1] to ans. Anyways, the details are in the code - there's a lot of extra stuff as well.
-
-Also, theoretically there could be a test case this code fails for, since the hash function might provide a collision for two numbers, but this is incredibly unlikely for something of this size.
-
-    */
-    long long seg[(int)1e5+1];
-    long long hash[(int)1e5+1];
-    long long p[(int)1e5+1];
-    vector<vector<long long>> splitPainting(vector<vector<int>>& segments) {
-        int n = segments.size();
-        int mx = 0;
-
-        for (int i = 0; i < (int)1e5+1; i++) {
-            p[i] = 1;
-        }
-        int m = 1e9+9;
-        int pp = 31;
-        
-        for (int i = 0; i < n; i++) {
-            int l = segments[i][0];
-            int r = segments[i][1];
-            int c = segments[i][2];
-            seg[l] += c;
-            seg[r] -= c;
-            p[l] *= pp;
-            p[l] %= m;
-            int addval = ((c + 1) * p[l]) % m; 
-            hash[l] = (hash[l] + addval) % m;
-            hash[r] = (hash[r] - addval) % m;
-
-            mx = max(mx, r);
-        }
-        for (int i = 2; i < mx; i++) {
-            seg[i] += seg[i-1];
-            hash[i] += hash[i-1];
-            if (hash[i] < 0) hash[i] = (hash[i] + m) % m;
-        }
-        
-        vector<vector<long long>> ans;
-        int beg = hash[1] <= 0 ? 2 : 1;
-        for (int i = 2; i <= mx; i++) {
-            if (hash[i] != hash[i-1] && hash[i-1] > 0) {
-                ans.push_back({beg, i, seg[i-1]});
-                beg = i;
-            }
-            if (hash[i] <= 0) {
-                beg = i+1;
-            }
-        }
-        return ans;
+#include <bits/stdc++.h>
+ 
+using namespace std;
+ 
+#define MAINRET(x) in##x
+#define LL long long
+ 
+void solve();
+ 
+MAINRET(t) main(void) {
+    std::cin.tie(nullptr);
+    std::cin.sync_with_stdio(false);
+ 
+        solve();
+}
+ 
+#define INF numeric_limits<LL>::max() / 2
+#define NINF -INF
+ 
+const LL MX = 5 * 1e7;
+const LL MOD = 1000000007;
+const LL K = 27;
+ 
+struct Vertex {
+    LL next[K];
+    bool end = false;
+ 
+    Vertex() {
+        fill(next, next+K, -1);
     }
 };
+ 
+LL n, dp[MX];
+string a;
+vector<Vertex> trie(1);
+ 
+void add_string(string const& s) {
+    LL v = 0;
+    for (char ch : s) {
+        LL c = ch - 'a';
+        if (trie[v].next[c] == -1) {
+            trie[v].next[c] = trie.size();
+            trie.emplace_back();
+        }
+        v = trie[v].next[c];
+    }
+    trie[v].end = true;
+}
+ 
+/*
+ 
+*/
+void debug() {
+    cout << "dp: ";
+    for (LL i = 0; i <= a.size(); i++) {
+        cout << dp[i] << ' ';
+    }
+    cout << endl;
+}
+ 
+void solve() {
+    cin >> a;
+    cin >> n;
+    string tmp;
+    for (LL i = 0; i < n; i++) {
+        cin >> tmp;
+        add_string(tmp);
+    }
+    LL N = a.size();
+    dp[N] = 1;
+    for (LL i = N-1; i >= 0; i--) {
+        LL v = 0;
+        //cout << "SUS " << a.substr(i) << endl;
+        LL j = i;
+        for (LL j = i; j < N; j++) {
+            LL c = a[j] - 'a';
+            v = trie[v].next[c];
+            if (v == -1) break;
+            if (trie[v].end) {
+                //cout << "ended on: " << ch << endl;
+                //cout << "ch " << ch << " and " << i << " dp[i+1] " << dp[i+1] << " j: " << j << " " << dp[j+1] << endl;
+                dp[i] += dp[j+1];
+                dp[i] %= MOD;
+            }
+        }
+        //dp[i] += ans;
+    }
+    //debug();
+    cout << dp[0] << endl;
+}
+ 
+ 
