@@ -23,22 +23,28 @@ const LL MX = 5 * 1e5;
 int n;
 vector<int> adj[MX];
 int ans = 0;
-bool vis[MX];
 
 /*
 
 */
 
-void dfs(int u, int prev) {
+int dfs(int u, int prev) {
+    int big = 0;
+    int big2 = 0;
     for (int v : adj[u]) {
         if (v != prev) {
-            dfs(v, u);
+            int len = dfs(v, u);
+            if (len >= big) {
+                big2 = big;
+                big = len;
+            } else if (len > big2) {
+                big2 = len;
+            }
         }
     }
-    if (prev != 0 && !vis[u] && !vis[prev]) {
-        vis[u] = 1; vis[prev] = 1;
-        ans++;
-    }
+
+    ans = max(ans, big + big2);
+    return max(big, big2) + 1;
 }
 
 void solve() {
