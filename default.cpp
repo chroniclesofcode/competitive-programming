@@ -17,7 +17,7 @@ MAINRET(t) main(void) {
 #define INF numeric_limits<LL>::max() / 2
 #define NINF -INF
 
-const LL MX = 5 * 1e6;
+const LL MX = 5 * 1e5;
 //const LL MOD = 1e7;
 
 int n;
