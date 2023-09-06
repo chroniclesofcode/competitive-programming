@@ -10,81 +10,59 @@ void solve();
 MAINRET(t) main(void) {
     std::cin.tie(nullptr);
     std::cin.sync_with_stdio(false);
-    LL t;
-    cin >> t;
-    while (t--)
+
         solve();
 }
 
 #define INF numeric_limits<LL>::max() / 2
+#define NINF -INF
+
 const LL MX = 5 * 1e5;
 //const LL MOD = 1e7;
 
-LL n, k, h[MX];
-
+int n;
+vector<int> adj[MX];
 /*
-
+   dp represents longest dist to each node
+   0 or 1 depending from left or right of diameter
 */
+int dp[MX][2];
+int mxval = 0;
+int mxidx = 0;
+
+void dfs(int u, int p, int dep, int idx) {
+    dp[u][idx] = dep;
+    if (dep > mxval) {
+        mxval = dep;
+        mxidx = u;
+    }
+    for (int v : adj[u]) {
+        if (v != p) {
+            dfs(v, u, dep+1, idx);
+        }
+    }
+}
 
 void solve() {
-    cin >> n >> k;
-    for (LL i = 0; i < n; i++) {
-        cin >> h[i];
+    cin >> n;
+    for (int i = 0; i < n-1; i++) {
+        int a, b;
+        cin >> a >> b;
+        a--; b--;
+        adj[a].push_back(b);
+        adj[b].push_back(a);
     }
-
-    LL c = h[k-1];
-    LL l = k-1;
-    LL r = k-1;
-    if (l == 0 || r == n-1) {
-        cout << "YES\n";
-        return;
+    dfs(0, 0, 0, 0);
+    int a = mxidx; // furthest from 0
+    mxval = 0;
+    dfs(a, -1, 0, 0);
+    int b = mxidx; // furthest from a
+    dfs(b, -1, 0, 1);
+    
+    for (int i = 0; i < n; i++) {
+        cout << max(dp[i][0],dp[i][1]) << ' ';
     }
-    bool reachable = false;
-    LL lmx = k-1;
-    LL rmx = k-1;
-    LL prevl = -1;
-    LL prevr = -1;
-    LL slime = h[k-1];
-    while (c >= 0) {
-        slime = c;
-        l = lmx;
-        r = rmx;
-        
-        // No progress made, break out
-        if (lmx == prevl && rmx == prevr) {
-            break;
-        }
-        prevl = lmx;
-        prevr = rmx;
-
-        while (l > 0 && slime+h[l-1]>=0) {
-            l--;
-            slime += h[l];
-            if (slime >= c) {
-                c = slime;
-                lmx = l;
-            }
-        }
-        slime = c;
-        while (r < n-1 && slime+h[r+1]>=0) {
-            r++;
-            slime += h[r];
-            if (slime >= c) {
-                c = slime;
-                rmx = r;
-            }
-        }
-        // Made it
-        if (l == 0 || r == n-1) {
-            reachable = true;
-            break;
-        }
-    }
-    if (reachable) {
-        cout << "YES\n";
-    } else {
-        cout << "NO\n";
-    }
+    cout << '\n';
 }
 
 
