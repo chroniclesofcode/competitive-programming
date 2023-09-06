@@ -17,34 +17,74 @@ MAINRET(t) main(void) {
 }
 
 #define INF numeric_limits<LL>::max() / 2
-const LL MX = 5 * 1e6;
+const LL MX = 5 * 1e5;
 //const LL MOD = 1e7;
 
-int n;
+LL n, k, h[MX];
 
 /*
-   for each k, iterate through all multiples of k
-   inside string until we hit a value that is not
-   meant to be deleted.
+
 */
 
 void solve() {
-    cin >> n;
-    string s;
-    cin >> s;
-    vector<bool> b(s.size()+1, true);
-    long long ans = 0;
-    for (int i = 1; i <= n; i++) {
-        for (int j = i-1; j < n; j += i) {
-            if (b[j] && s[j] == '1') {
-                break;
-            } else if (b[j] && s[j] == '0') {
-                b[j] = false;
-                ans += i;
+    cin >> n >> k;
+    for (LL i = 0; i < n; i++) {
+        cin >> h[i];
+    }
+
+    LL c = h[k-1];
+    LL l = k-1;
+    LL r = k-1;
+    if (l == 0 || r == n-1) {
+        cout << "YES\n";
+        return;
+    }
+    bool reachable = false;
+    LL lmx = k-1;
+    LL rmx = k-1;
+    LL prevl = -1;
+    LL prevr = -1;
+    LL slime = h[k-1];
+    while (c >= 0) {
+        slime = c;
+        l = lmx;
+        r = rmx;
+        
+        // No progress made, break out
+        if (lmx == prevl && rmx == prevr) {
+            break;
+        }
+        prevl = lmx;
+        prevr = rmx;
+
+        while (l > 0 && slime+h[l-1]>=0) {
+            l--;
+            slime += h[l];
+            if (slime >= c) {
+                c = slime;
+                lmx = l;
             }
         }
+        slime = c;
+        while (r < n-1 && slime+h[r+1]>=0) {
+            r++;
+            slime += h[r];
+            if (slime >= c) {
+                c = slime;
+                rmx = r;
+            }
+        }
+        // Made it
+        if (l == 0 || r == n-1) {
+            reachable = true;
+            break;
+        }
     }
-    cout << ans << '\n';
+    if (reachable) {
+        cout << "YES\n";
+    } else {
+        cout << "NO\n";
+    }
 }
 
 
