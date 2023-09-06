@@ -8,10 +8,17 @@ public:
     vector<vector<int>> up;
     int LG;
 
-    void dfs(int u, int p) {
+    void dfs(int u, int p, int w) {
         tin[u] = ++timer;
         up[u][0] = p;
-        if (p != -1) dep[u] = dep[p]+1;
+        
+        if (p != -1) {
+            dep[u] = dep[p]+1;
+            for (int i = 0; i < 27; i++) {
+                weight[u][i] = weight[p][i];
+            }
+            weight[u][w]++;
+        }
 
         for (int i = 1; i <= LG; i++) {
             if (up[u][i-1] != -1)
@@ -20,7 +27,7 @@ public:
         for (arr e: adj[u]) {
             int v = e[0];
             if (v != p) {
-                dfs(v, u);
+                dfs(v, u, e[1]);
             }
         }
         tout[u] = ++timer;
@@ -43,17 +50,6 @@ public:
         return up[u][0];
     }
 
-    void calcWeights(int u, int p, int w) {
-        for (int i = 0; i < 27; i++) {
-            weight[u][i] = weight[p][i];
-        }
-        weight[u][w]++;
-        for (auto e : adj[u]) {
-            if (e[0] != p)
-                calcWeights(e[0], u, e[1]);
-        }
-    }
-
     vector<int> minOperationsQueries(int n, vector<vector<int>>& edges, vector<vector<int>>& queries) {
         for (int i = 30; i >= 0; i--) {
             if (n & (1 << i)) {
@@ -69,10 +65,7 @@ public:
             adj[a].push_back({b, w});
             adj[b].push_back({a, w});
         }
-        dfs(0, -1);
-        for (auto e : adj[0]) {
-            calcWeights(e[0], 0, e[1]);
-        }
+        dfs(0, -1, 0);
         vector<int> ans;
         for (auto q : queries) {
             int a = q[0];
