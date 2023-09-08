@@ -1,41 +1,33 @@
-/**
- * Definition for singly-linked list.
- * struct ListNode {
- *     int val;
- *     ListNode *next;
- *     ListNode() : val(0), next(nullptr) {}
- *     ListNode(int x) : val(x), next(nullptr) {}
- *     ListNode(int x, ListNode *next) : val(x), next(next) {}
- * };
- */
 class Solution {
 public:
-    ListNode* mergeKLists(vector<ListNode*>& lists) {
-        #define arr array<int,2>
-        priority_queue<arr, vector<arr>, greater<arr>> pq;
-
-        for (int i = 0; i < lists.size(); i++) {
-            if (lists[i] != NULL) pq.push({lists[i]->val, i});
+    int dp[1001][1001];
+    int pref[501];
+    int stoneGameV(vector<int>& stones) {
+        int n = stones.size();
+        int p = 0;
+        for (int i = 0; i < n; i++) {
+            p += stones[i];
+            pref[i] = p;
         }
-        if (pq.empty()) return NULL;
-        int idx = pq.top()[1];
-        ListNode* head = lists[idx];
-        ListNode* back = head;
-        lists[idx] = lists[idx]->next;
-        pq.pop();
-        if (lists[idx] != NULL) pq.push({lists[idx]->val, idx});
-        while (!pq.empty()) {
-            arr tp = pq.top();
-            idx = tp[1];
-            pq.pop();
-            back->next = lists[idx];
-            back = back->next;
-            lists[idx] = lists[idx]->next;
-            if (lists[idx] != NULL) {
-                pq.push({lists[idx]->val, idx});
+        for (int i = n-1; i >= 0; i--) {
+            for (int j = i; j < n; j++)  { 
+                if (i == j) {
+                    continue;
+                }
+                int tot = i > 0 ? pref[j]-pref[i-1] : pref[j];
+                int sm = 0;
+                for (int k = i; k <= j; k++) {
+                    sm += stones[k];
+                    if (sm > tot-sm) {
+                        dp[i][j] = max(dp[i][j], tot-sm+dp[k+1][j]);
+                    } else if (tot-sm > sm) {
+                        dp[i][j] = max(dp[i][j], sm+dp[i][k]);
+                    } else {
+                        dp[i][j] = max(dp[i][j], sm+max(dp[i][k],dp[k+1][j]));
+                    }
+                }
             }
         }
-        back->next = NULL;
-        return head;
+        return dp[0][n-1];
     }
 };
