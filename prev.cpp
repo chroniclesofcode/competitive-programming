@@ -1,45 +1,33 @@
-#include <bits/stdc++.h>
+class Solution {
+public:
+    int timer = 1;
+    vector<vector<int>> ans;
+    vector<int> tin, vis, low, adj[(int)1e5];
 
-using namespace std;
-
-#define MAINRET(x) in##x
-#define LL long long
-
-void solve();
-
-MAINRET(t) main(void) {
-    std::cin.tie(nullptr);
-    std::cin.sync_with_stdio(false);
-
-        solve();
-}
-
-#define INF numeric_limits<LL>::max() / 2
-#define NINF -INF
-#define arr array<int,2>
-const LL MX = 5 * 1e5;
-//const LL MOD = 1e7;
-
-int n, m;
-
-/*
-
-*/
-
-void solve() {
-    cin >> n >> m;
-    for (int i = 0; i < n; i++) {
-        int x;
-        cin >> x;
+    void dfs(int u, int p) {
+        low[u] = tin[u] = timer++;
+        for (int v : adj[u]) {
+            if (v == p) continue;
+            if (tin[v] != -1) {
+                low[u] = min(low[u], tin[v]);
+            } else {
+                dfs(v, u);
+                low[u] = min(low[u], low[v]);
+                if (low[v] > tin[u]) {
+                    ans.push_back({u, v});
+                }
+            }
+        }
     }
-    for (int i = 0; i < m; i++) {
-        int r;
-        cin >> r;
+    vector<vector<int>> criticalConnections(int n, vector<vector<int>>& connections) {
+        for (auto c : connections) {
+            adj[c[0]].push_back(c[1]);
+            adj[c[1]].push_back(c[0]);
+        }
+        tin = vector<int>(n, -1);
+        vis = vector<int>(n, 0);
+        low = vector<int>(n, -1);
+        dfs(0, -1);
+        return ans;
     }
-    cout << endl;
-}
-
-
-
-
-
+};
