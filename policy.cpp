@@ -8,6 +8,7 @@ using namespace std;
 
 
 #define MAINRET(x) in##x
+#define what_is(x) cout << #x << " is " << x << endl;
 #define LL long long
 
 void solve();
