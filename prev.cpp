@@ -1,85 +1,39 @@
-#include <bits/stdc++.h>
-
-using namespace std;
-
-#define MAINRET(x) in##x
-#define what_is(x) cout << #x << " is " << x << endl;
-#define LL long long
-
-void solve();
-
-MAINRET(t) main(void) {
-    std::cin.tie(nullptr);
-    std::cin.sync_with_stdio(false);
-
-        solve();
-}
-
-#define INF numeric_limits<LL>::max() / 2
-#define NINF -INF
-
-const LL MX = 2 * 1e5;
-//const LL MOD = 1e7;
-
-LL n, q, t[4*MX];
-vector<LL> a;
-
-void build(vector<LL> &a, LL v, LL tl, LL tr) {
-    if (tl == tr) {
-        t[v] = a[tl];
-    } else {
-        LL tm = (tl + tr) / 2;
-        build(a, v*2, tl, tm);
-        build(a, v*2+1, tm+1, tr);
-        t[v] = t[v*2] + t[v*2+1];
-    }
-}
-
-LL query(LL v, LL tl, LL tr, LL l, LL r) {
-    if (l > r) 
-        return 0;
-    if (l == tl && r == tr) {
-        return t[v];
-    }
-    LL tm = (tl + tr) / 2;
-    return query(v*2, tl, tm, l, min(r, tm)) +
-               query(v*2+1, tm+1, tr, max(l, tm+1), r);
-}
-
-void update(LL v, LL tl, LL tr, LL pos, LL new_val) {
-    if (tl == tr) {
-        t[v] = new_val;
-    } else {
-        LL tm = (tl + tr) / 2;
-        if (pos <= tm)
-            update(v*2, tl, tm, pos, new_val);
-        else
-            update(v*2+1, tm+1, tr, pos, new_val);
-        t[v] = t[v*2] + t[v*2+1];
-    }
-}
-
-void solve() {
-    cin >> n >> q;
-    LL x;
-    for (LL i = 0; i < n; i++) {
-        cin >> x;
-        a.push_back(x);
-    }
-    build(a, 1, 0, n-1);
-    for (LL i = 0; i < q; i++) {
-        LL a, b, c;
-        what_is(a);
-        cin >> a >> b >> c;
-        if (a == 1) {
-            update(1, 0, n-1, b-1, c);
-        } else {
-            cout << query(1, 0, n-1, b-1, c-1) << '\n';
+class Solution {
+public:
+    const static int MX = (int)20;
+    int rev[MX];
+    int minNumberOfSemesters(int n, vector<vector<int>>& relations, int k) {
+        for (auto& rel : relations) {
+            rev[rel[1]-1] |= 1 << (rel[0]-1);
         }
+        int LG = 1 << n;
+        int INF = (int)1e9;
+        vector<int> dp(LG, INF); // dp[i]: min sems to reach mask i
+        dp[0] = 0;
+        for (int mask = 0; mask < LG; mask++) {
+            // note: when we reach mask, it should already be optimal
+            if (dp[mask] == INF) continue;
+
+            int can_study = 0; // bitmask of courses study-able
+            for (int i = 0; i < n; i++) {
+                // if course not studied yet and all prereqs completed
+                if (!(mask & (1 << i)) && (mask & rev[i]) == rev[i]) { 
+                    can_study |= (1 << i);
+                }
+            }
+
+            if (__builtin_popcount(can_study) <= k) {
+                dp[mask | can_study] = min(dp[mask | can_study], dp[mask] + 1);
+            } else {
+                // Trick to iterate through all combinations of positive bits of
+                // can_study - just & with can_study and decrement.
+                for (int comb = can_study; comb; comb = (comb - 1) & can_study) {
+                    if (__builtin_popcount(comb) <= k) {
+                        dp[mask | comb] = min(dp[mask | comb], dp[mask] + 1);
+                    }
+                }
+            }
+        }
+        return dp.back();
     }
-}
-
-
-
-
-
+};
