@@ -1,33 +1,53 @@
-class Solution {
-public:
-    int minCapability(vector<int>& nums, int k) {
-        // boils down to find the kth min out of numbers which aren't adjacent.
-        int n = nums.size();
-        vector<array<int,2>> v;
-        for (int i = 0; i < n; i++) {
-            v.push_back({nums[i], i});
-        }
-        sort(v.begin(), v.end());
-        int lo = 0;
-        int hi = n-1;
-        int ans = INT_MAX;
-        while (lo <= hi) {
-            int ct = 0;
-            vector<int> vis(n+1, 0);
-            int mid = lo + (hi - lo)/2;
-            for (int i = n-1; i >= 0; i--) {
-                if (!vis[i+1] && nums[i] <= v[mid][0]) {
-                    ct++;
-                    vis[i] = 1;
-                }
-            }
-            if (ct >= k) {
-                ans = min(ans, v[mid][0]);
-                hi = mid-1;
-            } else {
-                lo = mid+1;
-            }
-        }
-        return ans;
+#include <bits/stdc++.h>
+
+using namespace std;
+
+#define MAINRET(x) in##x
+#define what_is(x) cout << #x << " is " << x << endl;
+#define LL long long
+
+void solve();
+
+MAINRET(t) main(void) {
+    std::cin.tie(nullptr);
+    std::cin.sync_with_stdio(false);
+    LL t;
+    cin >> t;
+    while (t--)
+        solve();
+}
+
+#define INF numeric_limits<LL>::max() / 2
+const LL MX = 5 * 1e6;
+//const LL MOD = 1e7;
+
+int n;
+
+/*
+
+*/
+
+void solve() {
+    cin >> n;
+    if (n == 1) {
+        cout << 1 << '\n';
+        return;
+    } else if (n % 2 == 1) {
+        cout << -1 << '\n';
+        return;
+    } 
+    //int odds = n-1;
+    int odds = 1;;
+    int evens = 2;
+    for (int i = 0; i < n/2; i++) {
+        cout << evens << ' ' << odds << ' ';
+        odds = (odds + 2)% n;
+        evens += 2;
     }
-};
+    cout << '\n';
+}
+
+
+
+
+
