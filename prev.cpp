@@ -18,33 +18,47 @@ MAINRET(t) main(void) {
 }
 
 #define INF numeric_limits<LL>::max() / 2
-const LL MX = 5 * 1e6;
+const LL MX = 2001;
 //const LL MOD = 1e7;
 
-int n;
+int n, m, vis[MX], deg[MX], iscyc, orig;
+vector<int> adj[MX];
 
 /*
 
 */
 
-void solve() {
-    cin >> n;
-    if (n == 1) {
-        cout << 1 << '\n';
+void dfs(int u) {
+    if (orig == u) {
+        iscyc = 1;
         return;
-    } else if (n % 2 == 1) {
-        cout << -1 << '\n';
-        return;
-    } 
-    //int odds = n-1;
-    int odds = 1;;
-    int evens = 2;
-    for (int i = 0; i < n/2; i++) {
-        cout << evens << ' ' << odds << ' ';
-        odds = (odds + 2)% n;
-        evens += 2;
     }
-    cout << '\n';
+    if (vis[u]) return;
+    vis[u] = 1;
+    for (int v : adj[u]) {
+        if (vis[v]) continue;
+        dfs(v);
+    }
+}
+
+void solve() {
+    cin >> n >> m;
+    for (int i = 0; i < m; i++) {
+        int u, v;
+        cin >> u >> v;
+        u--; v--;
+        adj[u].push_back(v);
+        adj[v].push_back(u);
+        deg[u]++;
+        deg[v]++;
+    }
+    for (int i = 0; i < n; i++) {
+        iscyc = 0;
+        orig = i;
+        if (deg[i] >= 4) {
+            dfs(i);
+        }
+    }
 }
 
 
