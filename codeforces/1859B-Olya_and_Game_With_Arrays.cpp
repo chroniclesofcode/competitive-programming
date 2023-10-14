@@ -48,4 +48,4 @@ void solve() {
 
     cout << ans - minbig + small << '\n';
 }
-
+ 
