@@ -26,6 +26,7 @@ public:
         trie[v].end = true;
     }
 
+    // Note: search returns true if we DONT find it
     bool search(string const& s, int l, int r) {
         int v = 0;
         for (int i = l; i <= r; i++) {
