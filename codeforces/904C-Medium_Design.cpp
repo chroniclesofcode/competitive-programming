@@ -32,45 +32,28 @@ void solve() {
     #define arr array<LL,2>
     cin >> n >> m;
     map<LL, LL> seg;
-    vector<arr> a;
+    map<LL, LL> seg2;
     for (LL i = 0; i < n; i++) {
         LL l, r;
         cin >> l >> r;
         l--; r--;
-        a.push_back({l, r});
-        seg[l]++;
-        seg[r+1]--; // watch out, always +1
+        if (l != 0) {
+            seg[l]++; seg[r+1]--; // always r+1
+        }
+        if (r != m-1) {
+            seg2[l]++; seg2[r+1]--;
+        }
     }
+    LL b = 0;
     LL p = 0;
-    LL b = 0, bidx = 0;
-    for (auto it = seg.begin(); it != seg.end(); it++) {
-        if (it->first >= m) break;
-        p += it->second;
-        if (p > b) {
-            b = p;
-            bidx = it->first;
-        }
-    }
-    map<LL, LL> seg2;
-    for (LL i = 0; i < a.size(); i++) {
-        if (bidx >= a[i][0] && bidx <= a[i][1]) {
-            seg2[a[i][0]]++;
-            seg2[a[i][1]+1]--;
-        }
+    for (auto it : seg) {
+        p += it.second;
+        b = max(b, p);
     }
     p = 0;
-    LL ans = b;
-    auto it = seg2.begin();
-    if (it->first > 0) {
-        cout << b << '\n';
-        return;
+    for (auto it : seg2) {
+        p += it.second;
+        b = max(b, p);
     }
-    for (auto it = seg2.begin(); it != seg2.end(); it++) {
-        if (it->first >= m) {
-            break;
-        }
-        p += it->second;
-        ans = min(ans, p);
-    }
-    cout << b - ans << '\n';
+    cout << b << '\n';
 }
