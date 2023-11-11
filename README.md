@@ -1,5 +1,5 @@
 # Competitive Programming Solutions
-Archive of my solutions to various problems in competitive programming. If it is not obvious how a certain solution works, there may be some in-code comments detailing the steps taken (not guaranteed!). If you are confused about anything or want me to write an editorial for a problem explaining how to do it, feel free to send a message (chroniclesofcode on codeforces, I am solving pretty much everyday so my response time should be fairly quick!).
+Archive of my solutions to various problems in competitive programming. If it is not obvious how a certain solution works, there may be some in-code comments detailing the steps taken (not guaranteed!). If you are confused about anything or want me to write an editorial for a problem explaining how to do it, feel free to send a message (chroniclesofcode on codeforces, or just make a pull-request...)
 
 Note: I have also included questions from leetcode, which is not exactly competitve programming but still 'algorithmic'.
 
