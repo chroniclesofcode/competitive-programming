@@ -18,6 +18,8 @@ MAINRET(t) main(void) {
 #define INF numeric_limits<LL>::max() / 2
 #define NINF -INF
 
+/*
+
 const LL MX = 5 * 1e6;
 const int K = 26;
 
@@ -63,10 +65,38 @@ bool search(string const& s, int l, int r) {
     return true;
 }
     
-
-/*
-
 */
+
+const static int MX = (int)1e4 * 6 * 20;
+int tr[MX][2], c[MX], idx = 1; // optional end[MX]
+
+void addt(int num, int val) {
+    int u = 1;
+    for (int i = 19; i >= 0; i--) { // usually str.size()
+        int bit = (num >> i) & 1;
+        if (!tr[u][bit]) {
+            tr[u][bit] = ++idx;
+        }
+        u = tr[u][bit];
+        c[u] += val;
+    }
+}
+
+int gett(int num) {
+    int u = 1;
+    int res = 0;
+    for (int i = 19; i >= 0; i--) {
+        int bit = !((num >> i) & 1);
+        if (tr[u][bit] && c[tr[u][bit]] > 0) {
+            u = tr[u][bit];
+            res |= (bit << i);
+        } else {
+            u = tr[u][!bit];
+            res |= (!bit << i);
+        }
+    }
+    return num^res;
+}
 
 void solve() {
 
