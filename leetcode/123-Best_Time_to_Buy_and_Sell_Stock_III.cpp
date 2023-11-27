@@ -1,30 +1,21 @@
 class Solution {
 public:
-        int hold[100001][3];
-        int free[100001][3];
+    static const int mx = (int)1e5 + 1;
+    int dp[mx][2];
     int maxProfit(vector<int>& prices) {
         int n = prices.size();   
-        hold[0][1] = -prices[0];
-
-        for (int i = 1; i < n; i++) {
-            hold[i][1] = max(hold[i-1][1], free[i-1][0] - prices[i]);
-            free[i][1] = max(free[i-1][1], hold[i-1][1] + prices[i]);
-            if (free[i-1][1] > 0) {
-                hold[i][2] = max(hold[i-1][2], free[i-1][1] - prices[i]);
-                free[i][2] = max(free[i-1][2], hold[i-1][2] + prices[i]);
-            } else {
-                if (i+1 < n) {
-                    hold[i][2] = -prices[i+1];
-                }
-            }
-            /*
-            cout << "hold[" << i << "][1] = " << hold[i][1] << endl;
-            cout << "free[" << i << "][1] = " << free[i][1] << endl;
-            cout << "hold[" << i << "][2] = " << hold[i][2] << endl;
-            cout << "free[" << i << "][2] = " << free[i][2] << endl;
-            cout << endl;
-            */
+        int msf = prices[0], mp = 0;
+        for (int i = 0; i < n; i++) {
+            mp = max(mp, prices[i] - msf);
+            msf = min(msf, prices[i]);
+            dp[i][0] = i > 0 ? max(dp[i-1][0], mp) : mp;
         }
-        return max({0, free[n-1][2], free[n-1][1]});
+        mp = 0, msf = prices[n-1];
+        for (int i = n-1; i >= 0; i--) {
+            mp = max(mp, msf - prices[i]);
+            msf = max(msf, prices[i]);
+            dp[i][1] = max(dp[i+1][1], i > 0 ? dp[i-1][0] + mp : mp);
+        }
+        return max(dp[n-1][0], dp[0][1]);
     }
 };
