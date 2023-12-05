@@ -18,30 +18,55 @@ MAINRET(t) main(void) {
 }
 
 #define INF numeric_limits<LL>::max() / 2
-const LL MX = 101;
+const LL MX = 1001;
 //const LL MOD = 1e7;
 
-int n, k, a[MX];
+int n, m[MX][MX], ans[MX];
 
 /*
 
 */
 
 void solve() {
-    cin >> n >> k;
+    cin >> n;
     for (int i = 0; i < n; i++) {
-        cin >> a[i];
-    }
-    int distinct = 0;
-    int unsorted = 0;
-    for (int i = 1; i < n; i++) {
-        if (a[i] != a[i-1]) {
-            distinct = 1;
+        for (int j = 0; j < n; j++) {
+            int x; cin >> x;
+            m[i][j] = x;
         }
-        if (a[i] < a[i-1]) unsorted = 1;
     }
-    if (k <= 1 && distinct && unsorted) cout << "NO\n";
-    else cout << "YES\n";
+    if (n == 1) {
+        cout << "YES\n1\n";
+        return;
+    }
+
+    int inf = (int)1e9+1;
+    for (int i = 0; i < n; i++) {
+        int elem = (1 << 30) - 1;
+        for (int j = 0; j < n; j++) {
+            if (i != j) {
+                for (int k = 0; k < 30; k++) {
+                    if (!((m[i][j] >> k) & 1) && (elem >> k) & 1) {
+                        elem = elem ^ (1 << k);
+                    }
+                }
+            }
+        }
+        ans[i] = elem;
+    }
+    for (int i = 0; i < n; i++) {
+        for (int j = i+1; j < n; j++) {
+            if ((ans[i]|ans[j]) != m[i][j]) {
+                cout << "NO\n";
+                return;
+            }
+        }
+    }
+    cout << "YES\n";
+    for (int i = 0; i < n; i++) {
+        cout << ans[i] << ' ';
+    }
+    cout << '\n';
 }
 
 
