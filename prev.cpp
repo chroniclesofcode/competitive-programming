@@ -18,31 +18,30 @@ MAINRET(t) main(void) {
 }
 
 #define INF numeric_limits<LL>::max() / 2
-const LL MX = 5 * 1e6;
+const LL MX = 101;
 //const LL MOD = 1e7;
 
-LL n;
+int n, k, a[MX];
 
 /*
 
 */
 
 void solve() {
-    cin >> n;
-    vector<LL> a;
-    LL oct = 0;
-    LL tot = 0;
-    for (LL i = 0; i < n; i++) {
-        LL x; cin >> x;
-        if (x == 1) oct++;
-        tot += x;
-        a.push_back(x);
+    cin >> n >> k;
+    for (int i = 0; i < n; i++) {
+        cin >> a[i];
     }
-    if (n == 1 || oct == n || tot - 2*oct < n-oct) {
-        cout << "NO\n";
-        return;
+    int distinct = 0;
+    int unsorted = 0;
+    for (int i = 1; i < n; i++) {
+        if (a[i] != a[i-1]) {
+            distinct = 1;
+        }
+        if (a[i] < a[i-1]) unsorted = 1;
     }
-    cout << "YES\n";
+    if (k <= 1 && distinct && unsorted) cout << "NO\n";
+    else cout << "YES\n";
 }
 
 
