@@ -18,37 +18,59 @@ MAINRET(t) main(void) {
 }
 
 #define INF numeric_limits<LL>::max() / 2
+#define arr array<LL, 2>
 const LL MX = 5 * 1e6;
 //const LL MOD = 1e7;
 
-int n;
+LL n, x;
 
 /*
 
 */
 
 void solve() {
-    cin >> n;
-    string s;
-    cin >> s;
-    vector<int> pref(n), suf(n);
-    int p = 0;
-    for (int i = 0; i < n; i++) {
-        if (s[i] == 'A') p++;
-        pref[i] = p;
+    cin >> n >> x;
+    vector<LL> a(n), b(n), ans(n, -1);
+    vector<arr> q;
+    for (LL i = 0; i < n; i ++) {
+        LL tmp; cin >> tmp;
+        a[i] = tmp;
+        q.push_back({ tmp, i });
     }
-    p = 0;
-    for (int i = n-1; i >= 0; i--) {
-        if (s[i] == 'B') p++;
-        suf[i] = p;
+    sort(q.begin(), q.end());
+    for (LL i = 0; i < n; i++) {
+        LL tmp; cin >> tmp;
+        b[i] = tmp;
     }
-    int ans = 0;
-    for (int i = 0; i < n-1; i++) {
-        if (pref[i] > 0 && suf[i+1] > 0) {
-            ans++;
+    sort(b.begin(), b.end());
+    LL ct = 0;
+    LL sz = q.size();
+    LL mark = sz-1;
+    LL ptr = x-1;
+    for (LL i = sz-1; i >= 0; i--) {
+        if (ct >= x) {
+            break;
         }
+        if (ptr < 0 || q[i][0] <= b[ptr]) {
+            cout << "NO\n"; return;
+        }
+        ans[q[i][1]] = b[ptr];
+        ptr--;
+        ct++;
+        mark--;
     }
-    cout << ans << '\n';
+    ptr = n-1;
+    for (LL i = mark; i >= 0; i--) {
+        if (q[i][0] > b[ptr] || ptr < 0) {
+            cout << "NO\n"; return;
+        }
+        ans[q[i][1]] = b[ptr--];
+    }
+    cout << "YES\n";
+    for (auto e : ans) {
+        cout << e << ' ';
+    }
+    cout << '\n';
 }
 
 
