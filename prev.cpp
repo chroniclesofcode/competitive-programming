@@ -29,16 +29,26 @@ int n;
 
 void solve() {
     cin >> n;
-    vector<int> a;
+    string s;
+    cin >> s;
+    vector<int> pref(n), suf(n);
+    int p = 0;
     for (int i = 0; i < n; i++) {
-        int x; cin >> x;
-        a.push_back(x);
+        if (s[i] == 'A') p++;
+        pref[i] = p;
     }
-    if (a[0] == 1) {
-        cout << "YES\n";
-    } else {
-        cout << "NO\n";
+    p = 0;
+    for (int i = n-1; i >= 0; i--) {
+        if (s[i] == 'B') p++;
+        suf[i] = p;
     }
+    int ans = 0;
+    for (int i = 0; i < n-1; i++) {
+        if (pref[i] > 0 && suf[i+1] > 0) {
+            ans++;
+        }
+    }
+    cout << ans << '\n';
 }
 
 
