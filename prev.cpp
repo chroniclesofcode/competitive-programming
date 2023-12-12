@@ -1,64 +1,21 @@
-#include <bits/stdc++.h>
-
-using namespace std;
-
-#define MAINRET(x) in##x
-#define what_is(x) cout << #x << " is " << x << endl;
-#define LL long long
-
-void solve();
-
-MAINRET(t) main(void) {
-    std::cin.tie(nullptr);
-    std::cin.sync_with_stdio(false);
-    LL t;
-    cin >> t;
-    while (t--)
-        solve();
-}
-
-#define INF numeric_limits<LL>::max() / 2
-const LL MX = (int)1e5+1;
-//const LL MOD = 1e7;
-
-int n;
-LL pref[MX];
-/*
-
-*/
-
-void solve() {
-    cin >> n;
-    vector<int> a, b;
-    for (int i = 0; i < n; i++) {
-        int x; cin >> x;
-        b.push_back(x);
-        a.push_back(x);
-    }
-    unordered_map<int, int> m;
-    sort(a.begin(), a.end());
-    LL p = a[0];
-    int j = 0;
-    for (int i = 1; i < n; i++) {
-        if (p < a[i]) {
-            while (j < i) {
-                m[a[j]] = i-1;
-                j++;
-            }
+class Solution {
+public:
+    static constexpr int mx = (int)1e4 + 5;
+    double dp[mx];
+    double new21Game(int n, int k, int maxPts) {
+        dp[0] = 1.0;
+        dp[1] = -1.0;
+        double run = 0;
+        for (int i = 0; i < k; i++) {
+            run += dp[i];
+            if (i+1 <= n) dp[i+1] += run / maxPts;
+            if (i+maxPts+1 <= n) dp[i+maxPts+1] -= run / maxPts;
         }
-        p += a[i];
+        double ans = 0;
+        for (int i = k; i <= n; i++) {
+            run += dp[i];
+            ans += run;
+        }
+        return ans;
     }
-    while (j < n) {
-        m[a[j]] = n-1;
-        j++;
-    }
-    for (int i = 0; i < n; i++) {
-        cout << m[b[i]] << ' ';
-    }
-    cout << '\n';
-}
-
-
-
-
-
+};
