@@ -18,39 +18,44 @@ MAINRET(t) main(void) {
 }
 
 #define INF numeric_limits<LL>::max() / 2
-const LL MX = 5 * 1e6;
+const LL MX = (int)1e5+1;
 //const LL MOD = 1e7;
 
 int n;
-vector<vector<int>> dirs = {{1,1},{-1,1},{1,-1},{-1,-1}};
+LL pref[MX];
+/*
+
+*/
 
 void solve() {
-    int a, b, xk, yk, xq, yq;
-    cin >> a >> b >> xk >> yk >> xq >> yq;
-    int ans = 0;
-    vector<array<int,2>> v;
-    for (auto d : dirs) {
-        int nx = xk + a*d[0], ny = yk + b*d[1];
-        int hx = xk + b*d[0], hy = yk + a*d[1];
-        v.push_back({nx,ny});
-        if (hx != nx && hy != ny)
-            v.push_back({hx,hy});
-        
+    cin >> n;
+    vector<int> a, b;
+    for (int i = 0; i < n; i++) {
+        int x; cin >> x;
+        b.push_back(x);
+        a.push_back(x);
     }
-    for (auto e : v) {
-        int nx = e[0], ny = e[1];
-        for (auto g : dirs) {
-            if (nx + a*g[0] == xq && ny + b*g[1] == yq) {
-                ans++;
-                break;
-            }
-            if (nx + b*g[0] == xq && ny + a*g[1] == yq) {
-                ans++;
-                break;
+    unordered_map<int, int> m;
+    sort(a.begin(), a.end());
+    LL p = a[0];
+    int j = 0;
+    for (int i = 1; i < n; i++) {
+        if (p < a[i]) {
+            while (j < i) {
+                m[a[j]] = i-1;
+                j++;
             }
         }
+        p += a[i];
     }
-    cout << ans << '\n';
+    while (j < n) {
+        m[a[j]] = n-1;
+        j++;
+    }
+    for (int i = 0; i < n; i++) {
+        cout << m[b[i]] << ' ';
+    }
+    cout << '\n';
 }
 
 
