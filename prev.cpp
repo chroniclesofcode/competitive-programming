@@ -1,21 +1,22 @@
 class Solution {
 public:
-    static constexpr int mx = (int)1e4 + 5;
-    double dp[mx];
-    double new21Game(int n, int k, int maxPts) {
-        dp[0] = 1.0;
-        dp[1] = -1.0;
-        double run = 0;
-        for (int i = 0; i < k; i++) {
-            run += dp[i];
-            if (i+1 <= n) dp[i+1] += run / maxPts;
-            if (i+maxPts+1 <= n) dp[i+maxPts+1] -= run / maxPts;
+    static constexpr int mx = (int)1e5 + 1;
+    static constexpr int inf = (int)1e9 + 1;
+    int minOperations(vector<int>& t, vector<int>& arr) {
+        unordered_map<int, int> m;
+        for (int i = 0; i < t.size(); i++) {
+            m[t[i]] = i;
         }
-        double ans = 0;
-        for (int i = k; i <= n; i++) {
-            run += dp[i];
-            ans += run;
+        vector<int> arridx;
+        for (int i = 0; i < arr.size(); i++) {
+            if (m.count(arr[i])) arridx.push_back(m[arr[i]]);
         }
-        return ans;
+        vector<int> sz;
+        for (int i = 0; i < arridx.size(); i++) {
+            auto it = lower_bound(sz.begin(), sz.end(), arridx[i]);
+            if (it == sz.end()) sz.push_back(arridx[i]);
+            else *it = arridx[i];
+        }
+        return t.size() - sz.size();
     }
 };
