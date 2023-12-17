@@ -20,36 +20,46 @@ MAINRET(t) main(void) {
 #define INF numeric_limits<LL>::max() / 2
 const LL MX = 5 * 1e6;
 //const LL MOD = 1e7;
-#define arr array<LL,2>
+
 int n;
+
 /*
 
 */
 
 void solve() {
     cin >> n;
-    vector<arr> v;
+    vector<int> a;
     for (int i = 0; i < n; i++) {
-        int a, b;
-        cin >> a >> b;
-        v.push_back({a, b});
+        int x; cin >> x;
+        a.push_back(x);
     }
-   
-    sort(v.begin(), v.end(), greater<arr>());
-    LL prev = -1;
-    int ct = 0;
-    LL ans = 0;
-    for (auto e : v) {
-        if (e[0] == prev && ct == prev) continue;
-        if (e[0] != prev) {
-            prev = e[0];
-            ct = 0;
+    if (a.back() == 1) {
+        cout << "NO\n";
+        return;
+    }
+    cout << "YES\n";
+    int zero = 0;
+    int one = 0;
+    for (int i = n-1; i >= 0; i--) {
+        if (a[i] == 1) {
+            cout << 0 << ' ';
+            one++;
+            continue;
         }
-        ans += e[1];
-        ct++;
-        prev = e[0];
+        if (one > 0) {
+            cout << one << ' ';
+            one = 0;
+        }
+        if (i > 0 && a[i-1] == 1) {
+            continue;
+        }
+        cout << 0 << ' ';
     }
-    cout << ans << '\n';
+    if (one > 0) {
+        cout << one;
+    }
+    cout << '\n';
 }
 
 
