@@ -15,23 +15,21 @@ MAINRET(t) main(void) {
         solve();
 }
 
-#define INF numeric_limits<LL>::max() / 2
-#define NINF -INF
+constexpr int INF = (int)1e9 + 100;
+constexpr LL LINF = LLONG_MAX / 2;
+constexpr LL MX = 3 * 1e5;
+constexpr int MD = (int)1e9 + 7;
 
-const LL MX = 5 * 1e5;
-//const LL MOD = 1e7;
+int n, m, k;
 
-int n;
-
-/*
-
-*/
 
 void solve() {
 
 }
 
+/*
 
+*/
 
 
 

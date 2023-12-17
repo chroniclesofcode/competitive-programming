@@ -15,11 +15,11 @@ MAINRET(t) main(void) {
         solve();
 }
 
-#define INF numeric_limits<LL>::max() / 2
-#define NINF -INF
-
-const LL MX = 2 * 1e5;
-//const LL MOD = 1e7;
+constexpr int INF = (int)1e9 + 100;
+constexpr LL LINF = LLONG_MAX / 2;
+constexpr int NINF = -INF;
+constexpr LL MX = 2 * 1e5;
+constexpr int MD = (int)1e9 + 7;
 
 LL n, q, t[4*MX], lazy[4*MX];
 vector<LL> a;
@@ -81,7 +81,9 @@ void solve() {
     build(a, 1, 0, n-1);
 }
 
+/*
 
+*/
 
 
 

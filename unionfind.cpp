@@ -15,9 +15,11 @@ MAINRET(t) main(void) {
         solve();
 }
 
-#define INF numeric_limits<LL>::max() / 2
-const LL MX = 5 * 1e6;
-//const LL MOD = 1e7;
+constexpr int INF = (int)1e9 + 100;
+constexpr LL LINF = LLONG_MAX / 2;
+constexpr int NINF = -INF;
+constexpr LL MX = 3 * 1e5;
+constexpr int MD = (int)1e9 + 7;
 
 int sz[MX];
 int grp[MX]; 
@@ -42,11 +44,7 @@ void Union(int a, int b) {
 
 }
 
-int n;
-
-/*
-
-*/
+int n, m, k;
 
 void solve() {
     cin >> n;
@@ -55,6 +53,10 @@ void solve() {
     }
 
 }
+
+/*
+
+*/
 
 
 

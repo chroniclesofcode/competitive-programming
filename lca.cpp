@@ -15,20 +15,18 @@ MAINRET(t) main(void) {
         solve();
 }
 
-#define INF numeric_limits<LL>::max() / 2
-#define NINF -INF
-
-const LL MX = 5 * 1e5;
-//const LL MOD = 1e7;
+constexpr int INF = (int)1e9 + 100;
+constexpr LL LINF = LLONG_MAX / 2;
+constexpr int NINF = -INF;
+constexpr LL MX = 3 * 1e5;
+constexpr int MD = (int)1e9 + 7;
 
 int timer = 1;
 int n, q, tin[MX], tout[MX], LG;
 vector<int> adj[MX];
 vector<vector<int>> up;
 
-/*
 
-*/
 void dfs(int u, int p) {
     tin[u] = ++timer;
     up[u][0] = p;
@@ -75,7 +73,9 @@ void solve() {
 
 }
 
+/*
 
+*/
 
 
 
