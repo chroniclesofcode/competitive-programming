@@ -5,6 +5,7 @@ using namespace std;
 #define MAINRET(x) in##x
 #define what_is(x) cout << #x << " is " << x << endl;
 #define LL long long
+#define arr array<int,2>
 
 void solve();
 
@@ -17,8 +18,7 @@ MAINRET(t) main(void) {
         solve();
 }
 
-constexpr int INF = (int)1e9 + 100;
-constexpr LL LINF = LLONG_MAX / 2;
+constexpr int INF = std::numeric_limits<int>::max() / 2;
 constexpr int NINF = -INF;
 constexpr LL MX = 3 * 1e5;
 constexpr int MD = (int)1e9 + 7;

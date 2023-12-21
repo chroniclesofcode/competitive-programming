@@ -15,33 +15,43 @@ MAINRET(t) main(void) {
         solve();
 }
 
-constexpr LL INF = (LL)1e9 + 100;
+constexpr int INF = (int)1e9 + 100;
 constexpr LL LINF = LLONG_MAX / 2;
 constexpr LL MX = 3 * 1e5;
-constexpr LL MD = (LL)1e9 + 7;
+constexpr int MD = 998244353;
+int n, m, k;
 
-LL n, m, k;
-LL nums[MX];
-LL dp[MX];
+int dp[MX], lodd[MX], rodd[MX], leven[MX], reven[MX];
 
 void solve() {
     cin >> n;
-    LL big = 0;
-    for (LL i = 0; i < n; i++) {
-        LL x; cin >> x;
-        big = max(big, x);
-        nums[x]++;
+    vector<int> a(n);
+    for (int i = 0; i < n; i++) {
+        cin >> a[i];
     }
-    for (LL i = 0; i <= big; i++) {
-        dp[i] = i * nums[i];
-        if (i >= 1) {
-            dp[i] = max(dp[i], dp[i-1]);
-        }
-        if (i >= 2) {
-            dp[i] = max(dp[i], i*nums[i] + dp[i-2]);
+    int o = 0, e = 0;
+    for (int i = 0; i < n; i++) {
+        e += a[i] % 2 == 0 ? 1 : 0;
+        o += a[i] % 2 == 1 ? 1 : 0;
+        lodd[i] = o; leven[i] = e;
+    }
+    o = 0, e = 0;
+    for (int i = n-1; i >= 0; i--) {
+        e += a[i] % 2 == 0 ? 1 : 0;
+        o += a[i] % 2 == 1 ? 1 : 0;
+        rodd[i] = o; reven[i] = e;
+    }
+    int ans = 0;
+    for (int i = 1; i < n-1; i++) {
+        if (a[i] % 2 == 0) {
+            ans += lodd[i-1] * rodd[i+1];
+            ans += leven[i-1] * reven[i+1];
+        } else {
+            ans += lodd[i-1] * reven[i+1];
+            ans += leven[i-1] * rodd[i+1];
         }
     }
-    cout << dp[big] << '\n';
+    cout << ans << '\n';
 }
 
 /*
