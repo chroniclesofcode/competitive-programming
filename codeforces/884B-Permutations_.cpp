@@ -27,29 +27,23 @@ int n, m, k;
 
 void solve() {
     cin >> n;
-    vector<int> isp(n+1, 1);
-    vector<int> tmp;
-    isp[1] = 0;
-    for (int i = 2; i <= n; i++) {
-        if (isp[i]) {
-            tmp.push_back(i);
-            if ((LL)i*i <= n) {
-                for (int j = i*i; j <= n; j += i) {
-                    isp[j] = false;
-                }
-            }
-        }
+    vector<int> ans(n, -1);
+    if (n == 1) {
+        cout << "1\n";
+        return;
+    } else if (n == 2) {
+        cout << "1 2\n";
+        return;
     }
-    
-    vector<int> ans;
-    reverse(tmp.begin(), tmp.end());
-    for (auto t : tmp) {
-        ans.push_back(t);
-    }
-    for (int i = 1; i <= n; i++) {
-        if (!isp[i]) {
-            ans.push_back(i);
+    ans[0] = 2;
+    ans[n-1] = 3;
+    ans[n/2] = 1;
+    int j = 1;
+    for (int i = 4; i <= n; i++) {
+        while (j < n && ans[j] != -1) {
+            j++;
         }
+        ans[j] = i;
     }
     for (auto a : ans) {
         cout << a << ' ';
