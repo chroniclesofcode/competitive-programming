@@ -12,9 +12,7 @@ void solve();
 MAINRET(t) main(void) {
     std::cin.tie(nullptr);
     std::cin.sync_with_stdio(false);
-    LL t;
-    cin >> t;
-    while (t--)
+
         solve();
 }
 
@@ -25,45 +23,14 @@ constexpr int MD = (int)1e9 + 7;
 
 int n, m, k;
 
+
 void solve() {
-    cin >> n;
-    vector<int> isp(n+1, 1);
-    vector<int> tmp;
-    isp[1] = 0;
-    for (int i = 2; i <= n; i++) {
-        if (isp[i]) {
-            tmp.push_back(i);
-            if ((LL)i*i <= n) {
-                for (int j = i*i; j <= n; j += i) {
-                    isp[j] = false;
-                }
-            }
-        }
-    }
-    
-    vector<int> ans;
-    reverse(tmp.begin(), tmp.end());
-    for (auto t : tmp) {
-        ans.push_back(t);
-    }
-    for (int i = 1; i <= n; i++) {
-        if (!isp[i]) {
-            ans.push_back(i);
-        }
-    }
-    for (auto a : ans) {
-        cout << a << ' ';
-    }
-    cout << '\n';
+
 }
 
 /*
 
 */
-
-
-
-
 
 
 
