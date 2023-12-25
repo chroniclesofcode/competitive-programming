@@ -27,31 +27,27 @@ LL n, m, k;
 
 void solve() {
     cin >> n;
-    vector<LL> a(n);
-    LL odd = 0, even = 0;
-    for (LL i = 0; i < n; i++) {
-        cin >> a[i];
-        if (a[i] % 2 == 1) odd = 1;
-        else even = 1;
+    vector<LL> l(n), r(n), c(n);
+    for (LL i = 0; i < n; i++) cin >> l[i];
+    for (LL i = 0; i < n; i++) cin >> r[i];
+    for (LL i = 0; i < n; i++) cin >> c[i];
+    multiset<LL> ls;
+    for (auto len : l) ls.insert(len);
+    sort(r.begin(), r.end());
+    sort(c.begin(), c.end(), greater<LL>());
+    vector<int> diffs;
+    for (int i = 0; i < r.size(); i++) {
+        auto it = ls.lower_bound(r[i]);
+        it--;
+        diffs.push_back(r[i]-*it);
+        ls.erase(it);
     }
-    if (odd && even) {
-        cout << "2\n";
-        return;
+    sort(diffs.begin(), diffs.end());
+    LL ans = 0;
+    for (int i = 0; i < n; i++) {
+        ans += diffs[i] * c[i];
     }
-    LL val = 2;
-    for (LL i = 0; i <= 60; i++) {
-        unordered_set<LL> s;
-        for (LL j = 0; j < a.size(); j++) {
-            s.insert(a[j] % val);
-            if (s.size() > 2) break;
-        }
-        if (s.size() == 2) {
-            cout << val << '\n';
-            return;
-        }
-        val *= 2;
-    }
-    cout << -1 << '\n';
+    cout << ans << '\n';
 }
 
 /*
