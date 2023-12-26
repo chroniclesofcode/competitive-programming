@@ -23,22 +23,25 @@ constexpr int MD = (int)1e9 + 7;
 
 int n, m, k;
 
+
 void solve() {
-    constexpr int LIM = 100000;
-    vector<int> is_p(LIM, true);
-    vector<int> primes;
-    is_p[0] = is_p[1] = false;
-    for (int i = 2; i < LIM; i++) {
-        if (is_p[i]) {
-            primes.push_back(i);
-            if ((LL)i*i < LIM) {
-                for (int j = i*i; j <= LIM; j += i) {
-                    is_p[j] = false;
-                }
-            }
+    cin >> n >> k;
+    vector<int> h(n);
+    for (int i = 0; i < n; i++) cin >> h[i];
+    int sum = 0;
+    int ans = INF;
+    int ret = 0;
+    for (int i = 0; i < n; i++) {
+        sum += h[i];
+        if (i >= k) {
+            sum -= h[i-k];
+        }
+        if (i >= k-1 && sum < ans) {
+            ans = sum;
+            ret = i-(k-1)+1;
         }
     }
-
+    cout << ret << '\n';
 }
 
 /*
