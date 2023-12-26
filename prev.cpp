@@ -5,6 +5,7 @@ using namespace std;
 #define MAINRET(x) in##x
 #define what_is(x) cout << #x << " is " << x << endl;
 #define LL long long
+#define arr array<int,2>
 
 void solve();
 
@@ -15,11 +16,13 @@ MAINRET(t) main(void) {
         solve();
 }
 
-constexpr int INF = (int)1e9 + 100;
-constexpr LL LINF = LLONG_MAX / 2;
+constexpr int INF = std::numeric_limits<int>::max() / 2;
 constexpr int NINF = -INF;
-constexpr LL MX = 3 * 1e5;
+constexpr LL MX = 110;
 constexpr int MD = (int)1e9 + 7;
+
+int n, m, k;
+unordered_set<int> lang[MX];
 
 int sz[MX];
 int grp[MX]; 
@@ -44,21 +47,27 @@ void Union(int a, int b) {
 
 }
 
-int n, m, k;
-
 void solve() {
-    cin >> n;
-    vector<array<int,2>> a;
+    cin >> n >> m;
     for (int i = 0; i < n; i++) {
-        int x, y; cin >> x >> y;
-        a.push_back({x,y});
         grp[i] = i;
         sz[i] = 1;
     }
+    int allzero = 1;
     for (int i = 0; i < n; i++) {
-        for (int j = 0; j < n; j++) {
-            if (i != j && (a[j][0] == a[i][0] || a[j][1] == a[i][1])) {
-                Union(i, j);
+        cin >> k;
+        if (k > 0) allzero = 0;
+        for (int j = 0; j < k; j++) {
+            int x; cin >> x;
+            lang[i].insert(x);
+        }
+    }
+    for (int i = 0; i < n; i++) {
+        for (auto l : lang[i]) {
+            for (int j = 0; j < n; j++) {
+                if (i != j && lang[j].count(l)) {
+                    Union(i, j);
+                }
             }
         }
     }
@@ -66,14 +75,12 @@ void solve() {
     for (int i = 0; i < n; i++) {
         s.insert(Find(i));
     }
-    cout << s.size() - 1 << '\n';
+    cout << s.size() - 1 + allzero << '\n';
 }
 
 /*
 
 */
-
-
 
 
 
