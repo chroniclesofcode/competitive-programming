@@ -12,9 +12,7 @@ void solve();
 MAINRET(t) main(void) {
     std::cin.tie(nullptr);
     std::cin.sync_with_stdio(false);
-    LL t;
-    cin >> t;
-    while (t--)
+
         solve();
 }
 
@@ -25,17 +23,19 @@ constexpr int MD = (int)1e9 + 7;
 
 int n, m, k;
 
-void solve() {
 
+void solve() {
+    cin >> n;
+    vector<array<int,2>> a(n);
+    for (int i = 0; i < n; i++) {
+        int x, y; cin >> x >> y;
+        a[i] = {x,y};
+    }
 }
 
 /*
 
 */
-
-
-
-
 
 
 

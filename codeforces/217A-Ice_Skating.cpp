@@ -48,11 +48,25 @@ int n, m, k;
 
 void solve() {
     cin >> n;
+    vector<array<int,2>> a;
     for (int i = 0; i < n; i++) {
+        int x, y; cin >> x >> y;
+        a.push_back({x,y});
         grp[i] = i;
         sz[i] = 1;
     }
-
+    for (int i = 0; i < n; i++) {
+        for (int j = 0; j < n; j++) {
+            if (i != j && (a[j][0] == a[i][0] || a[j][1] == a[i][1])) {
+                Union(i, j);
+            }
+        }
+    }
+    unordered_set<int> s;
+    for (int i = 0; i < n; i++) {
+        s.insert(Find(i));
+    }
+    cout << s.size() - 1 << '\n';
 }
 
 /*
