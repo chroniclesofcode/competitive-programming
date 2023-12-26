@@ -5,7 +5,7 @@ using namespace std;
 #define MAINRET(x) in##x
 #define what_is(x) cout << #x << " is " << x << endl;
 #define LL long long
-#define arr array<int,2>
+#define arr array<LL,2>
 
 void solve();
 
@@ -16,32 +16,54 @@ MAINRET(t) main(void) {
         solve();
 }
 
-constexpr int INF = std::numeric_limits<int>::max() / 2;
-constexpr int NINF = -INF;
+constexpr LL INF = std::numeric_limits<LL>::max() / 2;
+constexpr LL NINF = -INF;
 constexpr LL MX = 3 * 1e5;
-constexpr int MD = (int)1e9 + 7;
+constexpr LL MD = (LL)1e9 + 7;
 
-int n, m, k;
+LL n, m, k;
 
 
 void solve() {
     cin >> n >> k;
-    vector<int> h(n);
-    for (int i = 0; i < n; i++) cin >> h[i];
-    int sum = 0;
-    int ans = INF;
-    int ret = 0;
-    for (int i = 0; i < n; i++) {
-        sum += h[i];
+    vector<LL> a(n);
+    vector<LL> w(n);
+    vector<LL> idx(n);
+    for (LL i = 0; i < n; i++) cin >> a[i];
+    LL sum = 0, ans = 0;
+    LL first = 0, second = 0;
+    for (LL i = 0; i < n; i++) {
+        sum += a[i];
         if (i >= k) {
-            sum -= h[i-k];
+            sum -= a[i-k];
         }
-        if (i >= k-1 && sum < ans) {
-            ans = sum;
-            ret = i-(k-1)+1;
+        if (i >= k-1) {
+            if (sum > ans) {
+                ans = sum;
+                first = i-(k-1);
+            }
+            w[i] = ans;
+            idx[i] = first;
         }
     }
-    cout << ret << '\n';
+    LL ret = 0;
+    sum = 0;
+    LL r1 = 0, r2 = 0;
+    for (LL i = 0; i < n; i++) {
+        sum += a[i];
+        if (i >= k) {
+            sum -= a[i-k];
+        }
+        if (i >= 2*k-1) {
+            if (sum + w[i-k] > ret) {
+                ret = sum + w[i-k];
+                r1 = idx[i-k];
+                r2 = i-k+1;
+            }
+        }
+    }
+
+    cout << r1+1 << ' ' << r2+1 << '\n';
 }
 
 /*
