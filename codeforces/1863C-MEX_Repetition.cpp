@@ -26,23 +26,30 @@ constexpr int MD = (int)1e9 + 7;
 int n, m, k;
 
 void solve() {
-    cin >> n;
+    cin >> n >> k;
     vector<int> a(n);
-    vector<int> dp(n+1);
-    unordered_map<int, int> idx;
+    unordered_map<int,int> m;
     for (int i = 0; i < n; i++) {
         cin >> a[i];
-        dp[a[i]] = 1;
-        idx[a[i]] = i;
+        m[a[i]] = 1;
     }
-    int ans = 0;
-    for (int i = 1; i < n; i++) {
-        if (idx[i] > idx[i+1]) {
-            ans++;
+    int mex = 0;
+    for (int i = 0; i <= n; i++) {
+        if (!m[i]) {
+            mex = i;
+            break;
         }
     }
-    cout << ans << '\n';
-
+    a.push_back(mex);
+    int sz = a.size();
+    int shift = k % sz;
+    int start = sz-shift;
+    if (start == sz) start = 0;
+    for (int i = 0; i < n; i++) {
+        cout << a[start] << ' ';
+        start = (start + 1) % sz;
+    }
+    cout << '\n';
 }
 
 /*
