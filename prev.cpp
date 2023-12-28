@@ -12,9 +12,7 @@ void solve();
 MAINRET(t) main(void) {
     std::cin.tie(nullptr);
     std::cin.sync_with_stdio(false);
-    LL t;
-    cin >> t;
-    while (t--)
+
         solve();
 }
 
@@ -24,54 +22,50 @@ constexpr LL MX = 3 * 1e5;
 constexpr int MD = (int)1e9 + 7;
 
 int n, m, k;
+unordered_set<int> adj[MX];
+vector<int> ans;
+int deg[MX];
+
+void dfs(int u) {
+    while (!adj[u].empty()) {
+        auto it = adj[u].begin();
+        int v = *it;
+        adj[u].erase(adj[u].find(v));
+        adj[v].erase(adj[v].find(u));
+        dfs(v);
+    }
+    ans.push_back(u);
+}
 
 void solve() {
     cin >> n >> m;
-    vector<vector<char>> board(n, vector<char>(m, '.'));
-    for (int i = 0; i < n; i++) {
-        for (int j = 0; j < m; j++) {
-            char c; cin >> c;
-            board[i][j] = c;
-        }
+    for (int i = 0; i < m; i++) {
+        int a, b; cin >> a >> b;
+        a--; b--;
+        adj[a].insert(b);
+        adj[b].insert(a);
+        deg[a]++; deg[b]++;
     }
-    auto res = board;
     for (int i = 0; i < n; i++) {
-        int ct = 0;
-        for (int j = 0; j < m; j++) {
-            if (board[i][j] == 'U') {
-                res[i][j] = ct % 2 == 0 ? 'W' : 'B';
-                res[i+1][j] = ct % 2 == 0 ? 'B' : 'W';
-                board[i][j] = '.';
-                board[i+1][j] = '.';
-                ct++;
-            }
-        }
-        if (ct % 2 == 1) {
-            cout << -1 << '\n';
+        if (deg[i] & 1) {
+            cout << "IMPOSSIBLE\n";
             return;
         }
     }
-    for (int j = 0; j < m; j++) {
-        int ct = 0;
-        for (int i = 0; i < n; i++) {
-            if (board[i][j] == 'L') {
-                res[i][j] = ct % 2 == 0 ? 'W' : 'B';
-                res[i][j+1] = ct % 2 == 0 ? 'B' : 'W';
-                board[i][j] = '.';
-                board[i][j+1] = '.';
-                ct++;
-            }
-        }
-        if (ct % 2 == 1) {
-            cout << -1 << '\n';
-            return;
-        }
+    dfs(0);
+    if (ans.size() != m+1) {
+        cout << "IMPOSSIBLE\n";
+        return;
     }
-    for (int i = 0; i < n; i++) {
-        for (int j = 0; j < m; j++) {
-            cout << res[i][j];
-        }
-        cout << '\n';
+    for (auto a : ans) {
+        cout << a+1 << ' ';
     }
+    cout << '\n';
 }
+
+/*
+
+*/
+
+
 
