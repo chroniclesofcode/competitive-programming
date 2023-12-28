@@ -26,39 +26,52 @@ constexpr int MD = (int)1e9 + 7;
 int n, m, k;
 
 void solve() {
-    cin >> n >> k;
-    vector<int> a(n);
-    unordered_map<int,int> m;
+    cin >> n >> m;
+    vector<vector<char>> board(n, vector<char>(m, '.'));
     for (int i = 0; i < n; i++) {
-        cin >> a[i];
-        m[a[i]] = 1;
-    }
-    int mex = 0;
-    for (int i = 0; i <= n; i++) {
-        if (!m[i]) {
-            mex = i;
-            break;
+        for (int j = 0; j < m; j++) {
+            char c; cin >> c;
+            board[i][j] = c;
         }
     }
-    a.push_back(mex);
-    int sz = a.size();
-    int shift = k % sz;
-    int start = sz-shift;
-    if (start == sz) start = 0;
+    auto res = board;
     for (int i = 0; i < n; i++) {
-        cout << a[start] << ' ';
-        start = (start + 1) % sz;
+        int ct = 0;
+        for (int j = 0; j < m; j++) {
+            if (board[i][j] == 'U') {
+                res[i][j] = ct % 2 == 0 ? 'W' : 'B';
+                res[i+1][j] = ct % 2 == 0 ? 'B' : 'W';
+                board[i][j] = '.';
+                board[i+1][j] = '.';
+                ct++;
+            }
+        }
+        if (ct % 2 == 1) {
+            cout << -1 << '\n';
+            return;
+        }
     }
-    cout << '\n';
+    for (int j = 0; j < m; j++) {
+        int ct = 0;
+        for (int i = 0; i < n; i++) {
+            if (board[i][j] == 'L') {
+                res[i][j] = ct % 2 == 0 ? 'W' : 'B';
+                res[i][j+1] = ct % 2 == 0 ? 'B' : 'W';
+                board[i][j] = '.';
+                board[i][j+1] = '.';
+                ct++;
+            }
+        }
+        if (ct % 2 == 1) {
+            cout << -1 << '\n';
+            return;
+        }
+    }
+    for (int i = 0; i < n; i++) {
+        for (int j = 0; j < m; j++) {
+            cout << res[i][j];
+        }
+        cout << '\n';
+    }
 }
-
-/*
-
-*/
-
-
-
-
-
-
 
