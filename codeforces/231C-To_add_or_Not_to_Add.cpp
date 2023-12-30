@@ -25,29 +25,28 @@ LL n, m, k;
 
 
 void solve() {
-    cin >> n;
+    cin >> n >> k;
     vector<LL> a(n);
-    for (LL i = 0; i < n; i++) cin >> a[i];
-    LL lo = *max_element(a.begin(), a.end());
-    LL hi = (LL)1e13;
-    LL ans = (LL)1e13;
-    LL big = lo;
-    while (lo <= hi) {
-        LL mid = lo + (hi - lo)/2;
-        bool flag = false;
-        LL diff = 0;
-        for (int i = 0; i < n; i++) {
-            diff += mid - a[i];
+    for (LL i = 0; i < n; i++) {
+        cin >> a[i];
+    }
+    sort(a.begin(), a.end());
+    LL ans = 1;
+    LL ret = a[0];
+    LL j = 0;
+    LL sum = 0;
+    for (LL i = 0; i < n; i++) {
+        sum += a[i];
+        while (j < i && a[i]*(i-j+1) - sum > k) {
+            sum -= a[j];
+            j++;
         }
-        if (diff >= mid) flag = true;
-        if (flag) {
-            hi = mid-1;
-            ans = min(ans, mid);
-        } else {
-            lo = mid+1;
+        if (i-j+1 > ans) {
+            ans = i-j+1;
+            ret = a[i];
         }
     }
-    cout << ans << '\n';
+    cout << ans << ' ' << ret << '\n';
 }
 
 /*
