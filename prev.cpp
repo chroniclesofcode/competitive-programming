@@ -25,18 +25,7 @@ int n, m, k;
 
 
 void solve() {
-    cin >> n;
-    vector<int> a(n);
-    for (int i = 0; i < n; i++) {
-        cin >> a[i]; a[i]--;
-    }
-    vector<int> lis;
-    for (auto e : a) {
-        auto it = lower_bound(lis.begin(), lis.end(), e);
-        if (it != lis.end()) *it = e;
-        else lis.push_back(e);
-    }
-    cout << lis.size() << '\n';
+
 }
 
 /*
