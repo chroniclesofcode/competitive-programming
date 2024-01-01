@@ -24,20 +24,31 @@ constexpr LL MX = 3 * 1e5;
 constexpr int MD = (int)1e9 + 7;
 
 int n, m, k;
+int dp[101][101];
 
 void solve() {
-    string s;
-    cin >> s;
-    int same = 1;
-    for (int i = 1; i < s.size(); i++) {
-        if (s[i] != s[i-1]) same = 0;
-    }
-    if (same || s.size() <= 1) {
-        cout << "-1\n";
-        return;
-    }
-    s.pop_back();
-    cout << s.size() << '\n';
+    memset(dp, 0, sizeof(dp));
+    cin >> n >> m;
+    vector<int> a(n*m);
+    for (int i = 0; i < n*m; i++) cin >> a[i];
+    int small = min(n,m);
+    int big = max(n,m);
+    sort(a.begin(), a.end());
+    // where big is in corner
+    int maxdiff = *a.rbegin() - *a.begin();
+    auto it = a.begin(); it++;
+    int second = *a.rbegin() - *it;
+    int ans = 0;
+    ans += maxdiff * ((big-1)*small);
+    ans += second * (small-1);
+
+    // where small is in corner
+    int ans2 = 0;
+    auto it2 = a.rbegin(); it2++;
+    second = *it2 - *a.begin();
+    ans2 += maxdiff * ((big-1)*small);
+    ans2 += second * (small-1);
+    cout << max(ans, ans2) << '\n';
 }
 
 /*
