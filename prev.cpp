@@ -1,37 +1,54 @@
-class Solution {
-public:
-    int maximumLength(string s) {
-        cout << s << '\n';
-        int n = s.size();
-        vector<int> ct(26, 0);
-        int longest = 1;
-        map<int, int, greater<int>> occ[26];
-        ct[s[0]-'a']++;
-        occ[s[0]-'a'][1]++;
-        for (int i = 1; i < n; i++) {
-            int c = s[i] - 'a';
-            if (s[i] == s[i-1]) {
-                longest++;
-            } else {
-                longest = 1;
-            }
-            ct[c] = max(ct[c], longest);
-            occ[c][longest]++;
+#include <bits/stdc++.h>
+
+using namespace std;
+
+#define MAINRET(x) in##x
+#define what_is(x) cout << #x << " is " << x << endl;
+#define LL long long
+#define arr array<int,2>
+
+void solve();
+
+MAINRET(t) main(void) {
+    std::cin.tie(nullptr);
+    std::cin.sync_with_stdio(false);
+
+        solve();
+}
+
+constexpr int INF = std::numeric_limits<int>::max() / 2;
+constexpr int NINF = -INF;
+constexpr LL MX = 3 * 1e5;
+constexpr int MD = (int)1e9 + 7;
+
+int n, m, k;
+
+vector<int> z_function(string s) {
+    int n = s.size();
+    vector<int> z(n);
+    int l = 0, r = 0;
+    for(int i = 1; i < n; i++) {
+        if(i < r) {
+            z[i] = min(r - i, z[i - l]);
         }
-        int ans = -1;
-        for (int i = 0; i < 26; i++) {
-            auto top = occ[i].begin();
-            int tmp = top->first >= 3 ? top->first - 2 : -1;
-            int cumu = 0;
-            for (auto& it : occ[i]) {
-                cumu += it.second;
-                if (cumu >= 3) {
-                    tmp = max(tmp, it.first);
-                    break;
-                }
-            }
-            ans = max(ans, tmp);
+        while(i + z[i] < n && s[z[i]] == s[i + z[i]]) {
+            z[i]++;
         }
-        return ans;
+        if(i + z[i] > r) {
+            l = i;
+            r = i + z[i];
+        }
     }
-};
+    return z;
+}
+
+void solve() {
+
+}
+
+/*
+
+*/
+
+
+
