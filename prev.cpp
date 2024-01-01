@@ -12,7 +12,9 @@ void solve();
 MAINRET(t) main(void) {
     std::cin.tie(nullptr);
     std::cin.sync_with_stdio(false);
-
+    LL t;
+    cin >> t;
+    while (t--)
         solve();
 }
 
@@ -23,32 +25,28 @@ constexpr int MD = (int)1e9 + 7;
 
 int n, m, k;
 
-vector<int> z_function(string s) {
-    int n = s.size();
-    vector<int> z(n);
-    int l = 0, r = 0;
-    for(int i = 1; i < n; i++) {
-        if(i < r) {
-            z[i] = min(r - i, z[i - l]);
-        }
-        while(i + z[i] < n && s[z[i]] == s[i + z[i]]) {
-            z[i]++;
-        }
-        if(i + z[i] > r) {
-            l = i;
-            r = i + z[i];
-        }
-    }
-    return z;
-}
-
 void solve() {
-
+    string s;
+    cin >> s;
+    int same = 1;
+    for (int i = 1; i < s.size(); i++) {
+        if (s[i] != s[i-1]) same = 0;
+    }
+    if (same || s.size() <= 1) {
+        cout << "-1\n";
+        return;
+    }
+    s.pop_back();
+    cout << s.size() << '\n';
 }
 
 /*
 
 */
+
+
+
+
 
 
 
