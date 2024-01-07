@@ -18,47 +18,42 @@ MAINRET(t) main(void) {
 
 constexpr int INF = std::numeric_limits<int>::max() / 2;
 constexpr int NINF = -INF;
-constexpr LL MX = 3 * 1e5;
+constexpr LL MX = 1 * 1e5 + 1;
 constexpr int MD = (int)1e9 + 7;
 
 int n, m, k;
+vector<int> ans;
+vector<array<int,2>> adj[MX];
+int vis[MX];
 
-vector<string> gd(string &s) {
-    int sz = s.size();
-    vector<string> ret;
-    for (int i = 0; i < sz/2; i++) {
-        if (sz % (i+1) == 0) {
-            string pref = s.substr(0, i+1);
-            bool flag = true;
-            for (int j = i+1; j < sz; j += i+1) {
-                if (pref != s.substr(j, i+1)) {
-                    flag = false; break;
-                }
-            }
-            if (flag) {
-                ret.push_back(pref);
-            }
-        }
+bool dfs(int u, int p, bool problem) {
+    bool flag = false;
+    for (auto e : adj[u]) {
+        int v = e[0], t = e[1];
+        if (v == p) continue;
+        flag |= dfs(v, u, t);
     }
-    ret.push_back(s);
-    return ret;
+    if (!flag && problem) {
+        ans.push_back(u);
+        return true;
+    }
+    return flag;
 }
 
 void solve() {
-    string s1, s2;
-    cin >> s1 >> s2;
-    if (s1.size() == s2.size() && s1 == s2) {
-        vector<string> ans = gd(s1);
-        cout << ans.size() << '\n';
-        return;
+    cin >> n;
+    for (int i = 0; i < n-1; i++) {
+        int x,y,t; cin >> x >> y >> t;
+        x--; y--;
+        adj[x].push_back({y,t==2});
+        adj[y].push_back({x,t==2});
     }
-    vector<string> d1 = gd(s1);
-    vector<string> d2 = gd(s2);
-    sort(d1.begin(), d1.end());
-    sort(d2.begin(), d2.end());
-    vector<string> ans;
-    set_intersection(d1.begin(), d1.end(), d2.begin(), d2.end(), back_inserter(ans));
+    dfs(0, -1, false);
     cout << ans.size() << '\n';
+    for (auto a : ans) {
+        cout << a+1 << ' ';
+    }
+    cout << '\n';
 }
 
 /*
