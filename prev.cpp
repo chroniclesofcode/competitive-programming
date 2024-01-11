@@ -5,7 +5,7 @@ using namespace std;
 #define MAINRET(x) in##x
 #define what_is(x) cout << #x << " is " << x << endl;
 #define LL long long
-#define arr array<int,2>
+#define arr array<LL,2>
 
 void solve();
 
@@ -16,51 +16,51 @@ MAINRET(t) main(void) {
         solve();
 }
 
-constexpr int INF = std::numeric_limits<int>::max() / 2;
-constexpr int NINF = -INF;
-constexpr LL MX = 3 * 1e5;
-constexpr int MD = (int)1e9 + 7;
+constexpr LL INF = std::numeric_limits<LL>::max() / 2;
+constexpr LL NINF = -INF;
+constexpr LL MX = 1 * 1e5 + 10;
+constexpr LL MD = (LL)1e9 + 7;
 
-int n, m, k, v;
-int cost[10];
+LL n, m, k;
+LL color[MX];
+LL diff[MX];
+vector<LL> adj[MX];
+unordered_map<LL, unordered_map<LL, LL>> mp;
 
 void solve() {
-    cin >> v;
-    int small = INF;
-    int sd = 0;
-    for (int i = 1; i <= 9; i++) {
-        cin >> cost[i];
-        if (cost[i] < small) {
-            small = cost[i];
-            sd = i;
+    cin >> n >> m;
+    LL big = 0;
+    LL small = INF;
+    for (LL i = 1; i <= n; i++) {
+        cin >> color[i];
+        adj[color[i]].push_back(i);
+        big = max(big, color[i]);
+        small = min(small, color[i]);
+    }
+    for (LL i = 0; i < m; i++) {
+        LL a, b;
+        cin >> a >> b;
+        if (color[a] != color[b] && mp[color[a]][color[b]] == 0) {
+            diff[color[a]]++;
+            diff[color[b]]++;
+            mp[color[a]][color[b]] = 1;
+            mp[color[b]][color[a]] = 1;
         }
     }
-    if (small > v) {
-        cout << -1 << '\n';
-        return;
-    }
-    int numdig = v/small;
-    v -= small*numdig;
-    vector<int> ans(numdig, sd);
-    for (int i = 0; i < numdig; i++) {
-        for (int j = 9; j >= 1; j--) {
-            if (v + small - cost[j] >= 0) {
-                ans[i] = j;
-                v = v + small - cost[j];
-                break;
-            }
+    LL ret = small;
+    LL ans = -1;
+    for (LL i = small; i <= big; i++) {
+        if (diff[i] > ans) {
+            ans = diff[i];
+            ret = i;
         }
     }
-    for (int i = 0; i < numdig; i++) {
-        cout << ans[i];
-    }
-    cout << '\n';
+    cout << ret << '\n';
+    
 }
 
 /*
-   we want as many digits as possible -> use the smallest cost
-   to form the maximum amount of digits. Now, the number must
-   have that many digits. Then, just test all the cases.
+
 */
 
 
