@@ -1,53 +1,129 @@
-class Solution {
-public:
-    vector<int> z_function(string s, int sz) {
-        int n = s.size();
-        vector<int> z(n);
-        int l = 0, r = 0;
-        for(int i = 1; i < n; i++) {
-            if(i < r) {
-                z[i] = min(r - i, z[i - l]);
-            }
-            while(i + z[i] < n && s[z[i]] == s[i + z[i]]) {
-                z[i]++;
-            }
-            if(i + z[i] > r) {
-                l = i;
-                r = i + z[i];
-            }
+#include <bits/stdc++.h>
+
+using namespace std;
+
+#define MAINRET(x) in##x
+#define what_is(x) cout << #x << " is " << x << endl;
+#define LL long long
+#define arr array<int,2>
+
+void solve();
+
+MAINRET(t) main(void) {
+    std::cin.tie(nullptr);
+    std::cin.sync_with_stdio(false);
+
+        solve();
+}
+
+constexpr int INF = std::numeric_limits<int>::max() / 2;
+constexpr int NINF = -INF;
+constexpr LL MX = 3 * 1e5;
+constexpr int MD = (int)1e9 + 7;
+
+int n, m, k;
+
+
+void solve() {
+    cin >> n;
+    vector<int> a(n);
+    for (int i = 0; i < n; i++) cin >> a[i];
+    vector<int> ans;
+    bool flag = false;
+    int tot = 0;
+    int threecount = 0;
+    for (int i = 0; i < n; i++) {
+        if (a[i] == 0) {
+            ans.push_back(0);
+            flag = true;
+        } else if (a[i] == 3) {
+            threecount++;
         }
-        vector<int> ret;
-        for (int i = sz; i < z.size(); i++) {
-            if (z[i] == sz) {
-                ret.push_back(i - (sz+1));
-            }
-        }
-        return ret;
+        tot += a[i];
     }
-    vector<int> beautifulIndices(string s, string a, string b, int k) {
-        string tmp = a + '#' + s;
-        vector<int> as = z_function(std::move(tmp), a.size());
-        string tmp2 = b + '#' + s;
-        vector<int> bs = z_function(std::move(tmp2), b.size());
-        vector<int> ans;
-        for (int i = 0; i < as.size(); i++) {
-            auto it = lower_bound(bs.begin(), bs.end(), as[i]);
-            if (it != bs.end()) {
-                int idx = *it;
-                if (abs(idx-as[i]) <= k) {
-                    ans.push_back(as[i]);
+    if (!flag) {
+        cout << "-1\n"; return;
+    }
+    sort(a.begin(), a.end());
+    a.erase(remove(a.begin(), a.end(), 0), a.end());
+    if (a.size() == 0 && ans.size() > 0) {
+        cout << 0 << '\n';
+        return;
+    }
+    if (tot % 3 == 0) {
+        for (auto e : a) {
+            ans.push_back(e);
+        }
+    } else {
+        int md = tot % 3;
+        bool fl = false, fl2 = false;
+        unordered_map<int, int> mp;
+        int ret1 = -1, ret21 = -1, ret22 = -1;
+        n = a.size();
+        int target = md;
+        for (int i = 0; i < n; i++) {
+            int val = a[i]%3;
+            if (val == target) {
+                fl = true;
+                ret1 = val;
+                break;
+            }
+            if (fl2 == false && mp[target-val]) {
+                fl2 = true;
+                ret21 = val;
+                ret22 = target-ret21;
+            } else if (fl2 == false && mp[3+target-val]) {
+                fl2 = true;
+                ret21 = val;
+                ret22 = 3+target-val;
+            }
+            mp[val] = 1;
+        }
+        if (!flag) {
+            cout << "0\n"; return;
+        }
+        if (fl) {
+            for (int i = 0; i < n; i++) {
+                if (a[i]%3 == ret1) {
+                    ret1 = -1;
                     continue;
                 }
+                ans.push_back(a[i]);
             }
-            if (it != bs.begin()) {
-                it--;
-                int idx = *it;
-                if (abs(idx-as[i]) <= k) {
-                    ans.push_back(as[i]);
+        } else if (fl2) {
+            for (int i = 0; i < n; i++) {
+                if (a[i]%3 == ret21) {
+                    ret21 = -1;
                     continue;
                 }
+                if (a[i]%3 == ret22) {
+                    ret22 = -1;
+                    continue;
+                }
+                ans.push_back(a[i]);
             }
+        } else {
+            cout << "0\n";
+            return;
         }
-        return ans;
     }
-};
+    int onlyzero = true;
+    for (auto e : ans) {
+        if (e != 0) onlyzero = false;
+    }
+    if (onlyzero) {
+        cout << 0 << '\n';
+        return;
+    }
+    for (int i = ans.size()-1; i >= 0; i--) {
+        cout << ans[i];
+    }
+    cout << '\n';
+}
+
+/*
+
+*/
+
+
+
