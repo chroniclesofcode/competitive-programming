@@ -1,47 +1,78 @@
-class Solution {
-public:
-    #define arr array<long long, 2>
-    static constexpr long long inf = (long long)1e11 + 10;
-    static constexpr int mx = (int)1e5+1;
-    vector<long long> dist1, dist2, distd;
-    vector<arr> adj[mx];
-    vector<arr> rev[mx];
-    int vis[mx];
-    void dijkstra(vector<array<long long, 2>> g[], vector<long long>& dist, int src) {
-        memset(vis, 0, sizeof(vis));
-        priority_queue<arr, vector<arr>, greater<arr>> pq;
-        pq.push({0, src});
-        dist[src] = 0;
-        while (!pq.empty()) {
-            auto [w, u] = pq.top();
-            pq.pop();
-            if (vis[u]) continue;
-            vis[u] = 1;
-            for (auto [d, v] : g[u]) {
-                if (dist[v] > w + d) {
-                    dist[v] = w + d;
-                    pq.push({dist[v], v});
-                }
-            }
+#include <bits/stdc++.h>
+
+using namespace std;
+
+#define MAINRET(x) in##x
+#define what_is(x) cout << #x << " is " << x << endl;
+#define LL long long
+#define arr array<LL,2>
+
+void solve();
+
+MAINRET(t) main(void) {
+    std::cin.tie(nullptr);
+    std::cin.sync_with_stdio(false);
+
+        solve();
+}
+
+constexpr LL INF = std::numeric_limits<LL>::max() / 2;
+constexpr LL NINF = -INF;
+constexpr LL MX = 3 * 1e5;
+constexpr LL MD = (LL)1e9 + 7;
+
+LL n, m, k;
+
+
+void solve() {
+    cin >> n;
+    vector<array<LL,2>> c;
+    for (LL i = 0; i < n; i++) {
+        LL a, b;
+        cin >> a >> b;
+        c.push_back({a,b});
+    }
+    sort(c.begin(), c.end(), [](array<LL,2> a, array<LL,2> b) {
+        return (a[0]*a[0]+a[1]*a[1]) < (b[0]*b[0]+b[1]*b[1]);
+    });
+    LL ct = 0;
+    for (auto e : c) {
+        if (e[0] == 0 || e[1] == 0) {
+            ct += 4;
+        } else {
+            ct += 6;
         }
     }
-    long long minimumWeight(int n, vector<vector<int>>& edges, int src1, int src2, int dest) {
-        dist1 = vector<long long>(n, inf);
-        dist2 = vector<long long>(n, inf);
-        distd = vector<long long>(n, inf);
-        for (auto &e : edges) {
-            adj[e[0]].push_back({e[2], e[1]});
-            rev[e[1]].push_back({e[2], e[0]});
+    cout << ct << '\n';
+    for (auto e : c) {
+        if (e[0] > 0) {
+            cout << "1 " << e[0] << " R\n";
+        } else if (e[0] < 0) {
+            cout << "1 " << -e[0] << " L\n";
         }
-        dijkstra(adj, dist1, src1);
-        dijkstra(adj, dist2, src2);
-        dijkstra(rev, distd, dest);
-        long long ans = dist1[dest] + dist2[dest];
-        ans = min(ans, dist1[src2] + dist2[dest]);
-        ans = min(ans, dist1[dest] + dist2[src1]);
-        for (int i = 0; i < n; i++) {
-            ans = min(ans, dist1[i] + dist2[i] + distd[i]);
+        if (e[1] > 0) {
+            cout << "1 " << e[1] << " U\n";
+        } else if (e[1] < 0) {
+            cout << "1 " << -e[1] << " D\n";
         }
-        return ans >= inf ? -1 : ans;
+        cout << 2 << '\n';
+        if (e[0] > 0) {
+            cout << "1 " << e[0] << " L\n";
+        } else if (e[0] < 0) {
+            cout << "1 " << -e[0] << " R\n";
+        }
+        if (e[1] > 0) {
+            cout << "1 " << e[1] << " D\n";
+        } else if (e[1] < 0) {
+            cout << "1 " << -e[1] << " U\n";
+        }
+        cout << 3 << '\n';
     }
-};
+}
+
+/*
+
+*/
+
+
+
