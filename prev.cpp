@@ -1,78 +1,33 @@
-#include <bits/stdc++.h>
+class Solution {
+public:
+    int n;
+    string target;
+    int ans = INT_MAX;
+    void bt(string& s, int start, int ct) {
+        if (start > n) return;
+        if (ct >= n+3) return;
+        if (start == n) { 
+            if (s == target)
+                ans = min(ans, ct);
+            return;
+        }
+        if (s[start] == target[start]) {
+            bt(s, start+1, ct);
+            return;
+        }
 
-using namespace std;
-
-#define MAINRET(x) in##x
-#define what_is(x) cout << #x << " is " << x << endl;
-#define LL long long
-#define arr array<LL,2>
-
-void solve();
-
-MAINRET(t) main(void) {
-    std::cin.tie(nullptr);
-    std::cin.sync_with_stdio(false);
-
-        solve();
-}
-
-constexpr LL INF = std::numeric_limits<LL>::max() / 2;
-constexpr LL NINF = -INF;
-constexpr LL MX = 3 * 1e5;
-constexpr LL MD = (LL)1e9 + 7;
-
-LL n, m, k;
-
-
-void solve() {
-    cin >> n;
-    vector<array<LL,2>> c;
-    for (LL i = 0; i < n; i++) {
-        LL a, b;
-        cin >> a >> b;
-        c.push_back({a,b});
-    }
-    sort(c.begin(), c.end(), [](array<LL,2> a, array<LL,2> b) {
-        return (a[0]*a[0]+a[1]*a[1]) < (b[0]*b[0]+b[1]*b[1]);
-    });
-    LL ct = 0;
-    for (auto e : c) {
-        if (e[0] == 0 || e[1] == 0) {
-            ct += 4;
-        } else {
-            ct += 6;
+        for (int j = start+1; j < n; j++) {
+            if (s[j] == target[start] && s[j] != target[j]) {
+                swap(s[start], s[j]);
+                bt(s, start+1, ct+1);
+                swap(s[start], s[j]);
+            }
         }
     }
-    cout << ct << '\n';
-    for (auto e : c) {
-        if (e[0] > 0) {
-            cout << "1 " << e[0] << " R\n";
-        } else if (e[0] < 0) {
-            cout << "1 " << -e[0] << " L\n";
-        }
-        if (e[1] > 0) {
-            cout << "1 " << e[1] << " U\n";
-        } else if (e[1] < 0) {
-            cout << "1 " << -e[1] << " D\n";
-        }
-        cout << 2 << '\n';
-        if (e[0] > 0) {
-            cout << "1 " << e[0] << " L\n";
-        } else if (e[0] < 0) {
-            cout << "1 " << -e[0] << " R\n";
-        }
-        if (e[1] > 0) {
-            cout << "1 " << e[1] << " D\n";
-        } else if (e[1] < 0) {
-            cout << "1 " << -e[1] << " U\n";
-        }
-        cout << 3 << '\n';
+    int kSimilarity(string s1, string s2) {
+        n = s1.size();
+        target = s2;
+        bt(s1, 0, 0);
+        return ans;
     }
-}
-
-/*
-
-*/
-
-
-
+};
