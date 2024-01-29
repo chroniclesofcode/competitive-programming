@@ -1,33 +1,25 @@
 class Solution {
 public:
-    int n;
-    string target;
-    int ans = INT_MAX;
-    void bt(string& s, int start, int ct) {
-        if (start > n) return;
-        if (ct >= n+3) return;
-        if (start == n) { 
-            if (s == target)
-                ans = min(ans, ct);
-            return;
-        }
-        if (s[start] == target[start]) {
-            bt(s, start+1, ct);
-            return;
-        }
-
-        for (int j = start+1; j < n; j++) {
-            if (s[j] == target[start] && s[j] != target[j]) {
-                swap(s[start], s[j]);
-                bt(s, start+1, ct+1);
-                swap(s[start], s[j]);
+    const static int mx = (int)1e6;
+    int minOrAfterOperations(vector<int>& nums, int k) {
+        int n = nums.size();
+        int ans = 0, ret = 0;
+        for (int i = 30; i >= 0; i--) {
+            int test = ans | (1 << i);
+            int tmp = 0, ct = 0;
+            for (auto e : nums) {
+                if (tmp == 0) tmp = e & test;
+                else tmp &= e & test;
+                if (tmp > 0) ct++;
+            }
+            if (ct <= k) {
+                ans = test;
+            } else {
+                ret |= (1 << i);
             }
         }
-    }
-    int kSimilarity(string s1, string s2) {
-        n = s1.size();
-        target = s2;
-        bt(s1, 0, 0);
-        return ans;
+        return ret;
     }
 };
+
+
