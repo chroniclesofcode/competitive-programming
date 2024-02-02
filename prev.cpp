@@ -1,29 +1,36 @@
 class Solution {
 public:
-    int run[2001];
-    int findMinimumTime(vector<vector<int>>& tasks) {
-        vector<array<int,3>> iv;
-        for (auto& t : tasks) {
-            iv.push_back({ t[1], t[0], t[2] });
-        }
-        sort(iv.begin(), iv.end());
-        int ans = 0;
-        for (int i = 0; i < iv.size(); i++) {
-            int u = iv[i][1], v = iv[i][0], dur = iv[i][2];
-            int ct = 0;
-            for (int j = v; j >= u; j--) {
-                if (ct >= dur) break;
-                if (run[j] == 1) ct++;
+    int tallestBillboard(vector<int>& rods) {
+        int n = rods.size();
+        int tot = accumulate(rods.begin(), rods.end(), 0);
+        auto dp = vector<vector<int>>(n+1, vector<int>(tot*2+1, INT_MIN));
+        for (int i = 0; i < n; i++) {
+            if (i == 0) {
+                dp[i][tot+rods[i]] = rods[i];
+                dp[i][tot-rods[i]] = 0;
+                dp[i][tot] = 0;
+                continue;
             }
-            for (int j = v; j >= u; j--) {
-                if (ct >= dur) break;
-                if (run[j] == 0) {
-                    run[j] = 1;
-                    ans++;
-                    ct++;
-                } 
+            for (int j = 0; j <= tot*2; j++) {
+                // ignore the rod
+                dp[i][j] = max(dp[i][j], dp[i-1][j]);
+
+                // use ith rod in left
+                if (rods[i] <= j) {
+                    dp[i][j] = max(dp[i][j], dp[i-1][j-rods[i]] + rods[i]);
+                }
+
+                // ith rod goes in other group
+                if (j + rods[i] <= tot*2) {
+                    dp[i][j] = max(dp[i][j], dp[i-1][j+rods[i]]);
+                }
             }
         }
-        return ans;
+        return dp[n-1][tot];
     }
 };
+/*
+    dp[i][j] = 0..i rods, if the difference left - right = j, where 
+    left is always larger than right - what is the highest height?
+*/
+
