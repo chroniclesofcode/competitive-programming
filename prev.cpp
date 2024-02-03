@@ -1,36 +1,39 @@
-class Solution {
-public:
-    int tallestBillboard(vector<int>& rods) {
-        int n = rods.size();
-        int tot = accumulate(rods.begin(), rods.end(), 0);
-        auto dp = vector<vector<int>>(n+1, vector<int>(tot*2+1, INT_MIN));
-        for (int i = 0; i < n; i++) {
-            if (i == 0) {
-                dp[i][tot+rods[i]] = rods[i];
-                dp[i][tot-rods[i]] = 0;
-                dp[i][tot] = 0;
-                continue;
-            }
-            for (int j = 0; j <= tot*2; j++) {
-                // ignore the rod
-                dp[i][j] = max(dp[i][j], dp[i-1][j]);
+#include <bits/stdc++.h>
 
-                // use ith rod in left
-                if (rods[i] <= j) {
-                    dp[i][j] = max(dp[i][j], dp[i-1][j-rods[i]] + rods[i]);
-                }
+using namespace std;
 
-                // ith rod goes in other group
-                if (j + rods[i] <= tot*2) {
-                    dp[i][j] = max(dp[i][j], dp[i-1][j+rods[i]]);
-                }
-            }
-        }
-        return dp[n-1][tot];
-    }
-};
+#define MAINRET(x) in##x
+#define what_is(x) cout << #x << " is " << x << endl;
+#define LL long long
+#define arr array<int,2>
+
+void solve();
+
+MAINRET(t) main(void) {
+    std::cin.tie(nullptr);
+    std::cin.sync_with_stdio(false);
+
+        solve();
+}
+
+constexpr int INF = std::numeric_limits<int>::max() / 2;
+constexpr int NINF = -INF;
+constexpr LL MX = 1 * 1e5 + 1;
+constexpr int MD = (int)1e9 + 7;
+
+int n, m, k;
+vector<int> adj[MX];
+
+void solve() {
+
+}
+
 /*
-    dp[i][j] = 0..i rods, if the difference left - right = j, where 
-    left is always larger than right - what is the highest height?
+   DFS from the starting element and find the point where
+   it enters the only cycle in the graph.
+   Then dijkstra from the chaser. See if it reaches this
+   point first or the other person.
 */
+
+
 
