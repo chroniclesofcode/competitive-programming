@@ -1,39 +1,48 @@
-#include <bits/stdc++.h>
-
-using namespace std;
-
-#define MAINRET(x) in##x
-#define what_is(x) cout << #x << " is " << x << endl;
-#define LL long long
-#define arr array<int,2>
-
-void solve();
-
-MAINRET(t) main(void) {
-    std::cin.tie(nullptr);
-    std::cin.sync_with_stdio(false);
-
-        solve();
-}
-
-constexpr int INF = std::numeric_limits<int>::max() / 2;
-constexpr int NINF = -INF;
-constexpr LL MX = 1 * 1e5 + 1;
-constexpr int MD = (int)1e9 + 7;
-
-int n, m, k;
-vector<int> adj[MX];
-
-void solve() {
-
-}
-
-/*
-   DFS from the starting element and find the point where
-   it enters the only cycle in the graph.
-   Then dijkstra from the chaser. See if it reaches this
-   point first or the other person.
-*/
-
-
-
+class Solution {
+public:
+    int count[501][501];
+    vector<vector<int>> resultGrid(vector<vector<int>>& img, int threshold) {
+        int n = img.size(), m = img[0].size();
+        vector<vector<int>> ret(n, vector<int>(m, 0));
+        for (int i = 0; i < n-2; i++) {
+            for (int j = 0; j < m-2; j++) {
+                bool flag = false;
+                for (int k = 0; k < 3; k++) {
+                    if (abs(img[i+k][j]-img[i+k][j+1]) > threshold || abs(img[i+k][j+1]-img[i+k][j+2]) > threshold) {
+                        flag = true;
+                    }
+                }
+                if (flag) continue;
+                for (int k = 0; k < 3; k++) {
+                    if (abs(img[i][j+k]-img[i+1][j+k]) > threshold || abs(img[i+1][j+k]-img[i+2][j+k]) > threshold) {
+                        flag = true;
+                    }
+                }
+                if (flag) continue;
+                int avg = 0;
+                for (int x = 0; x < 3; x++) {
+                    for (int y = 0; y < 3; y++) {
+                        avg += img[i+x][j+y];
+                    }
+                }
+                avg /= 9;
+                for (int x = 0; x < 3; x++) {
+                    for (int y = 0; y < 3; y++) {
+                        ret[i+x][j+y] += avg;
+                        count[i+x][j+y]++; 
+                    }
+                }
+            }
+        }
+        for (int i = 0; i < n; i++) {
+            for (int j = 0; j < m; j++) {
+                if (count[i][j] == 0) {
+                    ret[i][j] = img[i][j];
+                } else {
+                    ret[i][j] = ret[i][j] / count[i][j];
+                }
+            }
+        }
+        return ret;
+    }
+};
