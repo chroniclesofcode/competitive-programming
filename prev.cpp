@@ -1,48 +1,109 @@
-class Solution {
-public:
-    int count[501][501];
-    vector<vector<int>> resultGrid(vector<vector<int>>& img, int threshold) {
-        int n = img.size(), m = img[0].size();
-        vector<vector<int>> ret(n, vector<int>(m, 0));
-        for (int i = 0; i < n-2; i++) {
-            for (int j = 0; j < m-2; j++) {
-                bool flag = false;
-                for (int k = 0; k < 3; k++) {
-                    if (abs(img[i+k][j]-img[i+k][j+1]) > threshold || abs(img[i+k][j+1]-img[i+k][j+2]) > threshold) {
-                        flag = true;
-                    }
-                }
-                if (flag) continue;
-                for (int k = 0; k < 3; k++) {
-                    if (abs(img[i][j+k]-img[i+1][j+k]) > threshold || abs(img[i+1][j+k]-img[i+2][j+k]) > threshold) {
-                        flag = true;
-                    }
-                }
-                if (flag) continue;
-                int avg = 0;
-                for (int x = 0; x < 3; x++) {
-                    for (int y = 0; y < 3; y++) {
-                        avg += img[i+x][j+y];
-                    }
-                }
-                avg /= 9;
-                for (int x = 0; x < 3; x++) {
-                    for (int y = 0; y < 3; y++) {
-                        ret[i+x][j+y] += avg;
-                        count[i+x][j+y]++; 
-                    }
-                }
-            }
+#include <bits/stdc++.h>
+
+using namespace std;
+
+#define MAINRET(x) in##x
+#define LL long long
+
+void solve();
+
+MAINRET(t) main(void) {
+    std::cin.tie(nullptr);
+    std::cin.sync_with_stdio(false);
+
+        solve();
+}
+
+#define INF numeric_limits<LL>::max() / 2
+#define NINF -INF
+
+const LL MX = 2 * 1e5;
+//const LL MOD = 1e7;
+
+int n, m, s, grp[MX], in[MX];
+vector<int> adj[MX], rev[MX], scc[MX];
+vector<bool> vis(MX, false);
+vector<int> order, comp, rts;
+/*
+
+*/
+
+void dfs1(int u) {
+    vis[u] = true;
+    for (auto &v : adj[u]) {
+        if (!vis[v]) {
+            dfs1(v);
         }
-        for (int i = 0; i < n; i++) {
-            for (int j = 0; j < m; j++) {
-                if (count[i][j] == 0) {
-                    ret[i][j] = img[i][j];
-                } else {
-                    ret[i][j] = ret[i][j] / count[i][j];
-                }
-            }
-        }
-        return ret;
     }
-};
+    order.push_back(u);
+}
+
+void dfs2(int u) {
+    vis[u] = true;
+    comp.push_back(u);
+    for (auto &v : rev[u]) {
+        if (!vis[v]) {
+            dfs2(v);
+        }
+    }
+}
+
+void solve() {
+    cin >> n >> m >> s;
+    s--;
+    int a, b;
+    for (int i = 0; i < m; i++) {
+        cin >> a >> b; a--; b--;
+        adj[a].push_back(b);
+        rev[b].push_back(a);
+    }
+
+    for (int i = 0; i < n; i++) {
+        if (!vis[i]) {
+            dfs1(i);
+        }
+    }
+    vis.assign(n, false);
+
+    reverse(order.begin(), order.end());
+    int sourcecomponent = -1;
+    for (auto &v : order) {
+        if (!vis[v]) {
+            dfs2(v);
+
+            int rt = comp.front();
+            for (auto &u : comp) {
+                grp[u] = rt;
+                if (u == s) {
+                    sourcecomponent = rt;
+                }
+            }
+            rts.push_back(rt);
+
+            comp.clear();
+        }
+    }
+
+    for (int i = 0; i < n; i++) {
+        int r1 = grp[i];
+        for (auto &u : adj[i]) {
+            int r2 = grp[u];
+            if (r1 != r2) {
+                scc[r1].push_back(r2);
+                in[r2]++;
+            }
+        }
+    }
+    int ans = 0;
+    for (auto rt : rts) {
+        if (sourcecomponent != rt && in[rt] == 0) {
+            ans++;
+        }
+    }
+    cout << ans << endl;
+}
+
+
+
+
+ 
