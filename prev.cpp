@@ -1,109 +1,61 @@
-#include <bits/stdc++.h>
-
-using namespace std;
-
-#define MAINRET(x) in##x
-#define LL long long
-
-void solve();
-
-MAINRET(t) main(void) {
-    std::cin.tie(nullptr);
-    std::cin.sync_with_stdio(false);
-
-        solve();
-}
-
-#define INF numeric_limits<LL>::max() / 2
-#define NINF -INF
-
-const LL MX = 2 * 1e5;
-//const LL MOD = 1e7;
-
-int n, m, s, grp[MX], in[MX];
-vector<int> adj[MX], rev[MX], scc[MX];
-vector<bool> vis(MX, false);
-vector<int> order, comp, rts;
-/*
-
-*/
-
-void dfs1(int u) {
-    vis[u] = true;
-    for (auto &v : adj[u]) {
-        if (!vis[v]) {
-            dfs1(v);
-        }
-    }
-    order.push_back(u);
-}
-
-void dfs2(int u) {
-    vis[u] = true;
-    comp.push_back(u);
-    for (auto &v : rev[u]) {
-        if (!vis[v]) {
-            dfs2(v);
-        }
-    }
-}
-
-void solve() {
-    cin >> n >> m >> s;
-    s--;
-    int a, b;
-    for (int i = 0; i < m; i++) {
-        cin >> a >> b; a--; b--;
-        adj[a].push_back(b);
-        rev[b].push_back(a);
-    }
-
-    for (int i = 0; i < n; i++) {
-        if (!vis[i]) {
-            dfs1(i);
-        }
-    }
-    vis.assign(n, false);
-
-    reverse(order.begin(), order.end());
-    int sourcecomponent = -1;
-    for (auto &v : order) {
-        if (!vis[v]) {
-            dfs2(v);
-
-            int rt = comp.front();
-            for (auto &u : comp) {
-                grp[u] = rt;
-                if (u == s) {
-                    sourcecomponent = rt;
+class Solution {
+public:
+    int dp[9][260];
+    int maxStudents(vector<vector<char>>& seats) {
+        int n = seats.size(), m = seats[0].size();
+        int LG = 1 << m;
+        vector<int> perms;
+        for (int mask = 0; mask < LG; mask++) {
+            bool valid = true;
+            for (int j = 0; j < m; j++) {
+                if ((1<<j)&mask) {
+                    if (j > 0 && (1<<(j-1))&mask) {
+                        valid = false; break;
+                    }
+                    if ((1<<(j+1))&mask) {
+                        valid = false; break;
+                    }
                 }
             }
-            rts.push_back(rt);
-
-            comp.clear();
+            if (valid) perms.push_back(mask);
         }
-    }
-
-    for (int i = 0; i < n; i++) {
-        int r1 = grp[i];
-        for (auto &u : adj[i]) {
-            int r2 = grp[u];
-            if (r1 != r2) {
-                scc[r1].push_back(r2);
-                in[r2]++;
+        int ans = 0;
+        for (int i = 0; i < n; i++) {
+            for (int p : perms) {
+                bool valid = true;
+                for (int j = 0; j < m; j++) {
+                    if ((1<<j)&p && seats[i][j] != '.') {
+                        valid = false;
+                        break;
+                    }
+                }
+                if (!valid) continue;
+                if (i == 0) {
+                    dp[i][p] = __builtin_popcount(p);
+                    ans = max(ans, dp[i][p]);
+                    continue;
+                }
+                
+                for (int e : perms) {
+                    bool valid = true;
+                    for (int j = 0; j < m; j++) {
+                        if ((1<<j)&p) {
+                            if (j>0 && ((1<<(j-1))&e)) {
+                                valid = false; break;
+                            }
+                            if ((1<<(j+1))&e) {
+                                valid = false; break;
+                            }
+                        }
+                    }
+                    if (valid) {
+                        int pc = __builtin_popcount(p);
+                        dp[i][p] = max(dp[i][p], pc + dp[i-1][e]);
+                        ans = max(ans, dp[i][p]);
+                    }
+                }
             }
         }
+        return ans;
     }
-    int ans = 0;
-    for (auto rt : rts) {
-        if (sourcecomponent != rt && in[rt] == 0) {
-            ans++;
-        }
-    }
-    cout << ans << endl;
-}
-
-
-
-
- 
+};
