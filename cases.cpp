@@ -5,7 +5,8 @@ using namespace std;
 #define MAINRET(x) in##x
 #define what_is(x) cout << #x << " is " << x << endl;
 #define LL long long
-#define arr array<int,2>
+#define arr2 array<int,2>
+#define arr3 array<int,3>
 
 void solve();
 
