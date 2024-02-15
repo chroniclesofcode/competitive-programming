@@ -1,51 +1,37 @@
-class Solution {
-public:
-    int ct[26];
-    int maxPalindromesAfterOperations(vector<string>& words) {
-        vector<int> sz;
-        for (int i = 0; i < words.size(); i++) {
-            sz.push_back(words[i].size());
-            for (auto c : words[i]) {
-                ct[(int)c - 'a']++;
-            }
-        }
-        sort(sz.begin(), sz.end());
-        int ans = 0;
-        for (auto e : sz) {
-            bool oned = false;
-            if (e % 2 == 1) {
-                for (int i = 0; i < 26; i++) {
-                    if (ct[i] % 2 == 1) {
-                        e--;
-                        ct[i]--;
-                        oned = true;
-                        break;
-                    }
-                }
-            }
-            for (int i = 0; i < 26; i++) {
-                if (ct[i] == 0) continue;
-                if (e % 2 == 1 && !oned) {
-                    ct[i]--;
-                    e--;
-                    oned = true;
-                }
-                int reduce = 2*(ct[i]/2);
-                if (reduce >= e) {
-                    ct[i] -= e;
-                    e = 0;
-                } else {
-                    e -= reduce;
-                    ct[i] -= reduce;
-                }
-                if (e == 0) break;
-            }
-            if (e == 0) {
-                ans++;
-            } else {
-                break;
-            }
-        }
-        return ans;
-    }
-};
+#include <bits/stdc++.h>
+
+using namespace std;
+
+#define MAINRET(x) in##x
+#define what_is(x) cout << #x << " is " << x << endl;
+#define LL long long
+#define arr2 array<int,2>
+#define arr3 array<int,3>
+
+void solve();
+
+MAINRET(t) main(void) {
+    std::cin.tie(nullptr);
+    std::cin.sync_with_stdio(false);
+
+        solve();
+}
+
+constexpr int INF = std::numeric_limits<int>::max() / 2;
+constexpr int NINF = -INF;
+constexpr LL MX = 3 * 1e5;
+constexpr int MD = (int)1e9 + 7;
+
+int n, m, k;
+
+
+void solve() {
+
+}
+
+/*
+
+*/
+
+
+
