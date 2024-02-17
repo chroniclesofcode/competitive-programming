@@ -1,37 +1,47 @@
-#include <bits/stdc++.h>
+class StockPrice {
+public:
+    multiset<array<int,2>> prices; // price, timestamp
+    unordered_map<int, int> tp; // time->price
+    int currp = 0, currt = 0;
 
-using namespace std;
+    StockPrice() {
+        
+    }
+    
+    void update(int timestamp, int price) {
+        if (timestamp > currt && tp[timestamp] == 0) {
+            prices.insert({ price, timestamp });
+            currp = price;
+            currt = timestamp;
+            tp[currt] = currp;
+        } else {
+            if (tp[timestamp] != 0)
+                prices.erase(prices.find({ tp[timestamp], timestamp }));
+            tp[timestamp] = price;
+            prices.insert({ price, timestamp });
+            if (timestamp == currt) 
+                currp = price;
+        }
+    }
+    
+    int current() {
+        return currp;
+    }
+    
+    int maximum() {
+        return (*prev(prices.end()))[0];
+    }
+    
+    int minimum() {
+        return (*prices.begin())[0];
+    }
+};
 
-#define MAINRET(x) in##x
-#define what_is(x) cout << #x << " is " << x << endl;
-#define LL long long
-#define arr2 array<int,2>
-#define arr3 array<int,3>
-
-void solve();
-
-MAINRET(t) main(void) {
-    std::cin.tie(nullptr);
-    std::cin.sync_with_stdio(false);
-
-        solve();
-}
-
-constexpr int INF = std::numeric_limits<int>::max() / 2;
-constexpr int NINF = -INF;
-constexpr LL MX = 3 * 1e5;
-constexpr int MD = (int)1e9 + 7;
-
-int n, m, k;
-
-
-void solve() {
-
-}
-
-/*
-
-*/
-
-
-
+/**
+ * Your StockPrice object will be instantiated and called as such:
+ * StockPrice* obj = new StockPrice();
+ * obj->update(timestamp,price);
+ * int param_2 = obj->current();
+ * int param_3 = obj->maximum();
+ * int param_4 = obj->minimum();
+ */
