@@ -42,7 +42,11 @@ void solve() {
 }
 
 /*
-
+   ["a","aba","ababa","aa"]
+["pa","papa","ma","mama"]
+["abab","ab"]
+["a","a"]
+["bcc","c","cbaaa","ba","cabbc","b","bcbb","baca","caa","aa","caa","ca","cacac"]
 */
 
 
