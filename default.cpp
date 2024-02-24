@@ -17,7 +17,7 @@ MAINRET(t) main(void) {
         solve();
 }
 
-constexpr int INF = std::numeric_limits<int>::max() / 2;
+constexpr int INF = (int)1e9 + 100; 
 constexpr int NINF = -INF;
 constexpr LL MX = 3 * 1e5;
 constexpr int MD = (int)1e9 + 7;
