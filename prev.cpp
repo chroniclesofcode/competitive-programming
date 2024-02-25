@@ -1,15 +1,15 @@
 #include <bits/stdc++.h>
- 
+
 using namespace std;
- 
+
 #define MAINRET(x) in##x
 #define what_is(x) cout << #x << " is " << x << endl;
 #define LL long long
 #define arr2 array<int,2>
 #define arr3 array<int,3>
- 
+
 void solve();
- 
+
 MAINRET(t) main(void) {
     std::cin.tie(nullptr);
     std::cin.sync_with_stdio(false);
@@ -18,14 +18,14 @@ MAINRET(t) main(void) {
     while (t--)
         solve();
 }
- 
+
 constexpr int INF = (int)1e9 + 100;
 constexpr int NINF = -INF;
 constexpr int MX = 3 * 1e5;
 constexpr int MD = (int)1e9 + 7;
- 
+
 int n, m, k;
- 
+
 void solve() {
     cin >> n;
     string s, t;
@@ -57,12 +57,17 @@ void solve() {
     orig = diff_rev;
     if (diff_rev % 2 == 0) {
         diff_rev *= 2;
+        diff_rev--;
     } else {
-        diff_rev = (diff_rev-1)*2 + 1;
+        diff_rev = diff_rev*2;
     }
     if (orig == n) {
         diff_rev = min(diff_rev, orig*2-1);
     }
     
-    cout << min(diff, diff_rev+1) << '\n';
+    cout << min(diff, diff_rev) << '\n';
 }
+
+/*
+
+*/
