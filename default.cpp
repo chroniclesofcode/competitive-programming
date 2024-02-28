@@ -20,7 +20,7 @@ MAINRET(t) main(void) {
 constexpr int INF = (int)1e9 + 100; 
 constexpr LL LINF = std::numeric_limits<LL>::max() / 2;
 constexpr int NINF = -INF;
-constexpr LL MX = 3 * 1e5;
+constexpr LL MX = 2 * 1e5 + 1;
 constexpr int MD = (int)1e9 + 7;
 
 int n, m, k;
