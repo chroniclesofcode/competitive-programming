@@ -6,6 +6,9 @@ using namespace std;
 
 #define ordered_set tree<int,null_type,less<int>,rb_tree_tag,tree_order_statistics_node_update>
 
+// #define ordered_set tree<int,null_type,less_equal<int>,rb_tree_tag,tree_order_statistics_node_update>
+// multiset above
+
 
 #define MAINRET(x) in##x
 #define what_is(x) cout << #x << " is " << x << endl;
