@@ -1,56 +1,38 @@
-class Allocator {
-public:
-    int n;
-    vector<pair<int,int>> m[1001];
-    set<pair<int,int>> mem;
-    Allocator(int _n) {
-        n = _n;
-        mem.insert({0, n});
-    }
-    
-    int allocate(int size, int mID) {
-        for (auto it = mem.begin(); it != mem.end(); it++) {
-            if (it->second >= size) {
-                int first = it->first;
-                if (it->second > size) {
-                    mem.insert({first+size, it->second-size});
-                }
-                m[mID].push_back({first, size});
-                mem.erase(it);
-                return first;
-            }
-        }
-        return -1;
-    }
-    
-    int free(int mID) {
-        int ret = 0;
-        for (auto& p : m[mID]) {
-            ret += p.second;
-            int start = p.first, finish = p.first+p.second;
-            auto it = mem.lower_bound({p.first, -1});
-            auto it2 = it;
-            if (it2 != mem.begin() && !mem.empty()) {
-                it2--;
-                if (it2->first+it2->second >= start) {
-                    start = min(start, it2->first);
-                    mem.erase(it2);
-                }
-            }
-            if (it != mem.end() && it->first <= finish) {
-                finish = max(finish, it->first+it->second);
-                mem.erase(it);
-            }
-            mem.insert({start, finish-start});
-        }
-        m[mID].clear();
-        return ret;
-    }
-};
+#include <bits/stdc++.h>
 
-/**
- * Your Allocator object will be instantiated and called as such:
- * Allocator* obj = new Allocator(n);
- * int param_1 = obj->allocate(size,mID);
- * int param_2 = obj->free(mID);
- */
+using namespace std;
+
+#define MAINRET(x) in##x
+#define what_is(x) cout << #x << " is " << x << endl;
+#define LL long long
+#define arr2 array<int,2>
+#define arr3 array<int,3>
+
+void solve();
+
+MAINRET(t) main(void) {
+    std::cin.tie(nullptr);
+    std::cin.sync_with_stdio(false);
+
+        solve();
+}
+
+constexpr int INF = (int)1e9 + 100; 
+constexpr LL LINF = std::numeric_limits<LL>::max() / 2;
+constexpr int NINF = -INF;
+constexpr LL MX = 2 * 1e5 + 1;
+constexpr int MD = (int)1e9 + 7;
+
+int n, m, k;
+
+
+void solve() {
+
+}
+
+/*
+
+*/
+
+
+
