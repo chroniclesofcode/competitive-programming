@@ -22,21 +22,25 @@ constexpr LL MX = 3 * 1e5;
 constexpr int MD = (int)1e9 + 7;
 
 int n, m, k;
-int BIT[MX+1];
 
-void add(int x) {
-    for (; x <= n; x += x&-x) {
-        BIT[x]++;
-    }
-}
+class Fenwick {
+public:
+    int BIT[MX+1];
 
-int query(int x) {
-    int sum = 0;
-    for (; x > 0; x -= x&-x) {
-        sum += BIT[x];
+    void add(int x) {
+        for (; x <= MX; x += x&-x) {
+            BIT[x]++;
+        }
     }
-    return sum;
-}
+
+    int query(int x) {
+        int sum = 0;
+        for (; x > 0; x -= x&-x) {
+            sum += BIT[x];
+        }
+        return sum;
+    }
+};
 
 void solve() {
     cin >> n;

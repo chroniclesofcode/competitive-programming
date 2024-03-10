@@ -29,32 +29,60 @@ int n, m, k;
 
 void solve() {
     cin >> n;
-    string s;
-    cin >> s;
-    string t = s;
-    reverse(t.begin(), t.end());
-    int issmall = s < t;
-    if (s == t) {
-        cout << s << '\n';
+    vector<int> a(n);
+    for (int i = 0; i < n; i++) cin >> a[i];
+    vector<int> mark(n+2);
+    for (auto e : a) mark[e] = 1;
+    int mex = 0;
+    for (int i = 0; i <= n+1; i++) {
+        if (!mark[i]) {
+            mex = i;
+            break;
+        }
+    }
+    if (mex == 0) {
+        cout << "2\n1 1\n2 " << n << '\n';
         return;
     }
-    if (n % 2 == 0) {
-        if (issmall) {
-            cout << s << '\n';
-        } else {
-            cout << t + s << '\n';
+    vector<pair<int,int>> ans;
+    fill(mark.begin(), mark.end(), 0);
+    int j = 0;
+    for (int i = 0; i < n; i++) {
+        mark[a[i]] = 1;
+        while (j <= n+1 && mark[j] && mark[j+1] == 1) {
+            j++;
         }
-    } else {
-        if (issmall) {
-            cout << s + t << '\n';
-        } else {
-            cout << t << '\n';
+        if (i == n-1) {
+            cout << -1 << '\n'; return;
         }
+        if (mark[j] && j == mex-1) {
+            ans.push_back({1,i+1});
+            fill(mark.begin(), mark.end(), 0);
+            for (int k = i+1; k < n; k++) {
+                mark[a[k]] = 1;
+            }
+            for (int k = 0; k < mex; k++) {
+                if (!mark[k]) {
+                    cout << -1 << '\n'; return;
+                }
+            }
+            ans.push_back({i+2, n});
+            break;
+        }
+    }
+
+    cout << ans.size() << '\n';
+    for (auto &p : ans) {
+        cout << p.first << ' ' << p.second << '\n';
     }
 }
 
 /*
-
+   there can only be 1 mex that is valid : the
+   smallest number that doesn't exist. We then
+   seek to divide up the array properly. Any 
+   larger number will not be the mex since it
+   will face the smallest mex as a 'barrier'.
 */
 
 
