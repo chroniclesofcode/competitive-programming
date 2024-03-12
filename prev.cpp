@@ -5,7 +5,8 @@ using namespace std;
 #define MAINRET(x) in##x
 #define what_is(x) cout << #x << " is " << x << endl;
 #define LL long long
-#define arr array<int,2>
+#define arr2 array<int,2>
+#define arr3 array<int,3>
 
 void solve();
 
@@ -16,39 +17,17 @@ MAINRET(t) main(void) {
         solve();
 }
 
-constexpr int INF = std::numeric_limits<int>::max() / 2;
+constexpr int INF = (int)1e9 + 100; 
+constexpr LL LINF = std::numeric_limits<LL>::max() / 2;
 constexpr int NINF = -INF;
-constexpr LL MX = 3 * 1e5;
+constexpr LL MX = 2 * 1e5 + 1;
 constexpr int MD = (int)1e9 + 7;
 
 int n, m, k;
 
-class FenwickTree {
-public:
-    int BIT[MX+1];
-
-    void add(int x) {
-        for (; x <= MX; x += x&-x) {
-            BIT[x]++;
-        }
-    }
-
-    int query(int x) {
-        int sum = 0;
-        for (; x > 0; x -= x&-x) {
-            sum += BIT[x];
-        }
-        return sum;
-    }
-};
 
 void solve() {
-    FenwickTree f;
-    f.add(59);
-    f.add(66);
-    cout << f.query(60) << '\n';
-    cout << f.query(70) << '\n';
-    cout << f.query(40) << '\n';
+
 }
 
 /*
