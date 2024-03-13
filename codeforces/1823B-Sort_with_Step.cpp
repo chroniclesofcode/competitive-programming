@@ -26,6 +26,7 @@ constexpr int MX = 2 * 1e5 + 1;
 constexpr int MD = (int)1e9 + 7;
 
 int n, m, k;
+int mark[MX];
 
 void solve() {
     cin >> n >> k;
@@ -34,25 +35,20 @@ void solve() {
         cin >> a[i];
     }
     int error = 0;
-    vector<int> mark(n+1, 0);
+    vector<int> v;
     for (int i = 0; i < k; i++) {
-        mark.clear();
+        v.clear();
         for (int j = i; j < n; j += k) {
-            cout << "it: " << i << " mark: " << a[j]-1 << '\n';
             mark[a[j]-1] = 1;
+            v.push_back(a[j]-1);
         }
-        int err = 0;
         for (int j = i; j < n; j += k) {
             if (!mark[j]) {
-                err++;
                 error++;
             }
         }
-        if (err >= 2) {
-            cout << "-1\n"; return;
-        }
+        for (auto e : v) mark[e] = 0;
     }
-    cout << "error: " << error << '\n';
     if (error == 0) {
         cout << "0\n";
     } else if (error > 2) {
