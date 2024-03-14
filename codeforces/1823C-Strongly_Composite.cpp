@@ -12,7 +12,8 @@ void solve();
 MAINRET(t) main(void) {
     std::cin.tie(nullptr);
     std::cin.sync_with_stdio(false);
-
+    int t; cin >> t;
+    while (t--)
         solve();
 }
 
@@ -43,16 +44,41 @@ public:
     }
 };
 
+SieveOfE sieve((int)1e7+1);
+
 void solve() {
-    constexpr int LIM = (int)1e5;
-    SieveOfE sieve(LIM);
-    return;
+    cin >> n;
+    vector<int> a(n);
+    for (int i = 0; i < n; i++) {
+        cin >> a[i];
+    }
+    int tot = 0;
+    unordered_map<int,int> ps;
+    for (int i = 0; i < n; i++) {
+        int tmp = a[i];
+        int j = 0;
+        while (tmp > 1) {
+            if (tmp % sieve.primes[j] == 0) {
+                tmp /= sieve.primes[j];
+                ps[sieve.primes[j]]++;
+                tot++;
+            } else {
+                j++;
+            }
+        }
+    }
+    int ans = 0;
+    for (auto& e : ps) {
+        ans += e.second / 2;
+        tot -= 2*(e.second/2);
+    }
+    ans += tot/3;
+    cout << ans << '\n';
 }
 
 /*
-
+    2 sames can make 1. 3 diffs can make 1.
 */
-
 
 
 
