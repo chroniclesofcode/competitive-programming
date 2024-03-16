@@ -5,58 +5,80 @@ using namespace std;
 #define MAINRET(x) in##x
 #define what_is(x) cout << #x << " is " << x << endl;
 #define LL long long
-#define arr2 array<int,2>
-#define arr3 array<int,3>
+#define arr array<int,2>
 
 void solve();
 
-vector<int> l;
 MAINRET(t) main(void) {
     std::cin.tie(nullptr);
     std::cin.sync_with_stdio(false);
-
-    int p = 0;
-    l.push_back(0); l.push_back(0);
-    for (int i = 1; i <= 100; i++) {
-        p += i;
-        l.push_back(p);
-    }
-
-    LL t;
-    cin >> t;
+    int t; cin >> t;
     while (t--)
         solve();
 }
 
-constexpr int INF = (int)1e9 + 100;
-constexpr LL LINF = std::numeric_limits<LL>::max() / 2;
+constexpr int INF = std::numeric_limits<int>::max() / 2;
 constexpr int NINF = -INF;
-constexpr int MX = 2 * 1e5 + 1;
+constexpr LL MX = 3 * 1e5;
 constexpr int MD = (int)1e9 + 7;
 
 int n, m, k;
 
-void solve() {
-    cin >> n >> k;
-    for (int i = 0; i <= n; i++) {
-        int a = i, b = n-i;
-        a = a*(a-1)/2; b = b*(b-1)/2;
-        if (a + b == k) {
-            cout << "YES\n";
-            int one = i, two = n-i;
-            while (one--) cout << 1 << ' ';
-            while (two--) cout << -1 << ' ';
-            cout << '\n'; return;
+class SieveOfE {
+public:
+    vector<int> is_p;
+    vector<int> primes;
+    SieveOfE(int LIM) {
+        is_p = vector<int>(LIM, true);
+        is_p[0] = is_p[1] = false;
+        for (int i = 2; i*i <= LIM; i++) {
+            if (is_p[i]) {
+                for (int j = i*i; j <= LIM; j += i) {
+                    is_p[j] = false;
+                }
+            }
+        }
+        for (int i = 2; i <= LIM; i++) {
+            if (is_p[i]) primes.push_back(i);
         }
     }
-    cout << "NO\n";
+};
+
+SieveOfE sieve((int)1e7+1);
+
+void solve() {
+    cin >> n;
+    vector<int> a(n);
+    for (int i = 0; i < n; i++) {
+        cin >> a[i];
+    }
+    int tot = 0;
+    unordered_map<int,int> ps;
+    for (int i = 0; i < n; i++) {
+        int tmp = a[i];
+        int j = 0;
+        while (tmp > 1) {
+            if (tmp % sieve.primes[j] == 0) {
+                tmp /= sieve.primes[j];
+                ps[sieve.primes[j]]++;
+                tot++;
+            } else {
+                j++;
+            }
+        }
+    }
+    int ans = 0;
+    for (auto& e : ps) {
+        ans += e.second / 2;
+        tot -= 2*(e.second/2);
+    }
+    ans += tot/3;
+    cout << ans << '\n';
 }
 
 /*
-
+    2 sames can make 1. 3 diffs can make 1.
 */
-
-
 
 
 
