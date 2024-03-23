@@ -27,7 +27,8 @@ int n, m, k;
 
 
 void solve() {
-    cout << sizeof(char *) << '\n';
+    string hello = "bye";
+    cout << sizeof(int64_t) << ' ' << sizeof(&hello) << '\n';
 }
 
 /*
