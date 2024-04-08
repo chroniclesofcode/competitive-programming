@@ -4,7 +4,10 @@ using namespace std;
 
 #define MAINRET(x) in##x
 #define what_is(x) cout << #x << " is " << x << endl;
+#define print_vec(x, n) for (int i = 0; i < n; i++) cout << x[i] << ' '; cout << endl;
 #define LL long long
+#define arr2 array<int,2>
+#define arr3 array<int,3>
 
 void solve();
 
@@ -15,58 +18,60 @@ MAINRET(t) main(void) {
         solve();
 }
 
-#define INF numeric_limits<LL>::max() / 2
-#define NINF -INF
+constexpr int INF = (int)1e9 + 100; 
+constexpr LL LINF = std::numeric_limits<LL>::max() / 2;
+constexpr int NINF = -INF;
+constexpr int MX = 2 * 1e5 + 1;
+constexpr int MD = (int)1e9 + 7;
 
-/*
+int n, m, k;
 
-const LL MX = 5 * 1e6;
-const int K = 26;
+struct Trie {
+    static const int K = 26;
+    struct Vertex {
+        int next[K];
+        bool end = false;
+        Vertex() {
+            fill(next, next+K, -1);
+        }
+    };
+    vector<Vertex> trie;
 
-struct Vertex {
-    int next[K];
-    bool end = false;
+    Trie() : trie(1) {}
 
-    Vertex() {
-        fill(next, next+K, -1);
+    void add_string(string const& s) {
+        int v = 0;
+        for (char ch : s) {
+            int c = ch - 'a';
+            if (trie[v].next[c] == -1) {
+                trie[v].next[c] = trie.size();
+                trie.emplace_back();
+            }
+            v = trie[v].next[c];
+        }
+        trie[v].end = true;
+    }
+
+    // Find if there is an entry in trie for s[l..r]
+    bool search(string const& s, int l, int r) {
+        int v = 0;
+        for (int i = l; i <= r; i++) {
+            char ch = s[i];
+            int c = ch - 'a';
+            v = trie[v].next[c];
+            if (v == -1) {
+                return false;
+            }
+            if (i == r && trie[v].end == true) {
+                return true;
+            }
+        }
+        return false;
     }
 };
 
-int n;
-vector<Vertex> trie(1);
 
-void add_string(string const& s) {
-    int v = 0;
-    for (char ch : s) {
-        int c = ch - 'a';
-        if (trie[v].next[c] == -1) {
-            trie[v].next[c] = trie.size();
-            trie.emplace_back();
-        }
-        v = trie[v].next[c];
-    }
-    trie[v].end = true;
-}
-
-// Find if there is an entry in trie for s[l..r]
-bool search(string const& s, int l, int r) {
-    int v = 0;
-    for (int i = l; i <= r; i++) {
-        char ch = s[i];
-        int c = ch - 'a';
-        v = trie[v].next[c];
-        if (v == -1) {
-            return true;
-        }
-        if (trie[v].end == true) {
-            return false;
-        }
-    }
-    return true;
-}
-    
-*/
-
+/*
 const static int MX = (int)1e4 * 6 * 20;
 int tr[MX][2], c[MX], idx = 1; // optional end[MX]
 
@@ -97,6 +102,8 @@ int gett(int num) {
     }
     return num^res;
 }
+
+*/
 
 void solve() {
 
