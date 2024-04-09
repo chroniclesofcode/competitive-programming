@@ -70,45 +70,48 @@ struct Trie {
     }
 };
 
+struct BitTrie {
+    int tr[MX][2], c[MX], idx = 1; // optional end[MX]
 
-/*
-const static int MX = (int)1e4 * 6 * 20;
-int tr[MX][2], c[MX], idx = 1; // optional end[MX]
-
-void addt(int num, int val) {
-    int u = 1;
-    for (int i = 19; i >= 0; i--) { // usually str.size()
-        int bit = (num >> i) & 1;
-        if (!tr[u][bit]) {
-            tr[u][bit] = ++idx;
-        }
-        u = tr[u][bit];
-        c[u] += val;
-    }
-}
-
-int gett(int num) {
-    int u = 1;
-    int res = 0;
-    for (int i = 19; i >= 0; i--) {
-        int bit = !((num >> i) & 1);
-        if (tr[u][bit] && c[tr[u][bit]] > 0) {
+    // num can be string as well
+    void add_val(int num, int val) {
+        int u = 1;
+        for (int i = 19; i >= 0; i--) { // usually str.size()
+            int bit = (num >> i) & 1;
+            if (!tr[u][bit]) {
+                tr[u][bit] = ++idx;
+            }
             u = tr[u][bit];
-            res |= (bit << i);
-        } else {
-            u = tr[u][!bit];
-            res |= (!bit << i);
+            c[u] += val;
         }
     }
-    return num^res;
-}
+    
+    // Modify depending on question - currently max xor of num in trie
+    int get_xor(int num) {
+        int u = 1;
+        int res = 0;
+        for (int i = 19; i >= 0; i--) {
+            int bit = !((num >> i) & 1);
+            if (tr[u][bit] && c[tr[u][bit]] > 0) {
+                u = tr[u][bit];
+                res |= (bit << i);
+            } else {
+                u = tr[u][!bit];
+                res |= (!bit << i);
+            }
+        }
+        return num^res;
+    }
+};
 
-*/
 
 void solve() {
 
 }
 
+/*
+
+*/
 
 
 
