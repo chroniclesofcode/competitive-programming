@@ -28,7 +28,7 @@ public:
     vector<int> is_p;
     vector<int> primes;
     SieveOfE(int LIM) {
-        is_p = vector<int>(LIM, true);
+        is_p = vector<int>(LIM+10, true);
         is_p[0] = is_p[1] = false;
         for (int i = 2; i*i <= LIM; i++) {
             if (is_p[i]) {
