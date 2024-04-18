@@ -21,43 +21,43 @@ constexpr int NINF = -INF;
 constexpr LL MX = 3 * 1e5;
 constexpr int MD = (int)1e9 + 7;
 
-int sz[MX];
-int grp[MX]; 
 
-int Find(int a) {
-    if (a == grp[a]) {
-        return a;
+struct Uf {
+    vector<int> grp, sz;
+
+    Uf(int n = MX) {
+        grp = vector<int>(n);
+        sz = vector<int>(n, 1);
+        for (int i = 0; i < n; i++) grp[i] = i;
     }
-    return grp[a] = Find(grp[a]);
-}
 
-void Union(int a, int b) {
-    a = Find(a);
-    b = Find(b);
-    if (a != b) {
-        if (sz[a] < sz[b]) {
-            swap(a, b);
+    int Find(int a) {
+        return a == grp[a] ? a : grp[a] = Find(grp[a]);
+    }
+
+    void Union(int a, int b) {
+        a = Find(a);
+        b = Find(b);
+        if (a != b) {
+            if (sz[a] < sz[b]) {
+                swap(a, b);
+            }
+            grp[b] = a;
+            sz[a] += sz[b];
         }
-        grp[b] = a;
-        sz[a] += sz[b];
     }
-
-}
+};
 
 int n, m, k;
 
 void solve() {
     cin >> n;
-    for (int i = 0; i < n; i++) {
-        grp[i] = i;
-        sz[i] = 1;
-    }
-
 }
-
 /*
 
 */
+
+
 
 
 
