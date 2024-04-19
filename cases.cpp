@@ -36,9 +36,19 @@ void solve() {
 
 */
 
+/*
+   Try this if you are stuck:
+1) binary search on answer
+2) Try solving it in reverse
+3) Think of a simpler problem 
+4) Think of elements which are special
+   (like minimum, maximum, deepest node in tree, root)
+5) Is it graph problem?
+    - super node? dp? cycles?
+6) sorting on something e.g. queries?
+7) Parity? something special
+8) is it monotonic? could you use a PQ/stack/queue?
 
-
-
-
-
-
+   EDGE CASES! N = 1, 2...
+   LONG LONG
+*/
