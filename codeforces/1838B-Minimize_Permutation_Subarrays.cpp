@@ -29,11 +29,24 @@ constexpr int MD = (int)1e9 + 7;
 int n, m, k;
 
 void solve() {
-
+    cin >> n;
+    vector<int> a(n);
+    unordered_map<int, int> m;
+    for (int i = 0; i < n; i++) {
+        cin >> a[i];
+        m[a[i]] = i+1;
+    }
+    int big = n;
+    int one = m[1], two = m[2];
+    int loc = m[big];
+    vector<int> arr{one, two, loc};
+    sort(arr.begin(), arr.end());
+    cout << loc << ' ' << arr[1] << '\n';
 }
 
 /*
-
+    3 4 5 6 7 2 1 8 9
+    4 5 6 7 8 2 1 3 9
 */
 
 /*
