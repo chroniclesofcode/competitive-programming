@@ -28,7 +28,7 @@ constexpr LL MD = (LL)1e9 + 7;
 
 LL n, m, k;
 
-LL dp[MX][2][6];
+LL dp[MX][6][2];
 
 void solve() {
     string s;
@@ -43,35 +43,45 @@ void solve() {
         else if (s[i] == 'C') a[i] = 3;
         else if (s[i] == 'D') a[i] = 4;
         else if (s[i] == 'E') a[i] = 5;
-        for (int j = 1; j <= 5; j++) {
-            dp[i][0][j] = 0;
-            dp[i][1][j] = 0;
+        for (LL j = 1; j <= 5; j++) {
+            dp[i][j][0] = -LINF;
+            dp[i][j][1] = -LINF;
         }
     }
-    for (int i = 0; i < n; i++) {
-        for (int j = 1; j <= 5; j++) {
+    vector<LL> pref(6, 0);
+    dp[0][a[0]][0] = convert[a[0]];
+    for (LL i = 1; i <= 5; i++) {
+        dp[0][i][1] = convert[i];
+    }
+    for (LL i = 1; i < n; i++) {
+        // max reached is j
+        for (LL j = 1; j <= 5; j++) {
+            LL lim = max(j, a[i]);
+            // keeping it the same
+            if (a[i] >= j) {
+                dp[i][lim][0] = max(dp[i][lim][0], dp[i-1][j][0] + convert[a[i]]);
+                dp[i][lim][1] = max(dp[i][lim][1], dp[i-1][j][1] + convert[a[i]]);
+            } else {
+                dp[i][j][0] = max(dp[i][j][0], dp[i-1][j][0] - convert[a[i]]);
+                dp[i][j][1] = max(dp[i][j][1], dp[i-1][j][1] - convert[a[i]]);
+            }
+            // changed num to k
+            for (LL k = 1; k <= 5; k++) {
+                if (k < j) {
+                    dp[i][j][1] = max(dp[i][j][1], dp[i-1][j][0] - convert[k]);
+                } else if (k >= j) {
+                    dp[i][k][1] = max(dp[i][k][1], dp[i-1][j][0] + convert[k]);
+                }
+            }
         }
     }
-    LL ans = 0;
-    for (int i = 1; i <= 5; i++) {
-        ans = max(ans, dp[n-1][0][i]);
-        ans = max(ans, dp[n-1][1][i]);
+    LL ans = -LINF;
+    for (LL i = 1; i <= 5; i++) {
+        ans = max(ans, dp[n-1][i][0]);
+        ans = max(ans, dp[n-1][i][1]);
     }
     cout << ans << '\n';
-
-/*
-   for each element, what is the value if we
-   change the current element to X? you need
-   to keep an array of the occurrences so far
-   of each element, and keep adding to it.
-   If you change it to something, you need
-   to jump back and re-calc everything ->
-   aka - 2 times the elements smaller.
-
-   You also need to know the elements bigger
-   ahead, so use a prefix sum array I suppose
-   to find out.
-*/
+}
 
 /*
    Try this if you are stuck:
