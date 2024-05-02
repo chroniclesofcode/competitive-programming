@@ -30,13 +30,24 @@ int n, m, k;
 
 void solve() {
     cin >> n;
-    vector<int> a(n);
+    vector<int> a(n), b(n);
     for (int i = 0; i < n; i++) cin >> a[i];
-    int run = 0;
-    for (int i = 0; i < n; i++) {
-        cout << n - a[i] + 1 << ' ';
+    for (int i = 0; i < n; i++) cin >> b[i];
+    int run1 = 1, run2 = 1;
+    unordered_map<int, int> ma, mb;
+    ma[a[0]] = mb[b[0]] = 1;
+    for (int i = 1; i < n; i++) {
+        if (a[i] == a[i-1]) run1++;
+        else run1 = 1;
+        if (b[i] == b[i-1]) run2++;
+        else run2 = 1;
+        ma[a[i]] = max(ma[a[i]], run1);
+        mb[b[i]] = max(mb[b[i]], run2);
     }
-    cout << '\n';
+    int ans = 0;
+    for (auto &e : ma) ans = max(ans, e.second + mb[e.first]);
+    for (auto &e : mb) ans = max(ans, e.second + ma[e.first]);
+    cout << ans << '\n';
 }
 
 /*
