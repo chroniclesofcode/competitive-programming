@@ -27,26 +27,27 @@ constexpr int MX = 2 * 1e5 + 1;
 constexpr int MD = (int)1e9 + 7;
 
 int n, m, k;
+vector<arr2> adj[MX];
+int ans = 0;
+
+void dfs(int u, int reach, int ct, int par) {
+    ans = max(ans, ct);
+    for (auto &[v, i] : adj[u]) {
+        if (v == par) continue;
+        dfs(v, i, ct + (i <= reach), u);
+    }
+}
 
 void solve() {
+    ans = 0;
     cin >> n;
-    vector<int> a(n), b(n);
-    for (int i = 0; i < n; i++) cin >> a[i];
-    for (int i = 0; i < n; i++) cin >> b[i];
-    int run1 = 1, run2 = 1;
-    unordered_map<int, int> ma, mb;
-    ma[a[0]] = mb[b[0]] = 1;
-    for (int i = 1; i < n; i++) {
-        if (a[i] == a[i-1]) run1++;
-        else run1 = 1;
-        if (b[i] == b[i-1]) run2++;
-        else run2 = 1;
-        ma[a[i]] = max(ma[a[i]], run1);
-        mb[b[i]] = max(mb[b[i]], run2);
+    for (int i = 0; i < n; i++) adj[i].clear();
+    for (int i = 0; i < n-1; i++) {
+        int u, v; cin >> u >> v; u--; v--;
+        adj[u].push_back({v, i});
+        adj[v].push_back({u, i});
     }
-    int ans = 0;
-    for (auto &e : ma) ans = max(ans, e.second + mb[e.first]);
-    for (auto &e : mb) ans = max(ans, e.second + ma[e.first]);
+    dfs(0, -1, 1, -1);
     cout << ans << '\n';
 }
 
