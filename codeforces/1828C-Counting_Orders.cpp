@@ -14,12 +14,13 @@ void solve();
 MAINRET(t) main(void) {
     std::cin.tie(nullptr);
     std::cin.sync_with_stdio(false);
-    int t; cin >> t;
+    LL t;
+    cin >> t;
     while (t--)
         solve();
 }
 
-constexpr int INF = (int)1e9 + 100; 
+constexpr int INF = (int)1e9 + 100;
 constexpr LL LINF = std::numeric_limits<LL>::max() / 2;
 constexpr int NINF = -INF;
 constexpr int MX = 2 * 1e5 + 1;
@@ -27,19 +28,24 @@ constexpr int MD = (int)1e9 + 7;
 
 int n, m, k;
 
-
 void solve() {
     cin >> n;
-    vector<int> a(n+1);
-    for (int i = 1; i <= n; i++) {
-        cin >> a[i];
+    vector<int> a(n), b(n);
+    for (int i = 0; i < n; i++) cin >> a[i];
+    for (int i = 0; i < n; i++) cin >> b[i];
+    sort(a.begin(), a.end());
+    sort(b.begin(), b.end());
+    int j = 0;
+    LL ans = 1;
+    for (int i = 0; i < n; i++) {
+        while (j < n && a[j] <= b[i]) j++;
+        if (n-j < 0) {
+            cout << "0\n"; return;
+        }
+        ans *= (n-j) - (n - (i+1));
+        ans %= MD;
     }
-    int st = 0;
-    for (int i = 1; i <= n; i++) {
-        if (a[i] == i) continue;
-        st = st == 0 ? abs(a[i]-i) : gcd(st, abs(a[i]-i));
-    }
-    cout << st << '\n';
+    cout << ans % MD << '\n';
 }
 
 /*
