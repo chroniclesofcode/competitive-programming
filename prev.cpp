@@ -14,11 +14,13 @@ void solve();
 MAINRET(t) main(void) {
     std::cin.tie(nullptr);
     std::cin.sync_with_stdio(false);
-
+    LL t;
+    cin >> t;
+    while (t--)
         solve();
 }
 
-constexpr int INF = (int)1e9 + 100; 
+constexpr int INF = (int)1e9 + 100;
 constexpr LL LINF = std::numeric_limits<LL>::max() / 2;
 constexpr int NINF = -INF;
 constexpr int MX = 2 * 1e5 + 1;
@@ -26,52 +28,32 @@ constexpr int MD = (int)1e9 + 7;
 
 int n, m, k;
 
-
 void solve() {
     cin >> n;
-    vector<double> d(n+1);
-    for (int i = 1; i <= n; i++) {
-        cin >> d[i];
+    vector<int> a(n);
+    for (int i = 0; i < n; i++) {
+        cin >> a[i];
     }
-    cout << "aloha...";
-    string ans = "{d:";
-    int i = 1;
-    vector<pair<double,int>> bl(16);
-    for (; i <= n-16; i += 16) {
-        int j = i;
-        bl.clear();
-        for (int k = 0; k < 16; k++) {
-            bl.push_back({d[j+k], j+k});
-        }
-        sort(bl.begin(), bl.end());
-        ans += "{s:";
-        for (int k = 0; k < 16; k++) {
-            ans += to_string(bl[k].second);
-            if (k != 15) ans += ",";
-        }
-        ans += "}";
-        if (i+16 <= n-16) ans += ",";
+
+    long long ans = 0;
+    for (int i = 0; i < n; i++) {
+        int k = i-1;
+        while (k >= 0 && a[k] >= a[i]) k--;
+        int x = k;
+        while (x >= 0 && a[x] <= a[i]) x--;
+        int y = i;
+        while (y < n && a[y] >= a[i]) y++;
+        ans += (k - x) * (y - i);
     }
-    bl.clear();
-    for (int k = i; k <= n; k++) {
-        bl.push_back({d[k], k});
-    }
-    sort(bl.begin(), bl.end());
-    if (bl.size()) {
-        if (n > 16) ans += ",";
-        ans += "{s:";
-        for (int k = 0; k < bl.size(); k++) {
-            ans += to_string(bl[k].second);
-            if (k != bl.size() - 1) ans += ",";
-        }
-        ans += "}";
-    }
-    ans += "}";
-    cout << ans << '\n';
+    long long tot = 0;
+    for (int len = 1; len <= n; len++) tot += (len-1)*(n-len+1);
+    cout << tot - ans << '\n';
 }
 
 /*
+   for a simple array, how do we sort it using only swaps?
 
+   how do we carry on subproblems for subarrays?
 */
 
 /*
