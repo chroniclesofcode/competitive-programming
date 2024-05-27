@@ -127,7 +127,7 @@ public:
     node query(LL l, LL r, LL v = 1, LL tl = 0, LL tr = -1) {
         if (tr == -1) tr = n - 1;
         if (l > r) 
-            return 0;
+            return node();
         if (l == tl && r == tr) {
             return t[v];
         }
