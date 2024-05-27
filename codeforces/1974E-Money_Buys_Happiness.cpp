@@ -28,37 +28,49 @@ constexpr LL MD = (LL)1e9 + 7;
 
 LL n, m, k;
 
+LL dp[51][100001];
+
 void solve() {
-    cin >> n;
-    string s; cin >> s;
-    int nth = 0, sth = 0, est = 0, wst = 0;
-    for (int i = 0; i < s.size(); i++) {
-        if (s[i] == 'N') nth++;
-        else if (s[i] == 'S') sth++;
-        else if (s[i] == 'E') est++;
-        else if (s[i] == 'W') wst++;
+    LL salary;
+    cin >> m >> salary;
+    vector<arr2> a;
+    LL hsz = 0;
+    for (LL i = 0; i < m; i++) {
+        LL c, h; cin >> c >> h;
+        a.push_back({c, h});
+        hsz += h;
     }
-    int canceln = min(nth, sth);
-    int cancele = min(est, wst);
-    int tn = nth-canceln, ts = sth-canceln, te = est-cancele, tw = wst-cancele;
-    if (tn%2 || te%2 || ts%2 || tw%2 || s.size() < 2 || (s.size()==2 && s[0]!=s[1])) {
-        cout << "NO\n";
-        return;
-    }
-    int ct1 = 0, ct2 = 0;
-    for (int i = 0; i < s.size(); i++) {
-        if (s[i] == 'N') {
-            if (nth) { cout << (nth%2 ? 'R' : 'H'); nth--; }
-        } else if (s[i] == 'S') {
-            if (sth) { cout << (sth%2 ? 'R' : 'H'); sth--; }
-        } else if (s[i] == 'E') {
-            if (est) { cout << (est%2 ? 'H' : 'R'); est--; }
-        } else if (s[i] == 'W') {
-            if (wst) { cout << (wst%2 ? 'H' : 'R'); wst--; }
+    for (LL i = 0; i < m; i++) {
+        auto &[c, h] = a[i];
+        dp[i][0] = 0;
+        if (i == 0) {
+            for (LL j = 1; j <= hsz; j++) dp[i][j] = LINF;
+            if (c == 0) {
+                dp[i][h] = 0;
+            }
+            continue;
+        }
+        LL accrued = i * salary;
+        for (LL j = 1; j <= hsz; j++) {
+            dp[i][j] = dp[i-1][j];
+            if (j - h >= 0 && dp[i-1][j-h]+c <= accrued) {
+                dp[i][j] = min(dp[i][j], dp[i-1][j-h]+c);
+            }
         }
     }
-    cout << '\n';
+    LL ans = 0;
+    for (LL j = 0; j <= hsz; j++) {
+        if (dp[m-1][j] < LINF) {
+            ans = max(ans, j);
+        }
+    }
+    cout << ans << '\n';
+
 }
+
+/*
+
+*/
 
 /*
    Try this if you are stuck:
