@@ -25,15 +25,20 @@ int n, m, k;
 
 class Fenwick {
 public:
-    int BIT[MX+1];
+    int n;
+    vector<int> BIT;
 
-    void add(int x) {
-        for (; x <= MX; x += x&-x) {
-            BIT[x]++;
+    Fenwick(int sz) : n{sz}, BIT(sz+1, 0) {}
+
+    void add(int x, int add) {
+        x++;
+        for (; x <= n; x += x&-x) {
+            BIT[x] += add;
         }
     }
 
     int query(int x) {
+        x++;
         int sum = 0;
         for (; x > 0; x -= x&-x) {
             sum += BIT[x];
