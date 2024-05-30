@@ -26,58 +26,91 @@ constexpr LL MD = (LL)1e9 + 7;
 
 LL n, m, k, q;
 
-class Fenwick {
+class FenwickArr {
 public:
-    int n;
-    vector<int> BIT;
+    LL n;
+    vector<LL> BIT;
+    vector<LL> arr;
 
-    Fenwick(int sz) : n{sz}, BIT(sz+1, 0) {}
+    FenwickArr(LL sz) : n{sz}, BIT(sz+1, 0), arr(sz) {}
 
-    void add(int x, int add) {
+    void add(LL x, LL add) {
+        arr[x] += add;
         x++;
         for (; x <= n; x += x&-x) {
             BIT[x] += add;
         }
     }
 
-    int query(int x) {
+    LL query(LL x) {
         x++;
-        int sum = 0;
+        LL sum = 0;
         for (; x > 0; x -= x&-x) {
             sum += BIT[x];
         }
         return sum;
     }
 
-    int pref(int st, int end) {
-        return st == 0 ? query(end) : query(end) - query(st-1);
+    void set(LL idx, LL val) {
+        add(idx, val - arr[idx]);
+    }
+
+    LL pref(LL st, LL end) {
+        return st <= 0 ? query(end) : query(end) - query(st-1);
     }
 };
 
 void solve() {
     cin >> n >> q;
-    vector<int> a(n);
-    for (int i = 0; i < n; i++) cin >> a[i];
-    vector<vector<arr2>> queries(n);
-    for (int i = 0; i < q; i++) {
-        int x, y; cin >> x >> y; x--; y--;
-        q[x].push_back({y, i});
+    vector<LL> a(n);
+    FenwickArr pf(n);
+    for (LL i = 0; i < n; i++) {
+        cin >> a[i];
+        pf.add(i, a[i]);
     }
-    Fenwick f(n);
+    vector<vector<arr2>> queries(n);
+    for (LL i = 0; i < q; i++) {
+        LL x, y; cin >> x >> y; x--; y--;
+        queries[x].push_back({y, i});
+    }
+    FenwickArr f(n);
     vector<arr2> st;
-    vector<int> ans(q);
-    for (int i = n-1; i >= 0; i--) {
-        int val = a[i];
-        int g = n;
+    vector<LL> ans(q);
+    for (LL i = n-1; i >= 0; i--) {
+        LL val = a[i];
         while (!st.empty() && st.back()[0] <= val) {
             st.pop_back();
-            
+            f.set(st.size(), 0);
         }
-        for (auto &q : queries[i]) {
+        LL len = (st.empty() ? n : st.back()[1]) - i;
+        st.push_back({val, i});
+        f.set(st.size()-1, len * a[i]);
+        for (auto &qu : queries[i]) {
+            LL y = qu[0];
+            LL lo = 0, hi = st.size()-1;
+            LL elem = -1;
+            // Looking for element in stack that finishes
+            // before y in x->y.
+            while (lo <= hi) {
+                LL mid = lo + (hi - lo)/2;
+                // Compares index NOT value. Everything
+                // in stack is already guaranteed to be
+                // larger.
+                if (st[mid][1] <= y) {
+                    elem = mid;
+                    hi = mid-1;
+                } else {
+                    lo = mid+1;
+                }
+            }
+            // Note: elem+1 since our pref sum is inclusive
+            // exclude the elem, and calculate it manually
+            ans[qu[1]] = f.pref(elem+1, st.size()-1)
+                + (LL)((y - st[elem][1]+1)*st[elem][0])
+                - pf.pref(i, y);
         }
-        st.push_back(val);
     }
-    for (auto e : ans) cout << e << ' '; cout << '\n';
+    for (auto e : ans) cout << e << '\n';
 }
 
 /*
