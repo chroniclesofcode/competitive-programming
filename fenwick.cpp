@@ -47,6 +47,40 @@ public:
     }
 };
 
+class FenwickArr {
+public:
+    LL n;
+    vector<LL> BIT;
+    vector<LL> arr;
+
+    FenwickArr(LL sz) : n{sz}, BIT(sz+1, 0), arr(sz) {}
+
+    void add(LL x, LL add) {
+        arr[x] += add;
+        x++;
+        for (; x <= n; x += x&-x) {
+            BIT[x] += add;
+        }
+    }
+
+    LL query(LL x) {
+        x++;
+        LL sum = 0;
+        for (; x > 0; x -= x&-x) {
+            sum += BIT[x];
+        }
+        return sum;
+    }
+
+    void set(LL idx, LL val) {
+        add(idx, val - arr[idx]);
+    }
+
+    LL pref(LL st, LL end) {
+        return st <= 0 ? query(end) : query(end) - query(st-1);
+    }
+};
+
 void solve() {
     cin >> n;
 }
