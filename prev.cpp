@@ -4,10 +4,10 @@ using namespace std;
 
 #define MAINRET(x) in##x
 #define what_is(x) cout << #x << " is " << x << endl;
-#define print_vec(x, n) for (int i = 0; i < n; i++) cout << x[i] << ' '; cout << endl;
+#define print_vec(x, n) for (LL i = 0; i < n; i++) cout << x[i] << ' '; cout << endl;
 #define LL long long
-#define arr2 array<int,2>
-#define arr3 array<int,3>
+#define arr2 array<LL,2>
+#define arr3 array<LL,3>
 
 void solve();
 
@@ -18,86 +18,99 @@ MAINRET(t) main(void) {
         solve();
 }
 
-constexpr int INF = (int)1e9 + 100; 
+constexpr LL INF = (LL)1e9 + 100; 
 constexpr LL LINF = std::numeric_limits<LL>::max() / 2;
-constexpr int NINF = -INF;
-constexpr int MX = 2 * 1e5 + 1;
-constexpr int MD = (int)1e9 + 7;
+constexpr LL NINF = -INF;
+constexpr LL MX = 2 * 1e5 + 1;
+constexpr LL MD = (LL)1e9 + 7;
 
-int n, m, k;
+LL n, m, k, q;
 
-class SegtreeRNode {
+class FenwickArr {
 public:
-    LL n = 0;
+    LL n;
+    vector<LL> BIT;
+    vector<LL> arr;
 
-    struct node {
-        LL x;
-        node() : x{0} {}
-        node(LL e) : x{e} {}
+    FenwickArr(LL sz) : n{sz}, BIT(sz+1, 0), arr(sz) {}
 
-        friend node operator+(const node &a, const node &b) {
-            return node(a.x + b.x);
-        }
-        node& operator+=(const node &rhs) {
-            *this = *this + rhs;
-            return *this;
-        }
-    };
-
-    vector<node> t, lazy;
-    SegtreeRNode(LL sz) : n{sz}, t(4*sz+1), lazy(4*sz+1) {}
-
-
-    void push(LL v) {
-        t[v*2] += lazy[v];
-        lazy[v*2] += lazy[v];
-        t[v*2+1] += lazy[v];
-        lazy[v*2+1] += lazy[v];
-        lazy[v] = node();
-    }
-
-    void update(LL l, LL r, LL addend, LL v = 1, LL tl = 0, LL tr = -1) {
-        if (tr == -1) tr = n - 1;
-        if (l > r) 
-            return;
-        if (l == tl && tr == r) {
-            t[v] += addend;
-            lazy[v] += addend;
-        } else {
-            push(v);
-            LL tm = (tl + tr) / 2;
-            update(l, min(r, tm), addend, v*2, tl, tm);
-            update(max(l, tm+1), r, addend, v*2+1, tm+1, tr);
-            t[v] = max(t[v*2], t[v*2+1]);
+    void add(LL x, LL add) {
+        arr[x] += add;
+        x++;
+        for (; x <= n; x += x&-x) {
+            BIT[x] += add;
         }
     }
 
-    LL query(LL l, LL r, LL v = 1, LL tl = 0, LL tr = -1) {
-        if (tr == -1) tr = n - 1;
-        if (l > r)
-            return node().x;
-        if (l == tl && tr == r)
-            return t[v].x;
-        push(v);
-        LL tm = (tl + tr) / 2;
-        return max(query(l, min(r, tm), v*2, tl, tm),
-                query(max(l, tm+1), r, v*2+1, tm+1, tr));
+    LL query(LL x) {
+        x++;
+        LL sum = 0;
+        for (; x > 0; x -= x&-x) {
+            sum += BIT[x];
+        }
+        return sum;
+    }
+
+    void set(LL idx, LL val) {
+        add(idx, val - arr[idx]);
+    }
+
+    LL pref(LL st, LL end) {
+        return st <= 0 ? query(end) : query(end) - query(st-1);
     }
 };
 
 void solve() {
-    n = 11;
-    SegtreeRNode s(n);
-    vector<int> a = { 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10 };
-    for (int i = 0; i < n; i++) s.update(i,i,a[i]);
-    cout << s.query(1,4) << '\n';
-    cout << s.query(5,9) << '\n';
-    s.update(3,6,3);
-    s.update(6,10,4);
-    for (int i = 0; i < n; i++) cout << s.query(i,i) << ' '; cout << '\n';
-    cout << s.query(1,4) << " ans: " << 16 << '\n';
-    cout << s.query(5,9) << " ans: " << 57 << '\n';
-
+    cin >> n >> q;
+    vector<LL> a(n);
+    FenwickArr pf(n);
+    for (LL i = 0; i < n; i++) {
+        cin >> a[i];
+        pf.add(i, a[i]);
+    }
+    vector<vector<arr2>> queries(n);
+    for (LL i = 0; i < q; i++) {
+        LL x, y; cin >> x >> y; x--; y--;
+        queries[x].push_back({y, i});
+    }
+    FenwickArr f(n);
+    vector<arr2> st;
+    vector<LL> ans(q);
+    for (LL i = n-1; i >= 0; i--) {
+        LL val = a[i];
+        while (!st.empty() && st.back()[0] <= val) {
+            st.pop_back();
+            f.set(st.size(), 0);
+        }
+        LL len = (st.empty() ? n : st.back()[1]) - i;
+        st.push_back({val, i});
+        f.set(st.size()-1, len * a[i]);
+        for (auto &qu : queries[i]) {
+            LL y = qu[0];
+            LL lo = 0, hi = st.size()-1;
+            LL elem = -1;
+            // Looking for element in stack that finishes
+            // before y in x->y.
+            while (lo <= hi) {
+                LL mid = lo + (hi - lo)/2;
+                // Compares index NOT value. Everything
+                // in stack is already guaranteed to be
+                // larger.
+                if (st[mid][1] <= y) {
+                    elem = mid;
+                    hi = mid-1;
+                } else {
+                    lo = mid+1;
+                }
+            }
+            // Note: elem+1 since our pref sum is inclusive
+            // exclude the elem, and calculate it manually
+            ans[qu[1]] = f.pref(elem+1, st.size()-1)
+                + (LL)((y - st[elem][1]+1)*st[elem][0])
+                - pf.pref(i, y);
+        }
+    }
+    for (auto e : ans) cout << e << '\n';
 }
 
 /*
