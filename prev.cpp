@@ -4,10 +4,10 @@ using namespace std;
 
 #define MAINRET(x) in##x
 #define what_is(x) cout << #x << " is " << x << endl;
-#define print_vec(x, n) for (LL i = 0; i < n; i++) cout << x[i] << ' '; cout << endl;
+#define print_vec(x, n) for (int i = 0; i < n; i++) cout << x[i] << ' '; cout << endl;
 #define LL long long
-#define arr2 array<LL,2>
-#define arr3 array<LL,3>
+#define arr2 array<int,2>
+#define arr3 array<int,3>
 
 void solve();
 
@@ -18,99 +18,72 @@ MAINRET(t) main(void) {
         solve();
 }
 
-constexpr LL INF = (LL)1e9 + 100; 
+constexpr int INF = (int)1e9 + 100; 
 constexpr LL LINF = std::numeric_limits<LL>::max() / 2;
-constexpr LL NINF = -INF;
-constexpr LL MX = 2 * 1e5 + 1;
-constexpr LL MD = (LL)1e9 + 7;
+constexpr int NINF = -INF;
+constexpr int MX = 2 * 1e5 + 1;
+constexpr int MD = (int)1e9 + 7;
 
-LL n, m, k, q;
+int n, m, k;
 
-class FenwickArr {
+class Fenwick2D {
 public:
-    LL n;
-    vector<LL> BIT;
-    vector<LL> arr;
+    int n, m;
+    vector<vector<int>> BIT;
 
-    FenwickArr(LL sz) : n{sz}, BIT(sz+1, 0), arr(sz) {}
+    Fenwick2D(int sn, int sm) : n{sn}, m{sm}, BIT(sn+1, vector<int>(sm+1)) {}
 
-    void add(LL x, LL add) {
-        arr[x] += add;
-        x++;
-        for (; x <= n; x += x&-x) {
-            BIT[x] += add;
+    void add(int x, int y, int add) {
+        x++; y++;
+        for (int i = x; i <= n; i += i&-i) {
+            for (int j = y; j <= m; j += j&-j) {
+                BIT[i][j] += add;
+            }
         }
     }
 
-    LL query(LL x) {
-        x++;
-        LL sum = 0;
-        for (; x > 0; x -= x&-x) {
-            sum += BIT[x];
+    int query(int x, int y) {
+        x++; y++;
+        int sum = 0;
+        for (int i = x; i > 0; i -= i&-i) {
+            for (int j = y; j > 0; j -= j&-j) {
+                sum += BIT[i][j];
+            }
         }
         return sum;
-    }
-
-    void set(LL idx, LL val) {
-        add(idx, val - arr[idx]);
-    }
-
-    LL pref(LL st, LL end) {
-        return st <= 0 ? query(end) : query(end) - query(st-1);
     }
 };
 
 void solve() {
+    int q;
     cin >> n >> q;
-    vector<LL> a(n);
-    FenwickArr pf(n);
-    for (LL i = 0; i < n; i++) {
-        cin >> a[i];
-        pf.add(i, a[i]);
-    }
-    vector<vector<arr2>> queries(n);
-    for (LL i = 0; i < q; i++) {
-        LL x, y; cin >> x >> y; x--; y--;
-        queries[x].push_back({y, i});
-    }
-    FenwickArr f(n);
-    vector<arr2> st;
-    vector<LL> ans(q);
-    for (LL i = n-1; i >= 0; i--) {
-        LL val = a[i];
-        while (!st.empty() && st.back()[0] <= val) {
-            st.pop_back();
-            f.set(st.size(), 0);
-        }
-        LL len = (st.empty() ? n : st.back()[1]) - i;
-        st.push_back({val, i});
-        f.set(st.size()-1, len * a[i]);
-        for (auto &qu : queries[i]) {
-            LL y = qu[0];
-            LL lo = 0, hi = st.size()-1;
-            LL elem = -1;
-            // Looking for element in stack that finishes
-            // before y in x->y.
-            while (lo <= hi) {
-                LL mid = lo + (hi - lo)/2;
-                // Compares index NOT value. Everything
-                // in stack is already guaranteed to be
-                // larger.
-                if (st[mid][1] <= y) {
-                    elem = mid;
-                    hi = mid-1;
-                } else {
-                    lo = mid+1;
-                }
-            }
-            // Note: elem+1 since our pref sum is inclusive
-            // exclude the elem, and calculate it manually
-            ans[qu[1]] = f.pref(elem+1, st.size()-1)
-                + (LL)((y - st[elem][1]+1)*st[elem][0])
-                - pf.pref(i, y);
+    vector<vector<int>> g(n, vector<int>(n));
+    Fenwick2D f(n, n);
+    for (int i = 0; i < n; i++) {
+        for (int j = 0; j < n; j++) {
+            char tree; cin >> tree;
+            if (tree == '*') g[i][j] = 1;
+            else g[i][j] = 0;
+            f.add(i, j, g[i][j]);
         }
     }
-    for (auto e : ans) cout << e << '\n';
+    
+    for (int i = 0; i < q; i++) {
+        int op; cin >> op;
+        if (op == 1) {
+            int x, y; cin >> x >> y; x--; y--;
+            f.add(x, y, !g[x][y] - g[x][y]);
+            g[x][y] = !g[x][y];
+        } else {
+            int y1, x1, y2, x2; cin >> y1 >> x1 >> y2 >> x2;
+            y1--; x1--; y2--; x2--;
+            int ans = f.query(y2, x2);
+            if (x1 > 0) ans -= f.query(y2, x1-1);
+            if (y1 > 0) ans -= f.query(y1-1, x2);
+            if (x1 > 0 && y1 > 0) ans += f.query(y1-1, x1-1);
+            cout << ans << '\n';
+        }
+    }
 }
 
 /*

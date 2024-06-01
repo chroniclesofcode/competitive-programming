@@ -81,6 +81,34 @@ public:
     }
 };
 
+class Fenwick2D {
+public:
+    int n, m;
+    vector<vector<int>> BIT;
+
+    Fenwick2D(int sn, int sm) : n{sn}, m{sm}, BIT(sn+1, vector<int>(sm+1)) {}
+
+    void add(int x, int y, int add) {
+        x++; y++;
+        for (int i = x; i <= n; i += i&-i) {
+            for (int j = y; j <= m; j += j&-j) {
+                BIT[i][j] += add;
+            }
+        }
+    }
+
+    int query(int x, int y) {
+        x++; y++;
+        int sum = 0;
+        for (int i = x; i > 0; i -= i&-i) {
+            for (int j = y; j > 0; j -= j&-j) {
+                sum += BIT[i][j];
+            }
+        }
+        return sum;
+    }
+};
+
 void solve() {
     cin >> n;
 }
