@@ -72,6 +72,66 @@ public:
     }
 };
 
+// Range update, Range query -> can  be used in most applications
+class SegmentTree {
+private:
+    int n;
+    vector<long long> segtree;
+    vector<long long> lazy;
+public:
+    SegmentTree(int sz) : n{sz} {
+        segtree.resize(1 + 4 * sz);
+        lazy.resize(1 + 4 * sz);
+    }
+
+    void build(int node, int L, int R, vector<int> &v) {
+        if (L == R) {
+            segtree[node] = v[L];
+            return;
+        }
+        int mid = (L + R) / 2;
+        build(node*2, L, mid, v);
+        build(node*2+1, mid+1, R, v);
+        segtree[node] = segtree[node*2] + segtree[node*2+1];
+    }
+
+    void lz(int node, int L, int R) {
+        segtree[node] += lazy[node] * (R - L + 1);
+        if (L != R) {
+            lazy[node*2] += lazy[node];
+            lazy[node*2+1] += lazy[node];
+        }
+        lazy[node] = 0;
+    }
+
+    void update(int node, int L, int R, int Lq, int Rq, int val) {
+        if (lazy[node])
+            lz(node, L, R);
+        if (R < Lq || L > Rq)
+            return;
+        if (Lq <= L && R <= Rq) {
+            lazy[node] = val;
+            lz(node, L, R);
+            return;
+        }
+        int mid = (L + R) / 2;
+        update(node*2, L, mid, Lq, Rq, val);
+        update(node*2+1, mid+1, R, Lq, Rq, val);
+        segtree[node] = segtree[node*2] + segtree[node*2+1];
+    }
+
+    long long query(int node, int L, int R, int Lq, int Rq) {
+        if (lazy[node])
+            lz(node, L, R);
+        if (R < Lq || L > Rq)
+            return 0;
+        if (Lq <= L && R <= Rq)
+            return segtree[node];
+        int mid = (L + R) / 2;
+        return query(node*2, L, mid, Lq, Rq) + query(node*2+1, mid+1, R, Lq, Rq);
+    }
+};
+
 class Segtree2Ranges {
 public:
     int maxN = 0;

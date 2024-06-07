@@ -4,10 +4,10 @@ using namespace std;
 
 #define MAINRET(x) in##x
 #define what_is(x) cout << #x << " is " << x << endl;
-#define prLL_vec(x, n) for (LL i = 0; i < n; i++) cout << x[i] << ' '; cout << endl;
+#define print_vec(x, n) for (int i = 0; i < n; i++) cout << x[i] << ' '; cout << endl;
 #define LL long long
-#define arr2 array<LL,2>
-#define arr3 array<LL,3>
+#define arr2 array<int,2>
+#define arr3 array<int,3>
 
 void solve();
 
@@ -18,56 +18,43 @@ MAINRET(t) main(void) {
         solve();
 }
 
-constexpr LL INF = (LL)1e9 + 100; 
+constexpr int INF = (int)1e9 + 100; 
 constexpr LL LINF = std::numeric_limits<LL>::max() / 2;
-constexpr LL NINF = -INF;
-constexpr LL MX = 1e4 + 1;
-constexpr LL MD = 998244353;
+constexpr int NINF = -INF;
+constexpr int MX = 2 * 1e5 + 1;
+constexpr int MD = (int)1e9 + 7;
 
-LL n, m;
+int n, m, k;
 
-LL dp[MX][(1 << 10)+1];
+
 void solve() {
-    cin >> m >> n;
-    LL LG = (1 << m);
-    vector<LL> a(m);
-    for (LL i = 0; i < m; i++) {
-        cin >> a[i];
-        a[i]--;
-    }
-    vector<LL> f(m);
-    for (LL i = 0; i < m; i++) {
-        // we are saying a[i] is
-        // mapped to by f[a[i]] indices
-        f[a[i]] |= (1 << i);
-    }
-    for (LL i = 0; i <= n; i++) {
-        if (i == 0) {
-            dp[i][LG-1] = 1;
-            continue;
-        }
-        for (LL j = 0; j < LG; j++) {
-            for (LL k = 0; k < m; k++) {
-                if (j & (1 << k)) {
-                    LL mask = (j^(1<<k)) | f[k];
-                    dp[i][mask] += dp[i-1][j];
-                    dp[i][mask] %= MD;
-                }
+    string s;
+    cin >> s;
+    n = s.size();
+    stack<int> st;
+    string ret = "";
+    for (int i = 0; i < n; i++) {
+        st.push(i+1);
+        if (s[i] == 'I') {
+            while (!st.empty()) {
+                ret.push_back((char)(st.top()+'0'));
+                st.pop();
             }
         }
     }
-
-    LL ans = 0;
-    for (LL j = 0; j < LG; j++) {
-        ans += dp[n][j];
-        ans %= MD;
+    st.push(n+1);
+    while (!st.empty()) {
+        ret.push_back((char)(st.top()+'0'));
+        st.pop();
     }
-    cout << ans << '\n';
+    cout << ret << '\n';
 }
 
 /*
-f[2] = 1,3
-f[1] = 2
+IDIIDI
+stack:
+ans: 1324657
+
 */
 
 /*
