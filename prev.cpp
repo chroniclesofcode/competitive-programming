@@ -3,11 +3,7 @@
 using namespace std;
 
 #define MAINRET(x) in##x
-#define what_is(x) cout << #x << " is " << x << endl;
-#define print_vec(x, n) for (int i = 0; i < n; i++) cout << x[i] << ' '; cout << endl;
 #define LL long long
-#define arr2 array<int,2>
-#define arr3 array<int,3>
 
 void solve();
 
@@ -18,58 +14,92 @@ MAINRET(t) main(void) {
         solve();
 }
 
-constexpr int INF = (int)1e9 + 100; 
-constexpr LL LINF = std::numeric_limits<LL>::max() / 2;
-constexpr int NINF = -INF;
-constexpr int MX = 2 * 1e5 + 1;
-constexpr int MD = (int)1e9 + 7;
+#define INF numeric_limits<LL>::max() / 2
+#define NINF -INF
 
-int n, m, k;
+const LL MX = 3 * 1e5;
+//const LL MOD = 1e7;
 
+LL n, q;
+LL par[MX], grp[MX], tin[MX], tout[MX], depth[MX], comp[MX], pos[MX], sz[MX];
+bool vis[MX];
+vector<LL> adj[MX], cycle;
+LL timer = 0;
 
-void solve() {
-    string s;
-    cin >> s;
-    n = s.size();
-    stack<int> st;
-    string ret = "";
-    for (int i = 0; i < n; i++) {
-        st.push(i+1);
-        if (s[i] == 'I') {
-            while (!st.empty()) {
-                ret.push_back((char)(st.top()+'0'));
-                st.pop();
-            }
-        }
+void dfs(LL u) {
+    tin[u] = ++timer;
+    for (LL v : adj[u]) {
+        // Since we processed the full cycle before, this
+        // makes sure we're not processing an element in
+        // the cycle, and just keeping to tree nodes.
+        if (comp[v] == v) continue;
+        depth[v] = depth[u]+1;
+        grp[v] = grp[u];
+        comp[v] = comp[u];
+        dfs(v);
     }
-    st.push(n+1);
-    while (!st.empty()) {
-        ret.push_back((char)(st.top()+'0'));
-        st.pop();
-    }
-    cout << ret << '\n';
+    tout[u] = ++timer;
 }
 
-/*
-IDIIDI
-stack:
-ans: 1324657
+void solve() {
+    cin >> n;
+    for (LL i = 0; i < n; i++) {
+        cin >> par[i]; 
+        par[i]--;
+        adj[par[i]].push_back(i);
+    }
 
-*/
+    // Initialisations
+    for (LL i = 0; i < n; i++) {
+        comp[i] = -1;
+    }
 
-/*
-   Try this if you are stuck:
-1) binary search on answer
-2) Try solving it in reverse
-3) Think of a simpler problem 
-4) Think of elements which are special
-   (like minimum, maximum, deepest node in tree, root)
-5) Is it graph problem?
-    - super node? dp? cycles?
-6) sorting on something e.g. queries?
-7) Parity? something special
-8) is it monotonic? could you use a PQ/stack/queue?
+    // Find cycle
+    for (LL i = 0; i < n; i++) {
+        //cout << i << " comp[i] " << comp[i] << endl;
+        if (comp[i] != -1) {
+            continue;
+        }
+        LL u = i;
+        // Arrives at cycle
+        while (!vis[u]) {
+            vis[u] = 1;
+            u = par[u];
+        }
+        LL cycs = u;
+        LL ct = 1;
+        // Iterates through cycle again, setting values
+        while (u != cycs || cycle.empty()) {
+            cycle.push_back(u);
+            grp[u] = i;
+            pos[u] = ct++;
+            comp[u] = u; // Note: this holds true if in cycle
+            u = par[u];
+        }
+        LL cycle_size = cycle.size();
+        for (auto &c : cycle) {
+            timer = 0;
+            sz[c] = cycle_size;
+            // dfs outwards from each node to the end of 
+            // tree, propagating values throughout
+            dfs(c);
+        }
+        
+        cycle.clear();
+    }
+    int ret;
+    LL ans  = 0;
+    for (int i = 0; i < n; i++) {
+        if (comp[i] == i) {
+            ans += sz[i];
+        } else {
+            ans += depth[i] + sz[comp[i]];
+        }
+    }
+    cout << ans << '\n';
+}
 
-   EDGE CASES! N = 1, 2...
-   LONG LONG
-*/
+
+
+
+
