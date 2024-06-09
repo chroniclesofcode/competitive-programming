@@ -1,4 +1,3 @@
-
 n = int(input())
 md = 998244353
 numdigits = 0
