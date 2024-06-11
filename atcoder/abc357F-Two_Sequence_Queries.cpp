@@ -59,7 +59,7 @@ public:
         auto &seg = segtree[node];
         seg.sumab = (seg.sumab + seg.lazya * seg.sumb) % MD;
         seg.sumab = (seg.sumab + seg.suma * seg.lazyb) % MD;
-        seg.sumab += (seg.lazya * seg.lazyb) * (R-L+1);
+        seg.sumab += (((seg.lazya%MD) * (seg.lazyb%MD))%MD) * ((R-L+1) %MD);
         seg.sumab %= MD;
         if (L != R) {
             auto &segl = segtree[node*2];
@@ -69,8 +69,8 @@ public:
             segl.lazyb = (segl.lazyb + seg.lazyb) % MD;
             segr.lazyb = (segr.lazyb + seg.lazyb) % MD;
         }
-        seg.suma += seg.lazya * (R - L + 1);
-        seg.sumb += seg.lazyb * (R - L + 1);
+        seg.suma += seg.lazya * ((R - L + 1)%MD);
+        seg.sumb += seg.lazyb * ((R - L + 1)%MD);
         seg.suma %= MD;
         seg.sumb %= MD;
         seg.lazya = 0;
@@ -131,7 +131,7 @@ void solve() {
             s.update(1, 0, n-1, l, r, 0, x);
         } else {
             cin >> l >> r; l--; r--;
-            cout << s.query(1, 0, n-1, l, r) % MD << '\n';
+            cout << (s.query(1, 0, n-1, l, r)%MD+MD)% MD << '\n';
         }
     }
 }
