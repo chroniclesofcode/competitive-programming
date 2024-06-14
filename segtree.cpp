@@ -148,6 +148,84 @@ void solve() {
     cout << s.query(1, 3).x << '\n';
 }
 
+/*
+   
+   PERSISTENT SEGMENT TREE. Every update creates a whole new tree
+   that you need to store.
+
+*/
+
+class SegmentTreePersistent {
+public:
+    struct Node {
+        Node *l, *r;
+        LL sum;
+
+        Node(LL val) : l(nullptr), r(nullptr), sum(val) {}
+        Node(Node *l, Node *r) : l(l), r(r), sum(0) {
+            if (l) sum += l->sum;
+            if (r) sum += r->sum;
+        }
+    };
+    LL ct = 1;
+    vector<Node*> trees;
+
+    SegmentTreePersistent(LL maxsz) : trees(maxsz+1) {}
+
+    Node* build(vector<LL> &a, LL tl, LL tr) {
+        if (tl == tr)
+            return new Node(a[tl]);
+        LL tm = (tl + tr) / 2;
+        return new Node(build(a, tl, tm), build(a, tm+1, tr));
+    }
+
+    LL query(Node* v, LL tl, LL tr, LL l, LL r) {
+        if (l > r)
+            return 0;
+        if (l == tl && tr == r)
+            return v->sum;
+        LL tm = (tl + tr) / 2;
+        return query(v->l, tl, tm, l, min(r, tm))
+             + query(v->r, tm+1, tr, max(l, tm+1), r);
+    }
+
+    Node* update(Node* v, LL tl, LL tr, LL pos, LL new_val) {
+        if (tl == tr)
+            return new Node(new_val);
+        LL tm = (tl + tr) / 2;
+        if (pos <= tm)
+            return new Node(update(v->l, tl, tm, pos, new_val), v->r);
+        else
+            return new Node(v->l, update(v->r, tm+1, tr, pos, new_val));
+    }
+};
+using STP = SegmentTreePersistent;
+
+void solve() {
+    LL queries;
+    cin >> n >> queries;
+    vector<LL> bg(n);
+    for (LL i = 0; i < n; i++) {
+        cin >> bg[i];
+    }
+    STP s(MX);
+    s.trees[0] = s.build(bg, 0, n-1);
+    for (LL q = 0; q < queries; q++) {
+        LL op, k, a, b, x; cin >> op;
+        if (op == 1) {
+            cin >> k >> a >> x; k--; a--;
+            s.trees[k] = s.update(s.trees[k], 0, n-1, a, x);
+        } else if (op == 2) {
+            cin >> k >> a >> b; k--; a--; b--;
+            cout << s.query(s.trees[k], 0, n-1, a, b) << '\n';
+        } else if (op == 3) {
+            cin >> k; k--;
+            s.trees[s.ct++] = new STP::Node(s.trees[k]->l, s.trees[k]->r);
+        }
+    }
+}
+
+
 
 // NORMAL SEGTREES, NODE IS PROBABLY BETTER.
 
