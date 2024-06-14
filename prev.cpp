@@ -1,14 +1,32 @@
+class Solution {
+public:
+    int minimumCoins(vector<int>& prices) {
+        int n = prices.size();
+        int coins = 0;
+        int inf = (int)1e9;
+        // dp[i] = min cost to obtain this fruit
+        vector<int> dp(n);
+        deque<int> dq;
+        dp[0] = prices[0];
+        dq.push_back(0);
+        for (int i = 1; i < n; i++) {
+            while (!dq.empty() && (dq.front()+1)*2 < i+1)
+                dq.pop_front();
+            while (!dq.empty()) {
+                int bk = dq.back();
+                int before = (bk == 0) ? 0 : dp[bk-1];
+                if (dp[i-1] + prices[i] <= before + prices[bk]) {
+                    dq.pop_back();
+                } else {
+                    break;
+                }
+            }
+            dq.push_back(i);
+            int fr = dq.front();
+            int before = fr == 0 ? 0 : dp[fr-1];
+            dp[i] = before + prices[fr];
+        }
 
-n = int(input())
-md = 998244353
-numdigits = 0
-tmp = n
-while (tmp > 0):
-    numdigits += 1
-    tmp //= 10
-    
-ans = n * (pow(10, n * numdigits, md)-1) * pow(pow(10, numdigits)-1, md-2, md)
-ans %= md
-
-print(ans)
-
+        return dp[n-1];
+    }
+};
