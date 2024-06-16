@@ -26,78 +26,35 @@ constexpr LL MD = (LL)1e9 + 7;
 
 LL n, m, k;
 
-class SegmentTreePersistent {
-public:
-    struct Node {
-        Node *l, *r;
-        LL sum;
-
-        Node(LL val) : l(nullptr), r(nullptr), sum(val) {}
-        Node(Node *l, Node *r) : l(l), r(r), sum(0) {
-            if (l) sum += l->sum;
-            if (r) sum += r->sum;
-        }
-    };
-    LL ct = 1;
-    vector<Node*> trees;
-
-    SegmentTreePersistent(LL maxsz) : trees(maxsz+1) {}
-
-    Node* build(vector<LL> &a, LL tl, LL tr) {
-        if (tl == tr)
-            return new Node(a[tl]);
-        LL tm = (tl + tr) / 2;
-        return new Node(build(a, tl, tm), build(a, tm+1, tr));
-    }
-
-    LL query(Node* v, LL tl, LL tr, LL l, LL r) {
-        if (l > r)
-            return 0;
-        if (l == tl && tr == r)
-            return v->sum;
-        LL tm = (tl + tr) / 2;
-        return query(v->l, tl, tm, l, min(r, tm))
-             + query(v->r, tm+1, tr, max(l, tm+1), r);
-    }
-
-    Node* update(Node* v, LL tl, LL tr, LL pos, LL new_val) {
-        if (tl == tr)
-            return new Node(new_val);
-        LL tm = (tl + tr) / 2;
-        if (pos <= tm)
-            return new Node(update(v->l, tl, tm, pos, new_val), v->r);
-        else
-            return new Node(v->l, update(v->r, tm+1, tr, pos, new_val));
-    }
-};
-using STP = SegmentTreePersistent;
 
 void solve() {
-    LL queries;
-    cin >> n >> queries;
-    vector<LL> bg(n);
+    cin >> n >> m;
+    vector<LL> a(n), b(m);
     for (LL i = 0; i < n; i++) {
-        cin >> bg[i];
+        cin >> a[i];
     }
-    STP s(MX);
-    s.trees[0] = s.build(bg, 0, n-1);
-    for (LL q = 0; q < queries; q++) {
-        LL op, k, a, b, x; cin >> op;
-        if (op == 1) {
-            cin >> k >> a >> x; k--; a--;
-            s.trees[k] = s.update(s.trees[k], 0, n-1, a, x);
-        } else if (op == 2) {
-            cin >> k >> a >> b; k--; a--; b--;
-            cout << s.query(s.trees[k], 0, n-1, a, b) << '\n';
-        } else if (op == 3) {
-            cin >> k; k--;
-            s.trees[s.ct++] = new STP::Node(s.trees[k]->l, s.trees[k]->r);
+    for (LL i = 0; i < m; i++) {
+        cin >> b[i];
+    }
+    sort(a.begin(), a.end());
+    sort(b.begin(), b.end());
+    LL j = 0;
+    LL ans = 0;
+    for (LL i = 0; i < n; i++) {
+        if (j < m && b[j] <= a[i]) {
+            ans += a[i];
+            j++;
         }
+    }
+    if (j < m) {
+        cout << -1 << '\n';
+    } else {
+        cout << ans << '\n';
     }
 }
 
 /*
-
+   cout -1 if not possible
 */
 
 /*
