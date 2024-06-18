@@ -30,6 +30,7 @@ class Combs {
 public:
     LL n, mod;
     vector<LL> fact, inv;
+    Combs() = default;
     Combs(LL sz, LL md) : n(sz), mod(md), fact(sz+1), inv(sz+1) {
         fact[0] = 1;
         for (LL i = 1; i <= sz; i++) {
