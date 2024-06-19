@@ -77,6 +77,7 @@ public:
     }
 
     LL pref(LL st, LL end) {
+        if (st > end) return 0;
         return st <= 0 ? query(end) : query(end) - query(st-1);
     }
 };
