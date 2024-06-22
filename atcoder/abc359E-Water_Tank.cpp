@@ -22,43 +22,40 @@ constexpr LL INF = (LL)1e9 + 100;
 constexpr LL LINF = std::numeric_limits<LL>::max() / 2;
 constexpr LL NINF = -INF;
 constexpr LL MX = 2 * 1e5 + 1;
-constexpr LL MD = (LL)1e9 + 7;
+constexpr LL MD = 998244353;
 
-LL n, m, k, sz[MX];
-vector<LL> adj[MX];
+LL n, m, k;
 
-int dfs(int u, int p) {
-    sz[u] = 1;
-    for (int v : adj[u]) {
-        if (v == p) continue;
-        dfs(v, u);
-        sz[u] += sz[v];
-    }
-    return sz[u];
-}
-
-int centroid(int u, int p, int tot) {
-    for (int v : adj[u]) {
-        if (v == p) continue;
-        if (sz[v] > tot / 2) return centroid(v, u, tot);
-    }
-    return u;
-}
 
 void solve() {
-    cin >> n; 
-    for (LL i = 0; i < n-1; i++) {
-        LL a, b; cin >> a >> b; a--; b--;
-        adj[a].push_back(b);
-        adj[b].push_back(a);
+    cin >> n;
+    vector<LL> h(n+1);
+    h[0] = INF;
+    for (LL i = 1; i <= n; i++) {
+        cin >> h[i];
     }
-    dfs(0, -1);
-    cout << centroid(0, -1, n)+1 << '\n';
+    stack<LL> s;
+    s.push(0);
+    vector<LL> ans(n+1);
+    for (LL i = 1; i <= n; i++) {
+        while (!s.empty() && h[s.top()] < h[i]) {
+            s.pop();
+        }
+        LL tp = s.top();
+        ans[i] = ((i - tp) * h[i]) + 1;
+        if (tp > 0) ans[i] += ans[tp] - 1;
+        s.push(i);
+    }
+    for (LL i = 1; i <= n; i++) {
+        cout << ans[i] << ' ';
+    }
+    cout << '\n';
 }
 
 /*
 
 */
+
 /*
    Try this if you are stuck:
 1) binary search on answer
@@ -75,3 +72,4 @@ void solve() {
    EDGE CASES! N = 1, 2...
    LONG LONG
 */
+
