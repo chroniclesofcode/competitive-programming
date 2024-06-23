@@ -21,44 +21,66 @@ MAINRET(t) main(void) {
 constexpr LL INF = (LL)1e9 + 100; 
 constexpr LL LINF = std::numeric_limits<LL>::max() / 2;
 constexpr LL NINF = -INF;
-constexpr LL MX = 2 * 1e5 + 1;
-constexpr LL MD = (LL)1e9 + 7;
+constexpr LL MX = 1001;
+constexpr LL MD = 998244353;
 
-LL n, m, k, sz[MX];
-vector<LL> adj[MX];
+LL n, m, k;
+unordered_map<string, LL> dp[MX];
 
-int dfs(int u, int p) {
-    sz[u] = 1;
-    for (int v : adj[u]) {
-        if (v == p) continue;
-        dfs(v, u);
-        sz[u] += sz[v];
+bool ispal(string &s) {
+    LL n = s.size();
+    for (LL i = 0; i < n; i++) {
+        if (s[i] != s[n-1-i]) return false;
     }
-    return sz[u];
-}
-
-int centroid(int u, int p, int tot) {
-    for (int v : adj[u]) {
-        if (v == p) continue;
-        if (sz[v] > tot / 2) return centroid(v, u, tot);
-    }
-    return u;
+    return true;
 }
 
 void solve() {
-    cin >> n; 
-    for (LL i = 0; i < n-1; i++) {
-        LL a, b; cin >> a >> b; a--; b--;
-        adj[a].push_back(b);
-        adj[b].push_back(a);
+    cin >> n >> k;
+    string s; cin >> s;
+    if (k <= 1) { cout << 0 << '\n'; return; }
+    dp[0][""] = 1;
+    for (LL i = 1; i <= n; i++) {
+        for (auto &e : dp[i-1]) {
+            string str = e.first;
+            if (str.size() == k) str.erase(str.begin());
+            // not a wildcard
+            if (s[i-1] != '?') {
+                str.push_back(s[i-1]);
+                if (str.size() < k || !ispal(str)) {
+                    dp[i][str] += e.second;
+                    dp[i][str] %= MD;
+                }
+            } else {
+                str.push_back('A');
+                if (str.size() < k || !ispal(str)) {
+                    dp[i][str] += e.second;
+                    dp[i][str] %= MD;
+                }
+                str[str.size()-1] = 'B';
+                if (str.size() < k || !ispal(str)) {
+                    dp[i][str] += e.second;
+                    dp[i][str] %= MD;
+                }
+            }
+        }
     }
-    dfs(0, -1);
-    cout << centroid(0, -1, n)+1 << '\n';
+    LL ans = 0;
+    for (auto &e : dp[n]) {
+        ans += e.second;
+        ans %= MD;
+    }
+    cout << ans << '\n';
 }
 
 /*
+   dp[i][mask] = if the last elements at i is (mask)->A or B
+   how many good strings do we have in total? The mask is to
+   confirm that we do have a palindrome.
 
+   for all ??? case -> we
 */
+
 /*
    Try this if you are stuck:
 1) binary search on answer
