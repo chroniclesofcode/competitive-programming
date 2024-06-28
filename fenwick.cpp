@@ -28,6 +28,7 @@ public:
     int n;
     vector<int> BIT;
 
+    Fenwick() {}
     Fenwick(int sz) : n{sz}, BIT(sz+1, 0) {}
 
     void add(int x, int add) {
@@ -44,6 +45,11 @@ public:
             sum += BIT[x];
         }
         return sum;
+    }
+
+    int pref(int st, int end) {
+        if (st > end) return 0;
+        return st <= 0 ? query(end) : query(end) - query(st-1);
     }
 };
 
