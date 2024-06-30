@@ -27,31 +27,32 @@ constexpr LL MD = (LL)1e9 + 7;
 LL n, m, k, sz[MX], rem[MX];
 vector<LL> adj[MX];
 
-int get_subt(int u, int p) {
+LL get_subt(LL u, LL p) {
     sz[u] = 1;
-    for (int v : adj[u]) {
-        if (v == p) continue;
-        get_subt(v, u);
-        sz[u] += sz[v];
+    for (LL v : adj[u]) {
+        if (v == p || rem[v]) continue;
+        sz[u] += get_subt(v, u);
     }
     return sz[u];
 }
 
-int centroid(int u, int p, int tot) {
-    for (int v : adj[u]) {
+LL centroid(LL u, LL p, LL tot) {
+    for (LL v : adj[u]) {
         if (v == p || rem[v]) continue;
         if (sz[v] >= tot/2) return centroid(v, u, tot);
     }
     return u;
 }
 
-void centroid_decomp(int node = 0) {
-    int c = centroid(node, -1, sz[node]);
+void centroid_decomp(LL node = 0) {
+    LL c = centroid(node, -1, get_subt(node, -1));
     rem[c] = true;
+    
     /*
        Insert logic here
     */
-    for (int v : adj[c]) {
+
+    for (LL v : adj[c]) {
         if (rem[v]) continue;
         centroid_decomp(v);
     }
