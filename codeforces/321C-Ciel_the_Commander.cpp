@@ -45,63 +45,29 @@ LL centroid(LL u, LL p, LL tot) {
     return u;
 }
 
-void process_subt(LL u, LL p, LL c, LL dep) {
-    for (LL v : adj[u]) {
-        if (v == p || rem[v]) continue;
-        dep++;
-        process_subt(v, u, c, dep);
-        dep--;
-    }
-    anc[u].push_back({c, dep});
-}
 
-void centroid_decomp(LL node = 0) {
+void centroid_decomp(LL node = 0, int rank = 0) {
     LL c = centroid(node, -1, get_subt(node, -1));
     rem[c] = true;
+    ans[c] = rank;
     
     for (LL v : adj[c]) {
         if (rem[v]) continue;
-        process_subt(v, c, c, 1);
-    }
-
-    for (LL v : adj[c]) {
-        if (rem[v]) continue;
-        centroid_decomp(v);
+        centroid_decomp(v, rank+1);
     }
 }
-
-void paint(int u) {
-    for (auto &[a, dep] : anc[u]) {
-        ans[a] = min(ans[a], dep);
-    }
-    ans[u] = 0; // current is 0
-}
-
 void solve() {
-    cin >> n >> m; 
+    cin >> n; 
     for (LL i = 0; i < n-1; i++) {
         LL a, b; cin >> a >> b; a--; b--;
         adj[a].push_back(b);
         adj[b].push_back(a);
     }
-    for (int i = 0; i < n; i++) ans[i] = INF;
-
-    centroid_decomp(0);
-    paint(0);
-    for (int i = 0; i < m; i++) {
-        int op, v; cin >> op >> v; v--;
-        if (op == 1) {
-            // paint v red
-            paint(v);
-        } else {
-            // shortest distance to red from v
-            LL ret = ans[v];
-            for (auto &[a, dep] : anc[v]) {
-                ret = min(ret, dep + ans[a]);
-            }
-            cout << ret << '\n';
-        }
+    centroid_decomp(0, 0);
+    for (int i = 0; i < n; i++) {
+        cout << (char)(ans[i]+'A') << ' ';
     }
+    cout << '\n';
 }
 
 
