@@ -24,7 +24,7 @@ constexpr LL NINF = -INF;
 constexpr LL MX = 2 * 1e5 + 1;
 constexpr LL MD = (LL)1e9 + 7;
 
-LL n, m, k, sz[MX], rem[MX];
+LL n, m, k, sz[MX], rem[MX], ans[MX];
 vector<LL> adj[MX];
 vector<pair<LL,LL>> anc[MX]; // { ancestor, distance }
 
@@ -70,14 +70,39 @@ void centroid_decomp(LL node = 0) {
         centroid_decomp(v);
     }
 }
+
+void paint(int u) {
+    for (auto &[a, dep] : anc[u]) {
+        ans[a] = min(ans[a], dep);
+    }
+    ans[u] = 0; // current is 0
+}
+
 void solve() {
-    cin >> n; 
+    cin >> n >> m; 
     for (LL i = 0; i < n-1; i++) {
         LL a, b; cin >> a >> b; a--; b--;
         adj[a].push_back(b);
         adj[b].push_back(a);
     }
+    for (int i = 0; i < n; i++) ans[i] = INF;
+
     centroid_decomp(0);
+    paint(0);
+    for (int i = 0; i < m; i++) {
+        int op, v; cin >> op >> v; v--;
+        if (op == 1) {
+            // paint v red
+            paint(v);
+        } else {
+            // shortest distance to red from v
+            LL ret = ans[v];
+            for (auto &[a, dep] : anc[v]) {
+                ret = min(ret, dep + ans[a]);
+            }
+            cout << ret << '\n';
+        }
+    }
 }
 
 
