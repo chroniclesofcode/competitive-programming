@@ -24,9 +24,8 @@ constexpr LL NINF = -INF;
 constexpr LL MX = 2 * 1e5 + 1;
 constexpr LL MD = (LL)1e9 + 7;
 
-LL n, m, k, sz[MX], rem[MX];
+LL n, m, k, sz[MX], rem[MX], arrange[MX];
 vector<LL> adj[MX];
-vector<pair<LL,LL>> anc[MX]; // { ancestor, distance }
 
 LL get_subt(LL u, LL p) {
     sz[u] = 1;
@@ -45,39 +44,41 @@ LL centroid(LL u, LL p, LL tot) {
     return u;
 }
 
-void process_subt(LL u, LL p, LL c, LL dep) {
-    for (LL v : adj[u]) {
-        if (v == p || rem[v]) continue;
-        dep++;
-        process_subt(v, u, c, dep);
-        dep--;
-    }
-    anc[u].push_back({c, dep});
-}
-
-void centroid_decomp(LL node = 0) {
-    LL c = centroid(node, -1, get_subt(node, -1));
-    rem[c] = true;
-    
-    // Add logic here
-    for (LL v : adj[c]) {
-        if (rem[v]) continue;
-        process_subt(v, c, c, 1);
-    }
-
-    for (LL v : adj[c]) {
-        if (rem[v]) continue;
-        centroid_decomp(v);
+vector<int> order;
+void dfs(int u, int p) {
+    order.push_back(u);
+    for (int v : adj[u]) {
+        if (v == p) continue;
+        dfs(v, u);
     }
 }
+
 void solve() {
     cin >> n; 
+    vector<arr2> edges;
     for (LL i = 0; i < n-1; i++) {
         LL a, b; cin >> a >> b; a--; b--;
         adj[a].push_back(b);
         adj[b].push_back(a);
+        edges.push_back({a, b});
     }
-    centroid_decomp(0);
+    LL c = centroid(0, -1, get_subt(0, -1));
+    get_subt(c, -1);
+    LL ans = 0;
+    for (int i = 0; i < edges.size(); i++) {
+        ans += min(sz[edges[i][0]], sz[edges[i][1]]);
+    }
+    ans *= 2; // nodes going out, nodes going in.
+    cout << ans << '\n';
+    dfs(c, -1);
+    for (int i = 0; i < order.size(); i++) {
+        arrange[order[(i+n/2)%n]] = order[i];
+    }
+
+    for (int i = 0; i < n; i++) {
+        cout << arrange[i]+1 << ' ';
+    }
+    cout << '\n';
 }
 
 
