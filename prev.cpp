@@ -4,10 +4,10 @@ using namespace std;
 
 #define MAINRET(x) in##x
 #define what_is(x) cout << #x << " is " << x << endl;
-#define print_vec(x, n) for (int i = 0; i < n; i++) cout << x[i] << ' '; cout << endl;
+#define prLL_vec(x, n) for (LL i = 0; i < n; i++) cout << x[i] << ' '; cout << endl;
 #define LL long long
-#define arr2 array<int,2>
-#define arr3 array<int,3>
+#define arr2 array<LL,2>
+#define arr3 array<LL,3>
 
 void solve();
 
@@ -18,17 +18,58 @@ MAINRET(t) main(void) {
         solve();
 }
 
-constexpr int INF = (int)1e9 + 100; 
+constexpr LL INF = (LL)1e9 + 100; 
 constexpr LL LINF = std::numeric_limits<LL>::max() / 2;
-constexpr int NINF = -INF;
-constexpr int MX = 2 * 1e5 + 1;
-constexpr int MD = (int)1e9 + 7;
+constexpr LL NINF = -INF;
+constexpr LL MX = 2 * 1e5 + 1;
+constexpr LL MD = (LL)1e9 + 7;
 
-int n, m, k;
+LL n, m, k, dist[MX], dis, e;
+vector<arr2> adj[MX];
+LL ans = 0;
+
+LL dp[MX][2];
+LL mxval = 0;
+LL mxidx = 0;
+ 
+void dfs(LL u, LL p, LL depth) {
+	for (auto &[v,w] : adj[u]) {
+		if (v == p) continue;
+		dfs(v, u, depth + w);
+	}
+
+	if (depth > dis) {
+		dis = depth;
+		e = u;
+	}
+}
+
+
+LL calc(LL u, LL p) {
+    LL ct = 0;
+    for (auto &[v, w] : adj[u]) {
+        if (v == p) continue;
+        ct += calc(v, u) + 2*w;
+    }
+    return ct;
+}
 
 
 void solve() {
-
+    cin >> n;
+    LL a, b, c;
+    LL tot = 0;
+    for (LL i = 0; i < n-1; i++) {
+        cin >> a >> b >> c;
+        a--; b--;
+        adj[a].push_back({b,c});
+        adj[b].push_back({a,c});
+        tot += 2 * c;
+    }
+    dfs(0, -1, 0);
+	dis = 0;
+	dfs(e, -1, 0);
+    cout << tot - dis << '\n';
 }
 
 /*
