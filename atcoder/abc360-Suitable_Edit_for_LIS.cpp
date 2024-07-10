@@ -117,7 +117,7 @@ void solve() {
             ret = max(ret, dp1.qry(0, curr-1) + 1);
         } else {
             ret = dp0.qry(0, curr-1) + 1;
-            if (a[i] > 0 && ret < i+1) ret++;
+            if (a[i] > 1 && ret < i+1) ret++;
             ret = max(ret, dp1.qry(0, curr-1) + 1);
         }
         dp1.update(curr, ret);
@@ -129,7 +129,7 @@ void solve() {
 }
 
 /*
-
+   3 5 7 8 9 12 13 1000
 */
 
 /*
