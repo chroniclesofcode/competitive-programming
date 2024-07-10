@@ -102,8 +102,8 @@ void solve() {
     SegtreePNode dp0(n+10), dp1(n+10);
     int ans = 1;
     for (int i = 0; i < n; i++) {
+        ans = max(ans, dp0.qry(0, n+9) + 1);
         int curr = idx[a[i]];
-
         int ret = dp0.qry(0, curr-1) + 1;
         dp0.update(curr, ret);
         // one update left, use on the last node if OK
@@ -122,6 +122,7 @@ void solve() {
         }
         dp1.update(curr, ret);
         ans = max(ans, ret);
+        //cout << "a[i]: " << a[i] << " dp1: " << dp0.qry(curr,curr) << ' ' << dp1.qry(curr,curr) << '\n';
     }
 
     cout << ans << '\n';
