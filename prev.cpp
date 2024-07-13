@@ -4,10 +4,8 @@ using namespace std;
 
 #define MAINRET(x) in##x
 #define what_is(x) cout << #x << " is " << x << endl;
-#define print_vec(x, n) for (int i = 0; i < n; i++) cout << x[i] << ' '; cout << endl;
 #define LL long long
-#define arr2 array<int,2>
-#define arr3 array<int,3>
+#define arr array<int,2>
 
 void solve();
 
@@ -18,36 +16,115 @@ MAINRET(t) main(void) {
         solve();
 }
 
-constexpr int INF = (int)1e9 + 100; 
-constexpr LL LINF = std::numeric_limits<LL>::max() / 2;
+constexpr int INF = std::numeric_limits<int>::max() / 2;
 constexpr int NINF = -INF;
-constexpr int MX = 2 * 1e5 + 1;
+constexpr LL MX = 3 * 1e5;
 constexpr int MD = (int)1e9 + 7;
 
 int n, m, k;
 
+class Fenwick {
+public:
+    int n;
+    vector<int> BIT;
+
+    Fenwick() {}
+    Fenwick(int sz) : n{sz}, BIT(sz+1, 0) {}
+
+    void add(int x, int add) {
+        x++;
+        for (; x <= n; x += x&-x) {
+            BIT[x] += add;
+        }
+    }
+
+    int query(int x) {
+        x++;
+        int sum = 0;
+        for (; x > 0; x -= x&-x) {
+            sum += BIT[x];
+        }
+        return sum;
+    }
+
+    int pref(int st, int end) {
+        if (st > end) return 0;
+        return st <= 0 ? query(end) : query(end) - query(st-1);
+    }
+};
+
+class FenwickArr {
+public:
+    using LL = long long;
+    LL n;
+    vector<LL> BIT;
+    vector<LL> arr;
+
+    FenwickArr() {}
+    FenwickArr(LL sz) : n{sz}, BIT(sz+1, 0), arr(sz) {}
+
+    void add(LL x, LL add) {
+        arr[x] += add;
+        x++;
+        for (; x <= n; x += x&-x) {
+            BIT[x] += add;
+        }
+    }
+
+    LL query(LL x) {
+        x++;
+        LL sum = 0;
+        for (; x > 0; x -= x&-x) {
+            sum += BIT[x];
+        }
+        return sum;
+    }
+
+    void set(LL idx, LL val) {
+        add(idx, val - arr[idx]);
+    }
+
+    LL pref(LL st, LL end) {
+        if (st > end) return 0;
+        return st <= 0 ? query(end) : query(end) - query(st-1);
+    }
+};
+
+class Fenwick2D {
+public:
+    int n, m;
+    vector<vector<int>> BIT;
+
+    Fenwick2D(int sn, int sm) : n{sn}, m{sm}, BIT(sn+1, vector<int>(sm+1)) {}
+
+    void add(int x, int y, int add) {
+        x++; y++;
+        for (int i = x; i <= n; i += i&-i) {
+            for (int j = y; j <= m; j += j&-j) {
+                BIT[i][j] += add;
+            }
+        }
+    }
+
+    int query(int x, int y) {
+        x++; y++;
+        int sum = 0;
+        for (int i = x; i > 0; i -= i&-i) {
+            for (int j = y; j > 0; j -= j&-j) {
+                sum += BIT[i][j];
+            }
+        }
+        return sum;
+    }
+};
 
 void solve() {
-
+    cin >> n;
 }
 
 /*
 
 */
 
-/*
-   Try this if you are stuck:
-1) binary search on answer
-2) Try solving it in reverse
-3) Think of a simpler problem 
-4) Think of elements which are special
-   (like minimum, maximum, deepest node in tree, root)
-5) Is it graph problem?
-    - super node? dp? cycles?
-6) sorting on something e.g. queries?
-7) Parity? something special
-8) is it monotonic? could you use a PQ/stack/queue?
 
-   EDGE CASES! N = 1, 2...
-   LONG LONG
-*/
+
