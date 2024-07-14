@@ -28,7 +28,7 @@ int n, m, k;
 
 vector<arr2> adj[MX]; // adj must be: [node, weight]
 
-void dijkstra(int src) {
+vector<int> dijkstra(int src) {
     vector<int> vis(n, false), dist(n, INF);
     priority_queue<arr2, vector<arr2>, greater<arr2>> pq;
     pq.push({0, src});
