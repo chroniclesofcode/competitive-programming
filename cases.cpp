@@ -26,7 +26,7 @@ constexpr int NINF = -INF;
 constexpr int MX = 2 * 1e5 + 1;
 constexpr int MD = (int)1e9 + 7;
 
-int n, m, k;
+int n, m, k, q;
 
 void solve() {
 
