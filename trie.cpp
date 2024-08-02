@@ -71,13 +71,16 @@ struct Trie {
 };
 
 struct BitTrie {
-    int tr[MX][2], c[MX], idx = 1; // optional end[MX]
+    LL BSZ = 63;
+    vector<array<int,2>> tr;
+    vector<int> c;
+    int idx = 1;
+    BitTrie(int sz) : tr(sz+1), c(sz+1) {}
 
-    // num can be string as well
-    void add_val(int num, int val) {
-        int u = 1;
-        for (int i = 19; i >= 0; i--) { // usually str.size()
-            int bit = (num >> i) & 1;
+    void add_val(LL num, LL val) {
+        LL u = 1;
+        for (LL i = BSZ; i >= 0; i--) { 
+            LL bit = (num >> i) & 1;
             if (!tr[u][bit]) {
                 tr[u][bit] = ++idx;
             }
@@ -87,11 +90,11 @@ struct BitTrie {
     }
     
     // Modify depending on question - currently max xor of num in trie
-    int get_xor(int num) {
-        int u = 1;
-        int res = 0;
-        for (int i = 19; i >= 0; i--) {
-            int bit = !((num >> i) & 1);
+    LL get_xor(LL num) {
+        LL u = 1;
+        LL res = 0;
+        for (LL i = BSZ; i >= 0; i--) {
+            LL bit = !((num >> i) & 1);
             if (tr[u][bit] && c[tr[u][bit]] > 0) {
                 u = tr[u][bit];
                 res |= (bit << i);
