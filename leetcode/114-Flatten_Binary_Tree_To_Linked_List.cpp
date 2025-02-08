@@ -15,22 +15,24 @@ public:
     TreeNode *tail;
     void dfs(TreeNode *root) {
         if (root == nullptr) return;
+        TreeNode* l = root->left;
+        TreeNode* r = root->right;
 
         if (head == nullptr) {
-            head = new TreeNode(root->val);
+            head = root;
             tail = head;
+            head->left = nullptr;
+            head->right = nullptr;
         } else {
-            tail->right = new TreeNode(root->val);
+            tail->right = root;
+            tail->left = nullptr;
             tail = tail->right;
         }
 
-        dfs(root->left);
-        dfs(root->right);
+        dfs(l);
+        dfs(r);
     }
     void flatten(TreeNode* root) {
         dfs(root);
-        if (head != nullptr) {
-            *root = *head;
-        }
     }
 };
