@@ -6,9 +6,8 @@ public:
         vector<int> ans;
         unordered_map<string, int> exists;
         int allsz = words.size();
-        for (const auto& word : words) {
+        for (const auto& word : words)
             exists[word]++;
-        }
         for (int st = 0; st < wsz; st++) {
             int j = st;
             int tot = 0;
