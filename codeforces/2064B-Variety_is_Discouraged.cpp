@@ -39,7 +39,7 @@ void solve() {
     }
     int ans = 0;
     int curr = 0;
-    int l = 1, r = 1;
+    int l = 0, r = 0;
     for (int i = 0; i < n; i++) {
         if (ct[a[i]] == 1) {
             curr++;
@@ -50,6 +50,10 @@ void solve() {
             l = r - curr + 1;
         }
         ans = max(ans, curr);
+    }
+    if (l == 0 || r == 0) {
+        cout << 0 << '\n';
+        return;
     }
     cout << l << ' ' << r  << '\n';
 }
