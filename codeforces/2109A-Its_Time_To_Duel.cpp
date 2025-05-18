@@ -29,7 +29,35 @@ constexpr int MD = (int)1e9 + 7;
 int n, m, k, q;
 
 void solve() {
-
+    cin >> n;
+    vector<int> a(n);
+    for (int i = 0; i < n; i++) {
+        int x; cin >> x;
+        a[i] = x;
+    }
+    if (n == 2) {
+        if (a[0] + a[1] == 1) {
+            cout << "NO\n";
+        } else {
+            cout << "YES\n";
+        }
+        return;
+    }
+    int has_zero = a[0] == 0;
+    for (int i = 1; i < n; i++) {
+        if (a[i] == 0 && a[i-1] == 0) {
+            cout << "YES\n";
+            return;
+        }
+        if (a[i] == 0) {
+            has_zero = 1;
+        }
+    }
+    if (!has_zero) {
+        cout << "YES\n";
+        return;
+    }
+    cout << "NO\n";
 }
 
 /*

@@ -14,13 +14,11 @@ void solve();
 MAINRET(t) main(void) {
     std::cin.tie(nullptr);
     std::cin.sync_with_stdio(false);
-    LL t;
-    cin >> t;
-    while (t--)
+
         solve();
 }
 
-constexpr int INF = (int)1e9 + 100;
+constexpr int INF = (int)1e9 + 100; 
 constexpr LL LINF = std::numeric_limits<LL>::max() / 2;
 constexpr int NINF = -INF;
 constexpr int MX = 2 * 1e5 + 1;
@@ -28,30 +26,9 @@ constexpr int MD = (int)1e9 + 7;
 
 int n, m, k, q;
 
-// note 1-indexed
+
 void solve() {
-    cin >> n;
-    vector<int> a(n);
-    unordered_map<int, int> ct;
-    for (int i = 0; i < n; i++) {
-        cin >> a[i];
-        ct[a[i]]++;
-    }
-    int ans = 0;
-    int curr = 0;
-    int l = 1, r = 1;
-    for (int i = 0; i < n; i++) {
-        if (ct[a[i]] == 1) {
-            curr++;
-        } else curr = 0;
-        if (curr > ans) {
-            ans = curr;
-            r = i+1;
-            l = r - curr + 1;
-        }
-        ans = max(ans, curr);
-    }
-    cout << l << ' ' << r  << '\n';
+    
 }
 
 /*
