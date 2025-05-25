@@ -14,9 +14,6 @@ void solve();
 MAINRET(t) main(void) {
     std::cin.tie(nullptr);
     std::cin.sync_with_stdio(false);
-    LL t;
-    cin >> t;
-    while (t--)
         solve();
 }
 
@@ -31,32 +28,24 @@ int n, m, k, q;
 void solve() {
     cin >> n;
     vector<int> a;
-    map<int, vector<int>, greater<int>> compress;
     for (int i = 0; i < n; i++) {
         int x; cin >> x;
         a.push_back(x);
-        compress[x].push_back(i);
     }
-    vector<int> vis(n+1, 0);
-    int ans = 0;
-    for (auto& [num, vec] : compress) {
-        for (int i = 0; i < vec.size(); i++) {
-            int idx = vec[i];
-            if (vis[idx+1] || (idx-1>=0 && vis[idx-1])) {
-                vis[idx] = 1;
-            }
+    unordered_map<int,int> m;
+    int ans = INT_MAX;
+    for (int i = 0; i < n; i++) {
+        auto it = m.find(a[i]);
+        if (it != m.end()) {
+            ans = min(ans, i - it->second + 1);
         }
-        for (int i = vec.size() - 1; i >= 0; i--) {
-            int idx = vec[i];
-            if (vis[idx+1] || (idx-1>=0 && vis[idx-1])) {
-                vis[idx] = 1;
-            } else {
-                ans++;
-                vis[idx] = 1;
-            }
-        }
+        m[a[i]] = i;
     }
-    cout << ans << '\n';
+    if (ans == INT_MAX) {
+        cout << -1 << '\n';
+    } else {
+        cout << ans << '\n';
+    }
 }
 
 /*
