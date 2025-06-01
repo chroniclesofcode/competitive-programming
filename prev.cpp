@@ -28,34 +28,38 @@ int n, m, k, q;
 
 
 void solve() {
-    cin >> n >> q;
-    vector<int> a(n);
+    cin >> n;
+    vector<pair<int,unordered_map<int,int>>> faces;
+    double ans = 0;
     for (int i = 0; i < n; i++) {
-        int x; cin >> x;
-        a[i] = x;
+        cin >> k;
+        unordered_map<int,int> occurrences;
+        for (int j = 0; j < k; j++) {
+            int a;
+            cin >> a;
+            occurrences[a]++;
+        }
+        faces.push_back({k, std::move(occurrences)});
     }
-    map<int, vector<arr2>> queries;
-    for (int i = 0; i < q; i++) {
-        int r, x; cin >> r >> x;
-        queries[r-1].push_back({x, i});
-    }
-    vector<int> ans(q);
-    vector<int> dp;
     for (int i = 0; i < n; i++) {
-        int elem = a[i];
-        auto it = lower_bound(dp.begin(), dp.end(), elem);
-        if (it == dp.end()) {
-            dp.push_back(elem);
-        } else {
-            *it = elem;
-        }
-        for (auto& [x, idx] : queries[i]) {
-            ans[idx] = upper_bound(dp.begin(), dp.end(), x) - dp.begin();
+        for (int j = 0; j < i; j++) {
+            auto &[asz, a] = faces[i];
+            auto &[bsz, b] = faces[j];
+            auto &u = a.size() < b.size() ? a : b;
+            auto &v = a.size() < b.size() ? b : a;
+            auto usz = a.size() < b.size() ? asz : bsz;
+            auto vsz = a.size() < b.size() ? bsz : asz;
+            double curr = 0;
+            for (auto& [face, ct] : u) {
+                auto it = v.find(face);
+                if (it == v.end()) continue;
+                curr += ((double)ct / usz) * ((double)it->second / vsz);
+            }
+            ans = max(ans, curr);
         }
     }
-    for (int i = 0; i < q; i++) {
-        cout << ans[i] << '\n';
-    }
+
+    cout << std::setprecision(15) << ans << '\n';
 }
 
 /*
