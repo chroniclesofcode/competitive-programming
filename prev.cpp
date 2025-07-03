@@ -26,12 +26,69 @@ constexpr int MD = (int)1e9 + 7;
 
 int n, m, k, q;
 
-vector<int> adj[MX];
+class Fenwick {
+public:
+    int n;
+    vector<int> BIT;
+
+    Fenwick() {}
+    Fenwick(int sz) : n{sz}, BIT(sz+1, 0) {}
+
+    void add(int x, int add) {
+        x++;
+        for (; x <= n; x += x&-x) {
+            BIT[x] += add;
+        }
+    }
+
+    int query(int x) {
+        x++;
+        int sum = 0;
+        for (; x > 0; x -= x&-x) {
+            sum += BIT[x];
+        }
+        return sum;
+    }
+
+    int pref(int st, int end) {
+        if (st > end) return 0;
+        return st <= 0 ? query(end) : query(end) - query(st-1);
+    }
+};
 
 void solve() {
-    adj[0] = { 3, 2 };
-    adj[1].push_back(0);
-    
+    cin >> n;
+    vector<int> vals(n);
+    for (int i = 0; i < n; i++) {
+        int p; cin >> p;
+        vals[i] = p;
+    }
+    Fenwick ft(n+1);
+    for (int i = 0; i < n; i++) {
+        ft.add(i, 1); // represents empty slots
+    }
+    vector<int> ans(n);
+    for (int i = n-1; i >= 0; i--) {
+        int val = vals[i];
+        int lo = 0, hi = n-1;
+        int ret = 0;
+        while (lo <= hi) {
+            long long mid = lo + (hi - lo) / 2;
+            int qu = ft.query(mid);
+            if (qu >= val) {
+                ret = mid;
+                hi = mid-1;
+            } else {
+                lo = mid+1;
+            }
+        }
+        ans[ret] = i+1;
+        ft.add(ret, -1);
+    }
+    for (int i = 0; i < n; i++) {
+        cout << ans[i] << ' ';
+    }
+    cout << '\n';
 }
 
 /*
