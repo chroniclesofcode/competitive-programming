@@ -26,69 +26,84 @@ constexpr int MD = (int)1e9 + 7;
 
 int n, m, k, q;
 
-class Fenwick {
+class FFT {
 public:
-    int n;
-    vector<int> BIT;
+    using cd = complex<double>;
+    const double PI = acos(-1);
 
-    Fenwick() {}
-    Fenwick(int sz) : n{sz}, BIT(sz+1, 0) {}
+    void fft(vector<cd> & a, bool invert) {
+        int n = a.size();
 
-    void add(int x, int add) {
-        x++;
-        for (; x <= n; x += x&-x) {
-            BIT[x] += add;
+        for (int i = 1, j = 0; i < n; i++) {
+            int bit = n >> 1;
+            for (; j & bit; bit >>= 1)
+                j ^= bit;
+            j ^= bit;
+
+            if (i < j)
+                swap(a[i], a[j]);
+        }
+
+        for (int len = 2; len <= n; len <<= 1) {
+            double ang = 2 * PI / len * (invert ? -1 : 1);
+            cd wlen(cos(ang), sin(ang));
+            for (int i = 0; i < n; i += len) {
+                cd w(1);
+                for (int j = 0; j < len / 2; j++) {
+                    cd u = a[i+j], v = a[i+j+len/2] * w;
+                    a[i+j] = u + v;
+                    a[i+j+len/2] = u - v;
+                    w *= wlen;
+                }
+            }
+        }
+
+        if (invert) {
+            for (cd & x : a)
+                x /= n;
         }
     }
+    vector<int> multiply(vector<int> const& a, vector<int> const& b) {
+        vector<cd> fa(a.begin(), a.end()), fb(b.begin(), b.end());
+        int n = 1;
+        while (n < a.size() + b.size()) 
+            n <<= 1;
+        fa.resize(n);
+        fb.resize(n);
 
-    int query(int x) {
-        x++;
-        int sum = 0;
-        for (; x > 0; x -= x&-x) {
-            sum += BIT[x];
-        }
-        return sum;
-    }
+        fft(fa, false);
+        fft(fb, false);
+        for (int i = 0; i < n; i++)
+            fa[i] *= fb[i];
+        fft(fa, true);
 
-    int pref(int st, int end) {
-        if (st > end) return 0;
-        return st <= 0 ? query(end) : query(end) - query(st-1);
+        vector<int> result(n);
+        for (int i = 0; i < n; i++)
+            result[i] = round(fa[i].real());
+        return result;
     }
 };
 
+
 void solve() {
     cin >> n;
-    vector<int> vals(n);
+    vector<int> s(n);
+    int big = 1e6 + 1;
+    vector<int> poly(big);
     for (int i = 0; i < n; i++) {
-        int p; cin >> p;
-        vals[i] = p;
+        cin >> s[i];
+        poly[s[i]] = 1;
     }
-    Fenwick ft(n+1);
-    for (int i = 0; i < n; i++) {
-        ft.add(i, 1); // represents empty slots
-    }
-    vector<int> ans(n);
-    for (int i = n-1; i >= 0; i--) {
-        int val = vals[i];
-        int lo = 0, hi = n-1;
-        int ret = 0;
-        while (lo <= hi) {
-            long long mid = lo + (hi - lo) / 2;
-            int qu = ft.query(mid);
-            if (qu >= val) {
-                ret = mid;
-                hi = mid-1;
-            } else {
-                lo = mid+1;
-            }
+    FFT fft;
+    vector<int> mult = fft.multiply(poly, poly);
+    int m = mult.size();
+    long long ans = 0;
+    for (int i = 1; i < big; i++) {
+        if (poly[i] == 1 && i*2 < m) {
+            ans += (mult[i*2]-1)/2;
         }
-        ans[ret] = i+1;
-        ft.add(ret, -1);
     }
-    for (int i = 0; i < n; i++) {
-        cout << ans[i] << ' ';
-    }
-    cout << '\n';
+    cout << ans << '\n';
 }
 
 /*
