@@ -24,53 +24,60 @@ constexpr int NINF = -INF;
 constexpr int MX = 2 * 1e5 + 1;
 constexpr int MD = (int)1e9 + 7;
 
-int n, m, k, q, w;
+int n, m, k, q;
+int ans = 0;
+int ch(char c) {
+    return (c - '0');
+}
 
+void cost(string s, vector<int> costs) {
+    int sz = s.size();
+    if (sz == 1) {
+        ans = costs[0];
+        return;
+    }
+    string ret;
+    vector<int> nextcosts;
+    for (int i = 0; i < sz; i+= 3) {
+        int ct = ch(s[i])+ch(s[i+1])+ch(s[i+2]);
+        bool is_one = true;
+        int quota_rm = 0;
+        if (ct == 0 || ct == 3) quota_rm = 2;
+        else quota_rm = 1;
+        if (ct >= 2) {
+            ret.push_back('1');
+        } else {
+            ret.push_back('0');
+            is_one = false;
+        }
+        vector<int> amt;
+        for (int j = 0; j < 3; j++) {
+            if (s[i+j] == '1' && is_one) {
+                amt.push_back(costs[i+j]);
+            } else if (s[i+j] == '0' && !is_one) {
+                amt.push_back(costs[i+j]);
+            }
+        }
+        sort(amt.begin(), amt.end());
+        if (quota_rm == 2) {
+            nextcosts.push_back(amt[0]+amt[1]);
+        } else {
+            nextcosts.push_back(amt[0]);
+        }
+    }
+    cost(ret, nextcosts);
+}
 
 void solve() {
-    cin >> n >> w;
-    vector<arr3> blocks(n);
-    unordered_map<int,int> ordering;
-    for (int i = 0; i < n; i++) {
-        int x, y; cin >> x >> y;
-        blocks[i] = {y-1, x-1, i};
-    }
-    cin >> q;
-    vector<arr3> queries(q);
-    for (int i = 0; i < q; i++) {
-        int t, a; cin >> t >> a;
-        queries[i] = {t, a-1, i};
-    }
-    sort(queries.begin(), queries.end());
-    sort(blocks.begin(), blocks.end());
-    int j = 0;
-    vector<int> filled(n+1, 0); // how many in each vertical level?
-    vector<int> horiz(n+1, 0); // how many each horiz column?
-    vector<int> ans(q);
-    for (auto &[time, bnum, ansi] : queries) {
-        while (j < n && blocks[j][0] < time) {
-            int xblock = blocks[j][1];
-            ordering[blocks[j][2]] = horiz[xblock];
-            filled[horiz[xblock]]++;
-            horiz[xblock]++;
-            j++;
-        }
-        if (ordering.find(bnum) != ordering.end() && filled[ordering[bnum]] >= w) {
-            ans[ansi] = 0;
-        } else {
-            ans[ansi] = 1;
-        }
-    }
-    for (int i = 0; i < q; i++) {
-        if (ans[i]) {
-            cout << "Yes";
-        } else {
-            cout << "No";
-        }
-        cout << '\n';
-    }
+    cin >> n;
+    std::string s;
+    cin >> s;
+    vector<int> costs(s.size(), 1);
+    cost(s, costs);
+    cout << ans << '\n';
 }
 
 /*
-
+    
 */
+
