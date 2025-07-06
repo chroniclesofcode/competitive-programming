@@ -4,10 +4,10 @@ using namespace std;
 
 #define MAINRET(x) in##x
 #define what_is(x) cout << #x << " is " << x << endl;
-#define print_vec(x, n) for (int i = 0; i < n; i++) cout << x[i] << ' '; cout << endl;
+#define print_vec(x, n) for (LL i = 0; i < n; i++) cout << x[i] << ' '; cout << endl;
 #define LL long long
-#define arr2 array<int,2>
-#define arr3 array<int,3>
+#define arr2 array<LL,2>
+#define arr3 array<LL,3>
 
 void solve();
 
@@ -18,66 +18,72 @@ MAINRET(t) main(void) {
         solve();
 }
 
-constexpr int INF = (int)1e9 + 100; 
+constexpr LL INF = (LL)1e9 + 100; 
 constexpr LL LINF = std::numeric_limits<LL>::max() / 2;
-constexpr int NINF = -INF;
-constexpr int MX = 2 * 1e5 + 1;
-constexpr int MD = (int)1e9 + 7;
+constexpr LL NINF = -INF;
+constexpr LL MX = 2 * 1e5 + 1;
+constexpr LL MD = (LL)1e9 + 7;
 
-int n, m, k, q;
-int ans = 0;
-int ch(char c) {
-    return (c - '0');
-}
+LL n, m, k, q;
 
-void cost(string s, vector<int> costs) {
-    int sz = s.size();
-    if (sz == 1) {
-        ans = costs[0];
-        return;
-    }
-    string ret;
-    vector<int> nextcosts;
-    for (int i = 0; i < sz; i+= 3) {
-        int ct = ch(s[i])+ch(s[i+1])+ch(s[i+2]);
-        bool is_one = true;
-        int quota_rm = 0;
-        if (ct == 0 || ct == 3) quota_rm = 2;
-        else quota_rm = 1;
-        if (ct >= 2) {
-            ret.push_back('1');
-        } else {
-            ret.push_back('0');
-            is_one = false;
-        }
-        vector<int> amt;
-        for (int j = 0; j < 3; j++) {
-            if (s[i+j] == '1' && is_one) {
-                amt.push_back(costs[i+j]);
-            } else if (s[i+j] == '0' && !is_one) {
-                amt.push_back(costs[i+j]);
-            }
-        }
-        sort(amt.begin(), amt.end());
-        if (quota_rm == 2) {
-            nextcosts.push_back(amt[0]+amt[1]);
-        } else {
-            nextcosts.push_back(amt[0]);
-        }
-    }
-    cost(ret, nextcosts);
+LL calc(LL i, LL j, LL k) {
+    return i*j + j*k + k*i;
 }
 
 void solve() {
-    cin >> n;
-    std::string s;
-    cin >> s;
-    vector<int> costs(s.size(), 1);
-    cost(s, costs);
+    cin >> n >> k;
+    vector<long long> a(n), b(n), c(n);
+    for (LL i = 0; i < n; i++) {
+        LL t; cin >> t;
+        a[i] = t;
+    }
+    for (LL i = 0; i < n; i++) {
+        LL t; cin >> t;
+        b[i] = t;
+    }
+    for (LL i = 0; i < n; i++) {
+        LL t; cin >> t;
+        c[i] = t;
+    }
+    sort(a.begin(), a.end(), greater<LL>());
+    sort(b.begin(), b.end(), greater<LL>());
+    sort(c.begin(), c.end(), greater<LL>());
+    using arr4 = array<long long,4>;
+    priority_queue<arr4> pq;
+    long long fst = calc(a[0],b[0],c[0]);
+    pq.push({fst, 0, 0, 0});
+    long long ans = fst;
+    map<arr3,long long> mp;
+    long long ct = 0;
+    while (ct < k) {
+        auto tp = pq.top();
+        pq.pop();
+        long long x = tp[1], y = tp[2], z = tp[3];
+        if (mp[{x,y,z}]) continue;
+        ct++;
+        mp[{x,y,z}] = 1;
+        if (x+1 < n)
+            pq.push({calc(a[x+1],b[y],c[z]),x+1,y,z});
+        if (y+1 < n) 
+            pq.push({calc(a[x],b[y+1],c[z]),x,y+1,z});
+        if (z+1 < n)
+            pq.push({calc(a[x],b[y],c[z+1]),x,y,z+1});
+        ans = tp[0];
+    }
     cout << ans << '\n';
 }
 
 /*
-    
-*/
+1 2
+3 4
+5 6
 
+2,4,6
+2,4,5
+2,3,6
+2,3,5
+1,4,6
+1,4,5
+1,3,6
+1,3,5
+*/
