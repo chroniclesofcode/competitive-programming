@@ -4,10 +4,10 @@ using namespace std;
 
 #define MAINRET(x) in##x
 #define what_is(x) cout << #x << " is " << x << endl;
-#define print_vec(x, n) for (LL i = 0; i < n; i++) cout << x[i] << ' '; cout << endl;
+#define print_vec(x, n) for (int i = 0; i < n; i++) cout << x[i] << ' '; cout << endl;
 #define LL long long
-#define arr2 array<LL,2>
-#define arr3 array<LL,3>
+#define arr2 array<int,2>
+#define arr3 array<int,3>
 
 void solve();
 
@@ -18,72 +18,53 @@ MAINRET(t) main(void) {
         solve();
 }
 
-constexpr LL INF = (LL)1e9 + 100; 
+constexpr int INF = (int)1e9 + 100; 
 constexpr LL LINF = std::numeric_limits<LL>::max() / 2;
-constexpr LL NINF = -INF;
-constexpr LL MX = 2 * 1e5 + 1;
-constexpr LL MD = (LL)1e9 + 7;
+constexpr int NINF = -INF;
+constexpr int MX = 2 * 1e5 + 1;
+constexpr int MD = 998244353;
 
-LL n, m, k, q;
+int n, m, k, q;
 
-LL calc(LL i, LL j, LL k) {
-    return i*j + j*k + k*i;
-}
 
 void solve() {
-    cin >> n >> k;
-    vector<long long> a(n), b(n), c(n);
-    for (LL i = 0; i < n; i++) {
-        LL t; cin >> t;
-        a[i] = t;
+    cin >> n >> m;
+    string s; 
+    cin >> s;
+    map<vector<int>, long long> dp;
+    vector<int> tmp(n);
+    dp[tmp] = 1;
+    // for every char in M, what if letter was a-z?
+    for (int i = 0; i < m; i++) {
+        map<vector<int>, long long> nextdp;
+        // go through all previous dp[i]'s. These represent
+        // previous states of LIS dps that exist (and count of them)
+        for (auto &[prev, ct] : dp) {
+            // add a new char onto it. Note: irrespective of prev chars!
+            for (int j = 0; j < 26; j++) {
+                char c = 'a' + j;
+                vector<int> curr = prev;
+                // build LCS from scratch, using prev as a starting pt
+                for (int k = 0; k < n; k++) {
+                    if (s[k] == c) curr[k] = (k ? prev[k-1]+1 : 1);
+                    if (k) curr[k] = max(curr[k], curr[k-1]);
+                }
+                // prev state -> curr state, add all ways to reach prev
+                nextdp[curr] = (nextdp[curr] + ct) % MD;
+            }
+        }
+        dp = nextdp;
     }
-    for (LL i = 0; i < n; i++) {
-        LL t; cin >> t;
-        b[i] = t;
+    // dp now represents counts of all fully built strings of length M
+    // well, their DP arrays, that is.
+    // grab last elem in array for subseq of length exactly k (LCS)
+    // add ways to reach it to ans
+    vector<long long> ans(n+1);
+    for (auto &[curr, ct] : dp) {
+        ans[curr[n-1]] = (ans[curr[n-1]] + ct) % MD;
     }
-    for (LL i = 0; i < n; i++) {
-        LL t; cin >> t;
-        c[i] = t;
+    for (int i = 0; i < n+1; i++) {
+        cout << ans[i] << ' ';
     }
-    sort(a.begin(), a.end(), greater<LL>());
-    sort(b.begin(), b.end(), greater<LL>());
-    sort(c.begin(), c.end(), greater<LL>());
-    using arr4 = array<long long,4>;
-    priority_queue<arr4> pq;
-    long long fst = calc(a[0],b[0],c[0]);
-    pq.push({fst, 0, 0, 0});
-    long long ans = fst;
-    map<arr3,long long> mp;
-    long long ct = 0;
-    while (ct < k) {
-        auto tp = pq.top();
-        pq.pop();
-        long long x = tp[1], y = tp[2], z = tp[3];
-        if (mp[{x,y,z}]) continue;
-        ct++;
-        mp[{x,y,z}] = 1;
-        if (x+1 < n)
-            pq.push({calc(a[x+1],b[y],c[z]),x+1,y,z});
-        if (y+1 < n) 
-            pq.push({calc(a[x],b[y+1],c[z]),x,y+1,z});
-        if (z+1 < n)
-            pq.push({calc(a[x],b[y],c[z+1]),x,y,z+1});
-        ans = tp[0];
-    }
-    cout << ans << '\n';
+    cout << '\n';
 }
-
-/*
-1 2
-3 4
-5 6
-
-2,4,6
-2,4,5
-2,3,6
-2,3,5
-1,4,6
-1,4,5
-1,3,6
-1,3,5
-*/
