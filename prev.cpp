@@ -24,36 +24,54 @@ constexpr LL NINF = -INF;
 constexpr LL MX = 2 * 1e5 + 1;
 constexpr LL MD = (LL)1e9 + 7;
 
-LL n, m, k, q;
-vector<LL> a;
-vector<LL> s;
-unordered_set<LL> mp;
-
-void dfs(LL idx, LL sz) {
-    for (LL i = 0; i <= sz; i++) {
-        s[i] += a[idx];
-        if (idx == n-1) {
-            LL tmp = 0;
-            for (LL j = 0; j < s.size(); j++) tmp ^= s[j];
-            mp.insert(tmp);
-        } else if (i < sz) {
-            dfs(idx+1, sz);
-        } else {
-            dfs(idx+1, sz+1);
-        }
-        s[i] -= a[idx];
-    }
-}
+LL n, m, k, q, x;
+LL dp[5002][5002][3];
 
 void solve() {
-    cin >> n;
-    a = vector<LL>(n);
-    for (LL i = 0; i < n; i++) cin >> a[i];
-    s = vector<LL>(n, 0);
-    dfs(0,0);
-    cout << mp.size() << '\n';
+    cin >> n >> x;
+    vector<arr3> a(n);
+    for (LL i = 0; i < n; i++) {
+        LL vit, unit, calories;
+        cin >> vit >> unit >> calories;
+        a[i] = { vit-1, unit, calories };
+    }
+    for (LL i = 0; i < n; i++) {
+        for (LL j = 1; j <= x; j++) {
+            LL vit = a[i][0], unit = a[i][1], cal = a[i][2];
+            if (i) {
+                dp[i][j][0] = dp[i-1][j][0];
+                dp[i][j][1] = dp[i-1][j][1];
+                dp[i][j][2] = dp[i-1][j][2];
+            }
+            if (cal > j) continue;
+            if (i) {
+                dp[i][j][vit] = max(dp[i][j][vit],
+                                    dp[i-1][j-cal][vit] + unit);
+            } else {
+                dp[i][j][vit] = unit;
+            }
+        }
+    }
+    arr2 v0 = {0, 0};
+    arr2 v1 = {0, 0};
+    arr2 v2 = {0, 0};
+    for (LL i = 0; i < x; i++) {
+        if (v0 <= v1 && v0 <= v2) {
+            v0[1]++;
+            v0[0] = dp[n-1][v0[1]][0];
+        } else if (v1 <= v0 && v1 <= v2) {
+            v1[1]++;
+            v1[0] = dp[n-1][v1[1]][1];
+        } else {
+            v2[1]++;
+            v2[0] = dp[n-1][v2[1]][2];
+        }
+    } 
+    cout << min({v0[0], v1[0], v2[0] }) << '\n';
 }
 
 /*
+    only using 0..N foods, what is the max vitamins we can
+    take?
 
 */
