@@ -4,10 +4,10 @@ using namespace std;
 
 #define MAINRET(x) in##x
 #define what_is(x) cout << #x << " is " << x << endl;
-#define print_vec(x, n) for (int i = 0; i < n; i++) cout << x[i] << ' '; cout << endl;
+#define prLL_vec(x, n) for (LL i = 0; i < n; i++) cout << x[i] << ' '; cout << endl;
 #define LL long long
-#define arr2 array<int,2>
-#define arr3 array<int,3>
+#define arr2 array<LL,2>
+#define arr3 array<LL,3>
 
 void solve();
 
@@ -18,36 +18,59 @@ MAINRET(t) main(void) {
         solve();
 }
 
-constexpr int INF = (int)1e9 + 100; 
+constexpr LL INF = (LL)1e9 + 100; 
 constexpr LL LINF = std::numeric_limits<LL>::max() / 2;
-constexpr int NINF = -INF;
-constexpr int MX = 2 * 1e5 + 1;
-constexpr int MD = (int)1e9 + 7;
+constexpr LL NINF = -INF;
+constexpr LL MX = 2 * 1e5 + 1;
+constexpr LL MD = (LL)1e9 + 7;
 
-long long n, m, k, q;
+LL n, m, k, q;
 
-long long binsearch(long long st) {
-    long long lo = 1, hi = sqrt(n/2)+1;
-    long long ans = 0;
-    while (lo <= hi) {
-        long long mid = lo + (hi-lo)/2;
-        long long tmp = st*mid*mid;
-        if (tmp <= n) {
-            ans = mid;
-            lo = mid+1;
-        } else {
-            hi = mid-1;
-        }
-    }
-    return ans;
-}
 void solve() {
     cin >> n;
-    long long ans1 = binsearch(2);
-    long long ans2 = binsearch(4);
-    cout << ans1 + ans2 << '\n';
+    vector<LL> a(n);
+    for (LL i = 0; i < n; i++) {
+        cin >> a[i];
+        a[i]--;
+    }
+    vector<vector<LL>> vq(n+1);
+    for (LL i = 0; i < n; i++) {
+        vq[a[i]].push_back(i);
+    }
+    long long ans = 0;
+    for (LL i = 0; i < n; i++) {
+        vector<LL> &q = vq[i];
+        vector<LL> &nq = vq[i+1]; // possible because n+1
+        LL sz = q.size();
+        for (LL j = 0; j < sz; j++) {
+            // find sandwiched indices in next_queue
+            auto it = lower_bound(nq.begin(), nq.end(), q[j]);
+            LL right = (it == nq.end() ? n : *it);
+            LL rbound = (j < sz-1 ? q[j+1] : n);
+            right = min(right, rbound);
+            LL left = -1;
+            if (it != nq.begin()) {
+                it--;
+                left = *it;
+            }
+            ans += (q[j] - left) * (right - q[j]);
+        }
+    }
+    cout << ans << '\n';
 }
 
 /*
+let's say we union find everything together that is of the same
+group, and give everyone a group ID. So now the question is
+given an array of LLegers from 1->N with repeats, for every
+subarray, what is the number of distinct LLegers?
 
+We can somehow iterate through the indices of each number and
+get a better understanding, I think.
+
+count no of pairs where j is in the array and j+1 is not in the array
+this will give you all the 'runs'.
+Now count for all subarrays
+
+What could hLL me of this question???
 */
