@@ -9,6 +9,7 @@ using namespace std;
 #define arr2 array<LL,2>
 #define arr3 array<LL,3>
 
+
 void solve();
 
 MAINRET(t) main(void) {
@@ -24,53 +25,59 @@ constexpr LL NINF = -INF;
 constexpr LL MX = 2 * 1e5 + 1;
 constexpr LL MD = (LL)1e9 + 7;
 
-LL n, m, k, q;
+long long n, m, k, q;
 
+LL quadratic(LL mid, LL p) {
+    return (mid/p + 1) / 2;
+}
+
+using lll = __int128;
 void solve() {
-    cin >> n;
-    vector<LL> a(n);
+    cin >> n >> m;
+    vector<LL> p(n);
     for (LL i = 0; i < n; i++) {
-        cin >> a[i];
-        a[i]--;
+        LL v; cin >> v;
+        p[i] = v;
     }
-    vector<vector<LL>> vq(n+1);
-    for (LL i = 0; i < n; i++) {
-        vq[a[i]].push_back(i);
-    }
-    long long ans = 0;
-    for (LL i = 0; i < n; i++) {
-        vector<LL> &q = vq[i];
-        vector<LL> &nq = vq[i+1]; // possible because n+1
-        LL sz = q.size();
-        for (LL j = 0; j < sz; j++) {
-            // find sandwiched indices in next_queue
-            auto it = lower_bound(nq.begin(), nq.end(), q[j]);
-            LL right = (it == nq.end() ? n : *it);
-            LL rbound = (j < sz-1 ? q[j+1] : n);
-            right = min(right, rbound);
-            LL left = -1;
-            if (it != nq.begin()) {
-                it--;
-                left = *it;
+    LL lo = 1, hi = m;
+    LL ans = 0;
+    vector<LL> tmp(n);
+    while (lo < hi) {
+        // mid is the limit delta
+        LL mid = lo + (hi - lo)/2;
+        lll cost = 0;
+        LL ct = 0;
+        bool flag = false;
+        for (LL i = 0; i < n; i++) {
+            LL units = quadratic(mid, p[i]);
+            lll currp = ((__int128)units)*units*p[i];
+            cost += currp;
+            if (cost > m) {
+                flag = true;
+                break;
             }
-            ans += (q[j] - left) * (right - q[j]);
+            ct += units;
+            tmp[i] = units;
+        }
+        for (LL i = 0; i < n; i++) {
+            if (flag) break;
+            lll nxtp = ((tmp[i]+1)*(__int128)(tmp[i]+1)-tmp[i]*(__int128)tmp[i])*p[i];
+            if (nxtp == mid+1 && cost + nxtp <= m) {
+                cost += nxtp;
+                ct++;
+            }
+        }
+        if (cost > m) {
+            hi = mid-1;
+        } else {
+            lo = mid+1;
+            ans = max(ans, ct);
         }
     }
-    cout << ans << '\n';
+    
+    cout << (long long)ans << '\n';
 }
 
 /*
-let's say we union find everything together that is of the same
-group, and give everyone a group ID. So now the question is
-given an array of LLegers from 1->N with repeats, for every
-subarray, what is the number of distinct LLegers?
 
-We can somehow iterate through the indices of each number and
-get a better understanding, I think.
-
-count no of pairs where j is in the array and j+1 is not in the array
-this will give you all the 'runs'.
-Now count for all subarrays
-
-What could hLL me of this question???
 */
