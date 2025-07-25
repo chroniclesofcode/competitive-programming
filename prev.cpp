@@ -26,6 +26,7 @@ constexpr LL MD = (LL)1e9 + 7;
 
 LL n, m, k, q;
 
+
 class Fenwick {
 public:
     LL n;
@@ -56,75 +57,32 @@ public:
     }
 };
 
-// lowest element that is greater than target
-LL lowerb(vector<arr2>& nums, Fenwick& ft, LL target) {
-    LL lo = 0, hi = nums.size() - 1;
-    LL ans = q;
-    while (lo <= hi) {
-        LL mid = lo + (hi-lo)/2;
-        LL val = nums[mid][0] + ft.query(mid);
-        if (val >= target) {
-            hi = mid-1;
-            ans = min(ans, mid);
-        } else {
-            lo = mid+1;
-        }
-    }
-    return ans;
-}
 
-// greatest element that is less than target
-LL upperb(vector<arr2>& nums, Fenwick& ft, LL target) {
-    LL lo = 0, hi = nums.size() - 1;
-    LL ans = -1;
-    while (lo <= hi) {
-        LL mid = lo + (hi-lo)/2;
-        LL val = nums[mid][0] + ft.query(mid);
-        if (val <= target) {
-            lo = mid+1;
-            ans = max(ans, mid);
-        } else {
-            hi = mid-1;
-        }
-    }
-    return ans;
-}
 
 void solve() {
     cin >> n;
-    vector<arr2> range(n);
+    vector<LL> a(n);
     for (LL i = 0; i < n; i++) {
-        LL l, r; cin >> l >> r;
-        range[i] = {l, r};
+        cin >> a[i];
     }
-    cin >> q;
-    vector<arr2> queries(q);
-    for (LL i = 0; i < q; i++) {
-        LL tmp; cin >> tmp;
-        queries[i] = { tmp, i };
-    }
-    sort(queries.begin(), queries.end());
-    Fenwick ft(q + 10);
+    LL big = 1e7 + 1;
+    Fenwick ft(big+1);
+    vector<LL> ans(n);
     for (LL i = 0; i < n; i++) {
-        auto [l, r] = range[i];
-        LL bot = lowerb(queries, ft, l);
-        LL top = upperb(queries, ft, r);
-        if (bot > top) continue;
-        ft.add(bot, 1);
-        ft.add(top+1, -1);
+        LL val = a[i] + ft.pref(i, big) + i;
+        ft.add(val, 1);
+        ans[i] = max((LL)0, val - (n-1));
     }
-    vector<LL> ans(q);
-    for (LL i = 0; i < q; i++) {
-        ans[queries[i][1]] = queries[i][0] + ft.query(i);
+    for (LL i = 0; i < n; i++) {
+        cout << ans[i] << ' ';
     }
-    for (LL i = 0; i < q; i++) {
-        cout << ans[i] << '\n';
-    }
+    cout << endl;
 }
 
 /*
-
-Basically, sort the queries, order them by their actual values
-then for every range, binary search to find the beginning and
-the end, and increment for every l,r.
+    Every single elem will lose value equal to the number
+    in front of them.
+    Every single elem will gain value equal to the number
+    of elems previously WHICH have a greater stone value (or equal)
+    to the distance between them.
 */
