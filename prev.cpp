@@ -1,49 +1,24 @@
 class Solution {
 public:
-    vector<vector<int>> adj;
-    vector<int> ans;
-    vector<int> dp;
-
-    void dfs(int u, int p, vector<int> &g) {
-        if (u == p) return;
-        int count = 0;
-        if (g[u]) count = 1;
-        else count = -1;
-        for (int v : adj[u]) {
-            if (v == p) continue;
-            dfs(v, u, g);
-            if (dp[v] > 0) {
-                count += dp[v];
+    #define arr2 array<int,2>
+    long long maxPoints(vector<int>& technique1, vector<int>& technique2, int k) {
+        int n = technique1.size();
+        vector<arr2> diff(n);
+        for (int i = 0; i < n; i++) {
+            diff[i][0] = technique1[i] - technique2[i];
+            diff[i][1] = i;
+        }
+        sort(diff.begin(), diff.end(), greater<arr2>());
+        long long ans = 0;
+        vector<int> tmp;
+        for (int i = 0; i < n; i++) {
+            int idx = diff[i][1];
+            if (i < k) {
+                ans += technique1[idx];
+                continue;
             }
+            ans += (max(technique1[idx], technique2[idx]));
         }
-        dp[u] = count;
-    }
-
-    void calc(int u, int p) {
-        if (u == p) return;
-        ans[u] = dp[u];
-        if (p != -1 && (ans[p] > dp[u])) {
-            if (dp[u] <= 0) {
-                ans[u] += ans[p];
-            } else {
-                ans[u] += ans[p] - dp[u];
-            }
-        }
-        for (int v : adj[u]) {
-            if (v == p) continue;
-            calc(v, u);
-        }
-    }
-    vector<int> maxSubgraphScore(int n, vector<vector<int>>& edges, vector<int>& good) {
-        adj = vector<vector<int>>(n, vector<int>());
-        dp = vector<int>(n, 0);
-        ans = vector<int>(n);
-        for (auto& e : edges) {
-            adj[e[0]].push_back(e[1]);
-            adj[e[1]].push_back(e[0]);
-        }
-        dfs(0, -1, good);
-        calc(0, -1);
         return ans;
     }
 };
