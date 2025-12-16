@@ -1,24 +1,48 @@
+/*
+// Definition for a Node.
+class Node {
+public:
+    int val;
+    Node* left;
+    Node* right;
+    Node* next;
+
+    Node() : val(0), left(NULL), right(NULL), next(NULL) {}
+
+    Node(int _val) : val(_val), left(NULL), right(NULL), next(NULL) {}
+
+    Node(int _val, Node* _left, Node* _right, Node* _next)
+        : val(_val), left(_left), right(_right), next(_next) {}
+};
+*/
+
 class Solution {
 public:
-    #define arr2 array<int,2>
-    long long maxPoints(vector<int>& technique1, vector<int>& technique2, int k) {
-        int n = technique1.size();
-        vector<arr2> diff(n);
-        for (int i = 0; i < n; i++) {
-            diff[i][0] = technique1[i] - technique2[i];
-            diff[i][1] = i;
-        }
-        sort(diff.begin(), diff.end(), greater<arr2>());
-        long long ans = 0;
-        vector<int> tmp;
-        for (int i = 0; i < n; i++) {
-            int idx = diff[i][1];
-            if (i < k) {
-                ans += technique1[idx];
-                continue;
+    Node* connect(Node* root) {
+        if (!root) return root;
+
+        Node *curr = root;
+        Node *prev = NULL;
+        while (curr) {
+            Node *first = curr->left ? curr->left : curr->right;
+            if (prev) {
+                prev->next = first;
             }
-            ans += (max(technique1[idx], technique2[idx]));
+            if (first) {
+                prev = first;
+            }
+            if (prev && curr->left && curr->right) {
+                prev->next = curr->right;
+                prev = curr->right;
+            }
+            curr = curr->next;
         }
-        return ans;
+
+        connect(root->left);
+        connect(root->right);
+
+        return root;
     }
 };
+/*
+*/
