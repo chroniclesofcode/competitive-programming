@@ -1,48 +1,73 @@
-/*
-// Definition for a Node.
-class Node {
-public:
-    int val;
-    Node* left;
-    Node* right;
-    Node* next;
+#include <bits/stdc++.h>
 
-    Node() : val(0), left(NULL), right(NULL), next(NULL) {}
+using namespace std;
 
-    Node(int _val) : val(_val), left(NULL), right(NULL), next(NULL) {}
+#define MAINRET(x) in##x
+#define what_is(x) cout << #x << " is " << x << endl;
+#define print_vec(x, n) for (int i = 0; i < n; i++) cout << x[i] << ' '; cout << endl;
+#define LL long long
+#define arr2 array<int,2>
+#define arr3 array<int,3>
 
-    Node(int _val, Node* _left, Node* _right, Node* _next)
-        : val(_val), left(_left), right(_right), next(_next) {}
-};
-*/
+void solve();
 
-class Solution {
-public:
-    Node* connect(Node* root) {
-        if (!root) return root;
+MAINRET(t) main(void) {
+    std::cin.tie(nullptr);
+    std::cin.sync_with_stdio(false);
 
-        Node *curr = root;
-        Node *prev = NULL;
-        while (curr) {
-            Node *first = curr->left ? curr->left : curr->right;
-            if (prev) {
-                prev->next = first;
-            }
-            if (first) {
-                prev = first;
-            }
-            if (prev && curr->left && curr->right) {
-                prev->next = curr->right;
-                prev = curr->right;
-            }
-            curr = curr->next;
+        solve();
+}
+
+constexpr int INF = (int)1e9 + 100; 
+constexpr LL LINF = std::numeric_limits<LL>::max() / 2;
+constexpr int NINF = -INF;
+constexpr int MX = 2 * 1e5 + 1;
+constexpr int MD = (int)1e9 + 7;
+
+int n, m, k, q;
+
+
+void solve() {
+    cin >> k;
+    string s, t;
+    cin >> s;
+    cin >> t;
+    LL ct = 0;
+    
+    int i = 0, j = 0;
+    int n = s.size(), m = t.size();
+    while (1) {
+        if (i < n && j >= m) {
+            ct++;
+            i++;
+            continue;
+        } else if (i >= n && j < m) {
+            ct++;
+            j++;
+            continue;
+        } else if (i >= n && j >= m) {
+            break;
         }
-
-        connect(root->left);
-        connect(root->right);
-
-        return root;
+        if (s[i] == t[j]) {
+            i++; j++;
+        } else {
+            ct++;
+            if (n < m) {
+                j++;
+            } else if (m < n) {
+                i++;
+            } else {
+                i++; j++;
+            }
+        }
     }
-};
+    if (ct > k) {
+        cout << "No\n";
+    } else {
+        cout << "Yes\n";
+    }
+}
+
 /*
+
 */
