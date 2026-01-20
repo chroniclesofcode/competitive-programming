@@ -24,48 +24,40 @@ constexpr int NINF = -INF;
 constexpr int MX = 2 * 1e5 + 1;
 constexpr int MD = (int)1e9 + 7;
 
-int n, m, k, q;
+LL n, m, k, q;
 
+vector<LL> nums;
+vector<LL> tmp;
+LL ans = 0;
+
+void dfs(int idx, int ct, LL x) {
+    if (ct == 0) {
+        ans = max(ans, x);
+        return;
+    }
+    if (n - idx < ct) return;
+    for (int i = idx; i < n - ct + 1; i++) {
+        dfs(i + 1, ct - 1, x ^ nums[i]);
+    }
+}
 
 void solve() {
-    cin >> k;
-    string s, t;
-    cin >> s;
-    cin >> t;
-    LL ct = 0;
-    
-    int i = 0, j = 0;
-    int n = s.size(), m = t.size();
-    while (1) {
-        if (i < n && j >= m) {
-            ct++;
-            i++;
-            continue;
-        } else if (i >= n && j < m) {
-            ct++;
-            j++;
-            continue;
-        } else if (i >= n && j >= m) {
-            break;
-        }
-        if (s[i] == t[j]) {
-            i++; j++;
-        } else {
-            ct++;
-            if (n < m) {
-                j++;
-            } else if (m < n) {
-                i++;
-            } else {
-                i++; j++;
-            }
-        }
+    cin >> n >> k;
+    nums = vector<LL>(n);
+    for (int i = 0; i < n; i++) {
+        LL x; cin >> x;
+        nums[i] = x;
     }
-    if (ct > k) {
-        cout << "No\n";
+    if (n - k < k) {
+        LL tot = 0;
+        for (int i = 0; i < n; i++) {
+            tot ^= nums[i];
+        }
+        dfs(0, n-k, tot);
     } else {
-        cout << "Yes\n";
+        dfs(0, k, 0);
     }
+    cout << ans << '\n';
 }
 
 /*
